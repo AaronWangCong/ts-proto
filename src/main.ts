@@ -1494,14 +1494,14 @@ function generateDecode(ctx: Context, fullName: string, messageDesc: DescriptorP
               ${initializerSnippet}
               const el = ${readSnippet};
               if (el !== undefined) {
-                ${messageProperty}${maybeNonNullAssertion}.push(el);
+                ${messageProperty}${maybeNonNullAssertion}?.push(el);
               }
             `);
           } else {
             chunks.push(code`
               ${tagCheck}
               ${initializerSnippet}
-              ${messageProperty}${maybeNonNullAssertion}.push(${readSnippet});
+              ${messageProperty}${maybeNonNullAssertion}?.push(${readSnippet});
             `);
           }
         } else {
@@ -1510,7 +1510,7 @@ function generateDecode(ctx: Context, fullName: string, messageDesc: DescriptorP
           chunks.push(code`
             if (tag === ${tag}) {
               ${initializerSnippet}
-              ${messageProperty}${maybeNonNullAssertion}.push(${readSnippet});
+              ${messageProperty}${maybeNonNullAssertion}?.push(${readSnippet});
 
               continue;
             }
@@ -1519,7 +1519,7 @@ function generateDecode(ctx: Context, fullName: string, messageDesc: DescriptorP
               ${initializerSnippet}
               const end2 = reader.uint32() + reader.pos;
               while (reader.pos < end2) {
-                ${messageProperty}${maybeNonNullAssertion}.push(${readSnippet});
+                ${messageProperty}${maybeNonNullAssertion}?.push(${readSnippet});
               }
 
               continue;
@@ -1748,15 +1748,15 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
             ${writeSnippet("v!")};
           }
         `;
-        if (isOptional) {
+        // if (isOptional) {
           chunks.push(code`
             if (${messageProperty} !== undefined && ${messageProperty}.length !== 0) {
               ${listWriteSnippet}
             }
           `);
-        } else {
-          chunks.push(listWriteSnippet);
-        }
+        // } else {
+          // chunks.push(listWriteSnippet);
+        // }
       } else if (isEnum(field) && options.stringEnums) {
         // This is a lot like the `else` clause, but we wrap `fooToNumber` around it.
         // Ideally we'd reuse `writeSnippet` here, but `writeSnippet` has the `writer.uint32(tag)`
@@ -1771,15 +1771,15 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
           }
           writer.join();
         `;
-        if (isOptional) {
+        // if (isOptional) {
           chunks.push(code`
             if (${messageProperty} !== undefined && ${messageProperty}.length !== 0) {
               ${listWriteSnippet}
             }
           `);
-        } else {
-          chunks.push(listWriteSnippet);
-        }
+        // } else {
+          // chunks.push(listWriteSnippet);
+        // }
       } else {
         // Ideally we'd reuse `writeSnippet` but it has tagging embedded inside of it.
         const tag = ((field.number << 3) | 2) >>> 0;
@@ -1830,7 +1830,7 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
               throw new Error(`unexpected BigInt type: ${fieldType}`);
           }
         }
-        if (isOptional) {
+        // if (isOptional) {
           chunks.push(code`
             if (${messageProperty} !== undefined ${withAndMaybeCheckIsNotNull(
             options,
@@ -1839,9 +1839,9 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
               ${listWriteSnippet}
             }
           `);
-        } else {
-          chunks.push(listWriteSnippet);
-        }
+        // } else {
+          // chunks.push(listWriteSnippet);
+        // }
       }
     } else if (isWithinOneOfThatShouldBeUnion(options, field)) {
       if (!processedOneofs.has(field.oneofIndex)) {
@@ -2595,8 +2595,8 @@ function generateToJson(
     } else if (isRepeated(field)) {
       // Arrays might need their elements transformed
       const needMap = readSnippet("e").toCodeString([]) !== "e";
-      const maybeMap = needMap ? code`.map(e => ${readSnippet("e")})` : "";
-      const maybeMap2 = needMap ? code`.map(e => ${readSnippet("e", true)})` : "";
+      const maybeMap = needMap ? code`?.map(e => ${readSnippet("e")})` : "";
+      const maybeMap2 = needMap ? code`?.map(e => ${readSnippet("e", true)})` : "";
       chunks.push(code`
         if (${messageProperty}?.length) {
           ${jsonProperty} = ${messageProperty}${maybeMap};
