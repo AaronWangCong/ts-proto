@@ -2600,6 +2600,8 @@ function generateToJson(
       chunks.push(code`
         if (${messageProperty}?.length) {
           ${jsonProperty} = ${messageProperty}${maybeMap};
+        }
+        if (${messageProperty}) {
           ${protoProperty} = ${messageProperty}${maybeMap2};
         }
       `);
@@ -2789,10 +2791,10 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
           `);
         }
       } else {
-        const fallback = noDefaultValue ? "undefined" : "[]";
-
+        // const fallback = noDefaultValue ? "undefined" : "[]";
+        // 这个地方不能有默认值[], 因为存在局部更新接口字段的场景，如果有默认值表示覆盖
         chunks.push(code`
-          ${messageProperty} = ${objectProperty}?.map((e) => ${readSnippet("e")}) || ${fallback};
+          ${messageProperty} = ${objectProperty}?.map((e) => ${readSnippet("e")}) as any;
         `);
       }
     } else if (isWithinOneOfThatShouldBeUnion(options, field)) {
