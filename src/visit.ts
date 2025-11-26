@@ -61,7 +61,7 @@ export function visit(
   });
 }
 
-const builtInNames = ["Date", "Function"];
+const builtInNames = ["Date", "Function", "Object", "Promise", "Set", "String", "Symbol", "WeakMap", "WeakSet", "Map", "Array", "Boolean", "Number", "BigInt", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "Infinity", "NaN", "undefined", "null", "globalThis"];
 
 /** Potentially suffixes `Message` to names to avoid conflicts, i.e. with `Date`. */
 function messageName(name: string): string {
