@@ -2572,9 +2572,13 @@ function generateToJson(
         chunks.push(code`
           if (${messageProperty}?.size) {
             ${jsonProperty} = {};
-            ${protoProperty} = {};
             ${messageProperty}.forEach((v, k) => {
               ${jsonProperty}[${i}] = ${readSnippet("v")};
+            });
+          }
+          if (${messageProperty}) {
+            ${protoProperty} = {};
+            ${messageProperty}.forEach((v, k) => {
               ${protoProperty}[${i}] = ${readSnippet("v")};
             });
           }
@@ -2632,7 +2636,9 @@ function generateToJson(
       chunks.push(code`
         if (${check}) {
           ${jsonProperty} = ${readSnippet(`${messageProperty}`)};
-          ${protoProperty} = ${readSnippet(`${messageProperty}`)};
+        }
+        if(Object.hasOwn(message, '${fieldName}')) {
+          ${protoProperty} = ${jsonProperty};
         }
       `);
     }
@@ -2757,10 +2763,9 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
       }
     };
 
-    // 强制int32没有默认值为undefined
+    const isOptional = isOptionalProperty(field, messageDesc.options, options, true)
     const noDefaultValue =
-      (!options.initializeFieldsAsUndefined && isOptionalProperty(field, messageDesc.options, options, true)) ||
-      field.type === FieldDescriptorProto_Type.TYPE_INT32;
+      !options.initializeFieldsAsUndefined && isOptional
 
     // and then use the snippet to handle repeated fields if necessary
     if (isRepeated(field)) {
@@ -2828,10 +2833,10 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
       currentSwitchTarget = oneofNameWithObject;
     } else if (readSnippet(`x`).toCodeString([]) == "x") {
       // An optimized case of the else below that works when `readSnippet` returns the plain input
-      const fallback = isWithinOneOf(field) || noDefaultValue ? "undefined" : defaultValue(ctx, field);
+      const fallback = getFallbackValue(ctx, field, noDefaultValue, fieldName, isOptional);
       chunks.push(code`${messageProperty} = ${objectProperty} ?? ${fallback};`);
     } else {
-      const fallback = isWithinOneOf(field) || noDefaultValue ? "undefined" : defaultValue(ctx, field);
+      const fallback = getFallbackValue(ctx, field, noDefaultValue, fieldName, isOptional);
       chunks.push(code`
         ${messageProperty} = (${objectProperty} !== undefined && ${objectProperty} !== null)
           ? ${readSnippet(`${objectProperty}`)}
@@ -2850,6 +2855,16 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
   chunks.push(code`return message;`);
   chunks.push(code`}`);
   return joinCode(chunks, { on: "\n" });
+}
+
+function getFallbackValue(ctx: Context, field: FieldDescriptorProto, noDefaultValue: boolean, fieldName: string, isOptional: boolean): string | number | Code {
+  if (field.type === FieldDescriptorProto_Type.TYPE_INT32) {
+    return isOptional ? `(Object.hasOwn(object, '${fieldName}') ? 0 : undefined)` : 0;
+  }
+  if (field.type === FieldDescriptorProto_Type.TYPE_INT64) {
+    return isOptional ? `(Object.hasOwn(object, '${fieldName}') ? "0" : undefined)` : `"0"`;
+  }
+  return isWithinOneOf(field) || noDefaultValue ? "undefined" : defaultValue(ctx, field);
 }
 
 export const contextTypeVar = "Context extends DataLoaders";
