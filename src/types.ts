@@ -255,7 +255,7 @@ export function defaultValue(ctx: Context, field: FieldDescriptorProto): any {
       if (isJsTypeFieldOption(options, field)) {
         switch (field.options!.jstype) {
           case FieldOptions_JSType.JS_STRING:
-            return `"${numericDefaultVal}"`;
+            return useDefaultValue ? `"${numericDefaultVal}"` : '""';
           case FieldOptions_JSType.JS_NUMBER:
             return numericDefaultVal;
         }
@@ -270,7 +270,7 @@ export function defaultValue(ctx: Context, field: FieldDescriptorProto): any {
           useDefaultValue ? `(${numericDefaultVal})` : ""
         }`;
       } else if (options.forceLong === LongOption.STRING) {
-        return `"${numericDefaultVal}"`;
+        return useDefaultValue ? `"${numericDefaultVal}"` : '""';
       } else if (options.forceLong === LongOption.BIGINT) {
         return options.bigIntLiteral ? code`${numericDefaultVal}n` : code`BigInt("${numericDefaultVal}")`;
       } else {
