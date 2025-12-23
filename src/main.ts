@@ -2318,9 +2318,11 @@ function generateFromJson(ctx: Context, fullName: string, fullTypeName: string, 
       }
     };
 
+    // 强制int32没有默认值为undefined
     const noDefaultValue =
-      !options.initializeFieldsAsUndefined &&
-      isOptionalProperty(field, messageDesc.options, options, currentFile.isProto3Syntax);
+      (!options.initializeFieldsAsUndefined &&
+        isOptionalProperty(field, messageDesc.options, options, currentFile.isProto3Syntax)) ||
+      field.type === FieldDescriptorProto_Type.TYPE_INT32;
 
     // and then use the snippet to handle repeated fields if necessary
     if (canonicalFromJson[fullTypeName]?.[fieldName]) {
@@ -2755,8 +2757,10 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
       }
     };
 
+    // 强制int32没有默认值为undefined
     const noDefaultValue =
-      !options.initializeFieldsAsUndefined && isOptionalProperty(field, messageDesc.options, options, true);
+      (!options.initializeFieldsAsUndefined && isOptionalProperty(field, messageDesc.options, options, true)) ||
+      field.type === FieldDescriptorProto_Type.TYPE_INT32;
 
     // and then use the snippet to handle repeated fields if necessary
     if (isRepeated(field)) {
