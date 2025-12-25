@@ -2322,7 +2322,7 @@ function generateFromJson(ctx: Context, fullName: string, fullTypeName: string, 
     const noDefaultValue =
       (!options.initializeFieldsAsUndefined &&
         isOptionalProperty(field, messageDesc.options, options, currentFile.isProto3Syntax)) ||
-      field.type === FieldDescriptorProto_Type.TYPE_INT32;
+      (field.type === FieldDescriptorProto_Type.TYPE_INT32 && !messageDesc.options?.mapEntry);
 
     // and then use the snippet to handle repeated fields if necessary
     if (canonicalFromJson[fullTypeName]?.[fieldName]) {

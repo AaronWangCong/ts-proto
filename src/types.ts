@@ -437,7 +437,7 @@ export function isOptionalProperty(
     // don't bother verifying that oneof is not union. union oneofs generate their own properties.
     isWithinOneOf(field) ||
     field.proto3Optional ||
-    field.type === FieldDescriptorProto_Type.TYPE_INT32
+    (field.type === FieldDescriptorProto_Type.TYPE_INT32 && !messageOptions?.mapEntry)
   );
 }
 
