@@ -59,6 +59,7 @@ function generateRpcMethod(ctx: Context, serviceDesc: ServiceDescriptorProto, me
     ${methodDesc.formattedName}(
       request: ${inputType},
       metadata?: grpc.Metadata,
+      options?: { defaultZeroFields?: string[] },
       ${useAbortSignal ? "abortSignal?: AbortSignal," : ""}
     ): ${returns} {
       throw new Error('ts-proto does not yet support client streaming!');
@@ -71,9 +72,10 @@ function generateRpcMethod(ctx: Context, serviceDesc: ServiceDescriptorProto, me
     ${methodDesc.formattedName}(
       request: ${inputType},
       metadata?: grpc.Metadata,
+      options?: { defaultZeroFields?: string[] },
       ${useAbortSignal ? "abortSignal?: AbortSignal," : ""}
     ): ${returns} {
-      const _request = ${requestMessage}.fromPartial(request)
+      const _request = ${requestMessage}.fromPartial(request, options)
       return this.rpc.${method}(
         ${methodDescName(serviceDesc, methodDesc)},
         _request,

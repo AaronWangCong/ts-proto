@@ -798,10 +798,10 @@ function makeMessageFns(
   if (options.outputPartialMethods) {
     if (options.useExactTypes) {
       commonStaticMembers.push(code`create<I extends ${Exact}<${DeepPartial}<T>, I>>(base?: I): T;`);
-      commonStaticMembers.push(code`fromPartial<I extends ${Exact}<${DeepPartial}<T>, I>>(object: I): T;`);
+      commonStaticMembers.push(code`fromPartial<I extends ${Exact}<${DeepPartial}<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;`);
     } else {
       commonStaticMembers.push(code`create(base?: DeepPartial<T>): T;`);
-      commonStaticMembers.push(code`fromPartial(object: DeepPartial<T>): T;`);
+      commonStaticMembers.push(code`fromPartial(object: DeepPartial<T>, options?: { defaultZeroFields?: string[] }): T;`);
     }
   }
 
@@ -2672,11 +2672,11 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
 
   if (ctx.options.useExactTypes) {
     chunks.push(code`
-      fromPartial<I extends ${utils.Exact}<${utils.DeepPartial}<${fullName}>, I>>(${paramName}: I): ${fullName} {
+      fromPartial<I extends ${utils.Exact}<${utils.DeepPartial}<${fullName}>, I>>(${paramName}: I, options?: { defaultZeroFields?: string[] }): ${fullName} {
     `);
   } else {
     chunks.push(code`
-      fromPartial(${paramName}: ${utils.DeepPartial}<${fullName}>): ${fullName} {
+      fromPartial(${paramName}: ${utils.DeepPartial}<${fullName}>, options?: { defaultZeroFields?: string[] }): ${fullName} {
     `);
   }
 
@@ -2750,13 +2750,13 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
             return code`${from}`;
           } else {
             const type = basicTypeName(ctx, valueField);
-            return code`${type}.fromPartial(${from})`;
+            return code`${type}.fromPartial(${from}, options)`;
           }
         } else if (isAnyValueType(field)) {
           return code`${from}`;
         } else {
           const type = basicTypeName(ctx, field);
-          return code`${type}.fromPartial(${from})`;
+          return code`${type}.fromPartial(${from}, options)`;
         }
       } else {
         throw new Error(`Unhandled field ${field}`);
@@ -2859,10 +2859,10 @@ function generateFromPartial(ctx: Context, fullName: string, messageDesc: Descri
 
 function getFallbackValue(ctx: Context, field: FieldDescriptorProto, noDefaultValue: boolean, fieldName: string, isOptional: boolean): string | number | Code {
   if (field.type === FieldDescriptorProto_Type.TYPE_INT32) {
-    return isOptional ? `(Object.hasOwn(object, '${fieldName}') ? 0 : undefined)` : 0;
+    return isOptional ? `(options?.defaultZeroFields?.includes("${fieldName}") ? 0 : undefined)` : 0;
   }
   if (field.type === FieldDescriptorProto_Type.TYPE_INT64) {
-    return isOptional ? `(Object.hasOwn(object, '${fieldName}') ? "0" : undefined)` : `"0"`;
+    return isOptional ? `(options?.defaultZeroFields?.includes("${fieldName}") ? "0" : undefined)` : `"0"`;
   }
   return isWithinOneOf(field) || noDefaultValue ? "undefined" : defaultValue(ctx, field);
 }
