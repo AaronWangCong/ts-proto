@@ -1539,10 +1539,22 @@ function generateDecode(ctx: Context, fullName: string, messageDesc: DescriptorP
         ${oneofNameWithMessage} = { $case: '${fieldName}', ${valueName}: ${readSnippet} };
       `);
     } else {
-      chunks.push(code`
-        ${tagCheck}
-        ${messageProperty} = ${readSnippet};
-      `);
+      // 对于可选的 enum 字段，如果值为 0 则不赋值，保持 undefined
+      const isOptionalEnum = isEnum(field) && isOptionalProperty(field, messageDesc.options, options, currentFile.isProto3Syntax);
+      if (isOptionalEnum) {
+        chunks.push(code`
+          ${tagCheck}
+          const _enumValue = ${readSnippet};
+          if (_enumValue !== 0) {
+            ${messageProperty} = _enumValue;
+          }
+        `);
+      } else {
+        chunks.push(code`
+          ${tagCheck}
+          ${messageProperty} = ${readSnippet};
+        `);
+      }
     }
 
     if (!isRepeated(field) || packedType(field.type) === undefined) {
