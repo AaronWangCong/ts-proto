@@ -2650,7 +2650,7 @@ function generateToJson(
           ${jsonProperty} = ${readSnippet(`${messageProperty}`)};
         }
         if(Object.hasOwn(message, '${fieldName}')) {
-          ${protoProperty} = ${readSnippet(`${jsonProperty}`, true)};
+          ${protoProperty} = ${messageProperty} !== undefined ? ${readSnippet(`${messageProperty}`, true)} : ${messageProperty};
         }
       `);
     }
