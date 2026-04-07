@@ -50,18 +50,25 @@ export const ObjectId: MessageFns<ObjectId> = {
     return { value: isSet(object.value) ? globalThis.String(object.value) : "" };
   },
 
-  toJSON(message: ObjectId): unknown {
+  toJSON(message: ObjectId, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ObjectId>, I>>(base?: I): ObjectId {
     return ObjectId.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ObjectId>, I>>(object: I): ObjectId {
+  fromPartial<I extends Exact<DeepPartial<ObjectId>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ObjectId {
     const message = createBaseObjectId();
     message.value = object.value ?? "";
     return message;
@@ -73,7 +80,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -88,7 +95,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

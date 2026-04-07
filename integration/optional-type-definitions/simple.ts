@@ -25,7 +25,9 @@ export interface Simple {
    *
    * @deprecated
    */
-  age: number;
+  age?:
+    | number
+    | undefined;
   /**
    * This comment will also attach;
    *
@@ -55,7 +57,7 @@ export const Simple: MessageFns<Simple, "simple.Simple"> = {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    if (message.age !== 0) {
+    if (message.age !== undefined && message.age !== 0) {
       writer.uint32(16).int32(message.age);
     }
     if (message.child !== undefined) {
@@ -130,41 +132,61 @@ export const Simple: MessageFns<Simple, "simple.Simple"> = {
     return {
       $type: Simple.$type,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
-      age: isSet(object.age) ? globalThis.Number(object.age) : 0,
+      age: isSet(object.age) ? globalThis.Number(object.age) : undefined,
       child: isSet(object.child) ? Child.fromJSON(object.child) : undefined,
       testField: isSet(object.testField) ? globalThis.String(object.testField) : "",
       testNotDeprecated: isSet(object.testNotDeprecated) ? globalThis.String(object.testNotDeprecated) : "",
     };
   },
 
-  toJSON(message: Simple): unknown {
+  toJSON(message: Simple, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    if (message.age !== 0) {
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    if (message.age !== undefined && message.age !== 0) {
       obj.age = Math.round(message.age);
+    }
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? Math.round(message.age) : message.age;
     }
     if (message.child !== undefined) {
       obj.child = Child.toJSON(message.child);
     }
+    if (Object.hasOwn(message, "child")) {
+      obj2.child = message.child !== undefined ? Child.toJSON(message.child, true) : message.child;
+    }
     if (message.testField !== "") {
       obj.testField = message.testField;
+    }
+    if (Object.hasOwn(message, "testField")) {
+      obj2.test_field = message.testField !== undefined ? message.testField : message.testField;
     }
     if (message.testNotDeprecated !== "") {
       obj.testNotDeprecated = message.testNotDeprecated;
     }
-    return obj;
+    if (Object.hasOwn(message, "testNotDeprecated")) {
+      obj2.test_not_deprecated = message.testNotDeprecated !== undefined
+        ? message.testNotDeprecated
+        : message.testNotDeprecated;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Simple>, I>>(base?: I): Simple {
     return Simple.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I): Simple {
+  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Simple {
     const message = createBaseSimple();
     message.name = object.name ?? "";
-    message.age = object.age ?? 0;
-    message.child = (object.child !== undefined && object.child !== null) ? Child.fromPartial(object.child) : undefined;
+    message.age = object.age ?? (options?.defaultZeroFields?.includes("age") ? 0 : undefined);
+    message.child = (object.child !== undefined && object.child !== null)
+      ? Child.fromPartial(object.child, options)
+      : undefined;
     message.testField = object.testField ?? "";
     message.testNotDeprecated = object.testNotDeprecated ?? "";
     return message;
@@ -213,18 +235,22 @@ export const Child: MessageFns<Child, "simple.Child"> = {
     return { $type: Child.$type, name: isSet(object.name) ? globalThis.String(object.name) : "" };
   },
 
-  toJSON(message: Child): unknown {
+  toJSON(message: Child, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Child>, I>>(base?: I): Child {
     return Child.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Child>, I>>(object: I): Child {
+  fromPartial<I extends Exact<DeepPartial<Child>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Child {
     const message = createBaseChild();
     message.name = object.name ?? "";
     return message;
@@ -236,7 +262,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in Exclude<keyof T, "$type">]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in Exclude<keyof T, "$type">]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -252,7 +278,7 @@ export interface MessageFns<T, V extends string> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

@@ -8,13 +8,13 @@ export const protobufPackage = "simple";
 
 export interface Simple {
   name: string;
-  age: number;
+  age?: number | undefined;
 }
 
 export interface Numbers {
   double: number;
   float: number;
-  int32: number;
+  int32?: number | undefined;
   int64: number;
   uint32: number;
   uint64: number;
@@ -35,7 +35,7 @@ export const Simple: MessageFns<Simple> = {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    if (message.age !== 0) {
+    if (message.age !== undefined && message.age !== 0) {
       writer.uint32(16).int32(message.age);
     }
     return writer;
@@ -76,28 +76,35 @@ export const Simple: MessageFns<Simple> = {
   fromJSON(object: any): Simple {
     return {
       name: isSet(object.name) ? globalThis.String(object.name) : "",
-      age: isSet(object.age) ? globalThis.Number(object.age) : 0,
+      age: isSet(object.age) ? globalThis.Number(object.age) : undefined,
     };
   },
 
-  toJSON(message: Simple): unknown {
+  toJSON(message: Simple, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    if (message.age !== 0) {
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    if (message.age !== undefined && message.age !== 0) {
       obj.age = Math.round(message.age);
     }
-    return obj;
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? Math.round(message.age) : message.age;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Simple>, I>>(base?: I): Simple {
     return Simple.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I): Simple {
+  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Simple {
     const message = createBaseSimple();
     message.name = object.name ?? "";
-    message.age = object.age ?? 0;
+    message.age = object.age ?? (options?.defaultZeroFields?.includes("age") ? 0 : undefined);
     return message;
   },
 };
@@ -127,7 +134,7 @@ export const Numbers: MessageFns<Numbers> = {
     if (message.float !== 0) {
       writer.uint32(21).float(message.float);
     }
-    if (message.int32 !== 0) {
+    if (message.int32 !== undefined && message.int32 !== 0) {
       writer.uint32(24).int32(message.int32);
     }
     if (message.int64 !== 0) {
@@ -276,7 +283,7 @@ export const Numbers: MessageFns<Numbers> = {
     return {
       double: isSet(object.double) ? globalThis.Number(object.double) : 0,
       float: isSet(object.float) ? globalThis.Number(object.float) : 0,
-      int32: isSet(object.int32) ? globalThis.Number(object.int32) : 0,
+      int32: isSet(object.int32) ? globalThis.Number(object.int32) : undefined,
       int64: isSet(object.int64) ? globalThis.Number(object.int64) : 0,
       uint32: isSet(object.uint32) ? globalThis.Number(object.uint32) : 0,
       uint64: isSet(object.uint64) ? globalThis.Number(object.uint64) : 0,
@@ -289,56 +296,96 @@ export const Numbers: MessageFns<Numbers> = {
     };
   },
 
-  toJSON(message: Numbers): unknown {
+  toJSON(message: Numbers, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.double !== 0) {
       obj.double = message.double;
+    }
+    if (Object.hasOwn(message, "double")) {
+      obj2.double = message.double !== undefined ? message.double : message.double;
     }
     if (message.float !== 0) {
       obj.float = message.float;
     }
-    if (message.int32 !== 0) {
+    if (Object.hasOwn(message, "float")) {
+      obj2.float = message.float !== undefined ? message.float : message.float;
+    }
+    if (message.int32 !== undefined && message.int32 !== 0) {
       obj.int32 = Math.round(message.int32);
+    }
+    if (Object.hasOwn(message, "int32")) {
+      obj2.int32 = message.int32 !== undefined ? Math.round(message.int32) : message.int32;
     }
     if (message.int64 !== 0) {
       obj.int64 = Math.round(message.int64);
     }
+    if (Object.hasOwn(message, "int64")) {
+      obj2.int64 = message.int64 !== undefined ? Math.round(message.int64) : message.int64;
+    }
     if (message.uint32 !== 0) {
       obj.uint32 = Math.round(message.uint32);
+    }
+    if (Object.hasOwn(message, "uint32")) {
+      obj2.uint32 = message.uint32 !== undefined ? Math.round(message.uint32) : message.uint32;
     }
     if (message.uint64 !== 0) {
       obj.uint64 = Math.round(message.uint64);
     }
+    if (Object.hasOwn(message, "uint64")) {
+      obj2.uint64 = message.uint64 !== undefined ? Math.round(message.uint64) : message.uint64;
+    }
     if (message.sint32 !== 0) {
       obj.sint32 = Math.round(message.sint32);
+    }
+    if (Object.hasOwn(message, "sint32")) {
+      obj2.sint32 = message.sint32 !== undefined ? Math.round(message.sint32) : message.sint32;
     }
     if (message.sint64 !== 0) {
       obj.sint64 = Math.round(message.sint64);
     }
+    if (Object.hasOwn(message, "sint64")) {
+      obj2.sint64 = message.sint64 !== undefined ? Math.round(message.sint64) : message.sint64;
+    }
     if (message.fixed32 !== 0) {
       obj.fixed32 = Math.round(message.fixed32);
+    }
+    if (Object.hasOwn(message, "fixed32")) {
+      obj2.fixed32 = message.fixed32 !== undefined ? Math.round(message.fixed32) : message.fixed32;
     }
     if (message.fixed64 !== 0) {
       obj.fixed64 = Math.round(message.fixed64);
     }
+    if (Object.hasOwn(message, "fixed64")) {
+      obj2.fixed64 = message.fixed64 !== undefined ? Math.round(message.fixed64) : message.fixed64;
+    }
     if (message.sfixed32 !== 0) {
       obj.sfixed32 = Math.round(message.sfixed32);
+    }
+    if (Object.hasOwn(message, "sfixed32")) {
+      obj2.sfixed32 = message.sfixed32 !== undefined ? Math.round(message.sfixed32) : message.sfixed32;
     }
     if (message.sfixed64 !== 0) {
       obj.sfixed64 = Math.round(message.sfixed64);
     }
-    return obj;
+    if (Object.hasOwn(message, "sfixed64")) {
+      obj2.sfixed64 = message.sfixed64 !== undefined ? Math.round(message.sfixed64) : message.sfixed64;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Numbers>, I>>(base?: I): Numbers {
     return Numbers.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(object: I): Numbers {
+  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Numbers {
     const message = createBaseNumbers();
     message.double = object.double ?? 0;
     message.float = object.float ?? 0;
-    message.int32 = object.int32 ?? 0;
-    message.int64 = object.int64 ?? 0;
+    message.int32 = object.int32 ?? (options?.defaultZeroFields?.includes("int32") ? 0 : undefined);
+    message.int64 = object.int64 ?? "0";
     message.uint32 = object.uint32 ?? 0;
     message.uint64 = object.uint64 ?? 0;
     message.sint32 = object.sint32 ?? 0;
@@ -356,7 +403,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -382,7 +429,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

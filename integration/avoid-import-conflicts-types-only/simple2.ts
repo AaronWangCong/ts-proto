@@ -14,5 +14,5 @@ export enum SimpleEnum {
 
 export interface Simple {
   simple2Name: string;
-  simple2Age: number;
+  simple2Age?: number | undefined;
 }

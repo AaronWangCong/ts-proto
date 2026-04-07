@@ -54,7 +54,7 @@ export interface UInt64Value {
  */
 export interface Int32Value {
   /** The int32 value. */
-  value: number;
+  value?: number | undefined;
 }
 
 /**
@@ -251,7 +251,7 @@ function createBaseInt32Value(): Int32Value {
 
 export const Int32Value: MessageFns<Int32Value> = {
   encode(message: Int32Value, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.value !== 0) {
+    if (message.value !== undefined && message.value !== 0) {
       writer.uint32(8).int32(message.value);
     }
     return writer;

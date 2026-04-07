@@ -9,18 +9,18 @@ import { Empty } from "./google/protobuf/empty";
 export const protobufPackage = "user";
 
 export interface ProfileInfo {
-  id: number;
+  id?: number | null;
   bio: string;
   phone: string;
 }
 
 export interface Department {
-  id: number;
+  id?: number | null;
   name: string;
 }
 
 export interface User {
-  id: number;
+  id?: number | null;
   username: string;
   /**
    * ProfileInfo will be optional in typescript, the type will be ProfileInfo | null | undefined
@@ -35,7 +35,7 @@ export interface User {
 }
 
 export interface UserById {
-  id: number;
+  id?: number | null;
 }
 
 export const USER_PACKAGE_NAME = "user";

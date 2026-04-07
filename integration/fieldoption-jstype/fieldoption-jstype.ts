@@ -37,7 +37,7 @@ export interface SFixed64FieldOption {
 }
 
 function createBaseInt64FieldOption(): Int64FieldOption {
-  return { normalField: 0, numberField: 0, stringField: "0" };
+  return { normalField: 0, numberField: 0, stringField: "" };
 }
 
 export const Int64FieldOption: MessageFns<Int64FieldOption> = {
@@ -48,7 +48,7 @@ export const Int64FieldOption: MessageFns<Int64FieldOption> = {
     if (message.numberField !== 0) {
       writer.uint32(16).int64(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (message.stringField !== "") {
       writer.uint32(24).int64(message.stringField);
     }
     return writer;
@@ -98,38 +98,55 @@ export const Int64FieldOption: MessageFns<Int64FieldOption> = {
     return {
       normalField: isSet(object.normalField) ? globalThis.Number(object.normalField) : 0,
       numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : 0,
-      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "0",
+      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "",
     };
   },
 
-  toJSON(message: Int64FieldOption): unknown {
+  toJSON(message: Int64FieldOption, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.normalField !== 0) {
       obj.normalField = Math.round(message.normalField);
+    }
+    if (Object.hasOwn(message, "normalField")) {
+      obj2.normalField = message.normalField !== undefined ? Math.round(message.normalField) : message.normalField;
     }
     if (message.numberField !== 0) {
       obj.numberField = globalThis.Number(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (Object.hasOwn(message, "numberField")) {
+      obj2.numberField = message.numberField !== undefined
+        ? globalThis.Number(message.numberField)
+        : message.numberField;
+    }
+    if (message.stringField !== "") {
       obj.stringField = globalThis.String(message.stringField);
     }
-    return obj;
+    if (Object.hasOwn(message, "stringField")) {
+      obj2.stringField = message.stringField !== undefined
+        ? globalThis.String(message.stringField)
+        : message.stringField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Int64FieldOption>, I>>(base?: I): Int64FieldOption {
     return Int64FieldOption.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Int64FieldOption>, I>>(object: I): Int64FieldOption {
+  fromPartial<I extends Exact<DeepPartial<Int64FieldOption>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Int64FieldOption {
     const message = createBaseInt64FieldOption();
-    message.normalField = object.normalField ?? 0;
-    message.numberField = object.numberField ?? 0;
+    message.normalField = object.normalField ?? "0";
+    message.numberField = object.numberField ?? "0";
     message.stringField = object.stringField ?? "0";
     return message;
   },
 };
 
 function createBaseUInt64FieldOption(): UInt64FieldOption {
-  return { normalField: 0, numberField: 0, stringField: "0" };
+  return { normalField: 0, numberField: 0, stringField: "" };
 }
 
 export const UInt64FieldOption: MessageFns<UInt64FieldOption> = {
@@ -140,7 +157,7 @@ export const UInt64FieldOption: MessageFns<UInt64FieldOption> = {
     if (message.numberField !== 0) {
       writer.uint32(16).uint64(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (message.stringField !== "") {
       writer.uint32(24).uint64(message.stringField);
     }
     return writer;
@@ -190,38 +207,55 @@ export const UInt64FieldOption: MessageFns<UInt64FieldOption> = {
     return {
       normalField: isSet(object.normalField) ? globalThis.Number(object.normalField) : 0,
       numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : 0,
-      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "0",
+      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "",
     };
   },
 
-  toJSON(message: UInt64FieldOption): unknown {
+  toJSON(message: UInt64FieldOption, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.normalField !== 0) {
       obj.normalField = Math.round(message.normalField);
+    }
+    if (Object.hasOwn(message, "normalField")) {
+      obj2.normalField = message.normalField !== undefined ? Math.round(message.normalField) : message.normalField;
     }
     if (message.numberField !== 0) {
       obj.numberField = globalThis.Number(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (Object.hasOwn(message, "numberField")) {
+      obj2.numberField = message.numberField !== undefined
+        ? globalThis.Number(message.numberField)
+        : message.numberField;
+    }
+    if (message.stringField !== "") {
       obj.stringField = globalThis.String(message.stringField);
     }
-    return obj;
+    if (Object.hasOwn(message, "stringField")) {
+      obj2.stringField = message.stringField !== undefined
+        ? globalThis.String(message.stringField)
+        : message.stringField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<UInt64FieldOption>, I>>(base?: I): UInt64FieldOption {
     return UInt64FieldOption.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<UInt64FieldOption>, I>>(object: I): UInt64FieldOption {
+  fromPartial<I extends Exact<DeepPartial<UInt64FieldOption>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): UInt64FieldOption {
     const message = createBaseUInt64FieldOption();
     message.normalField = object.normalField ?? 0;
     message.numberField = object.numberField ?? 0;
-    message.stringField = object.stringField ?? "0";
+    message.stringField = object.stringField ?? "";
     return message;
   },
 };
 
 function createBaseSInt64FieldOption(): SInt64FieldOption {
-  return { normalField: 0, numberField: 0, stringField: "0" };
+  return { normalField: 0, numberField: 0, stringField: "" };
 }
 
 export const SInt64FieldOption: MessageFns<SInt64FieldOption> = {
@@ -232,7 +266,7 @@ export const SInt64FieldOption: MessageFns<SInt64FieldOption> = {
     if (message.numberField !== 0) {
       writer.uint32(16).sint64(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (message.stringField !== "") {
       writer.uint32(24).sint64(message.stringField);
     }
     return writer;
@@ -282,38 +316,55 @@ export const SInt64FieldOption: MessageFns<SInt64FieldOption> = {
     return {
       normalField: isSet(object.normalField) ? globalThis.Number(object.normalField) : 0,
       numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : 0,
-      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "0",
+      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "",
     };
   },
 
-  toJSON(message: SInt64FieldOption): unknown {
+  toJSON(message: SInt64FieldOption, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.normalField !== 0) {
       obj.normalField = Math.round(message.normalField);
+    }
+    if (Object.hasOwn(message, "normalField")) {
+      obj2.normalField = message.normalField !== undefined ? Math.round(message.normalField) : message.normalField;
     }
     if (message.numberField !== 0) {
       obj.numberField = globalThis.Number(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (Object.hasOwn(message, "numberField")) {
+      obj2.numberField = message.numberField !== undefined
+        ? globalThis.Number(message.numberField)
+        : message.numberField;
+    }
+    if (message.stringField !== "") {
       obj.stringField = globalThis.String(message.stringField);
     }
-    return obj;
+    if (Object.hasOwn(message, "stringField")) {
+      obj2.stringField = message.stringField !== undefined
+        ? globalThis.String(message.stringField)
+        : message.stringField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SInt64FieldOption>, I>>(base?: I): SInt64FieldOption {
     return SInt64FieldOption.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SInt64FieldOption>, I>>(object: I): SInt64FieldOption {
+  fromPartial<I extends Exact<DeepPartial<SInt64FieldOption>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SInt64FieldOption {
     const message = createBaseSInt64FieldOption();
     message.normalField = object.normalField ?? 0;
     message.numberField = object.numberField ?? 0;
-    message.stringField = object.stringField ?? "0";
+    message.stringField = object.stringField ?? "";
     return message;
   },
 };
 
 function createBaseFixed64FieldOption(): Fixed64FieldOption {
-  return { normalField: 0, numberField: 0, stringField: "0" };
+  return { normalField: 0, numberField: 0, stringField: "" };
 }
 
 export const Fixed64FieldOption: MessageFns<Fixed64FieldOption> = {
@@ -324,7 +375,7 @@ export const Fixed64FieldOption: MessageFns<Fixed64FieldOption> = {
     if (message.numberField !== 0) {
       writer.uint32(17).fixed64(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (message.stringField !== "") {
       writer.uint32(25).fixed64(message.stringField);
     }
     return writer;
@@ -374,38 +425,55 @@ export const Fixed64FieldOption: MessageFns<Fixed64FieldOption> = {
     return {
       normalField: isSet(object.normalField) ? globalThis.Number(object.normalField) : 0,
       numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : 0,
-      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "0",
+      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "",
     };
   },
 
-  toJSON(message: Fixed64FieldOption): unknown {
+  toJSON(message: Fixed64FieldOption, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.normalField !== 0) {
       obj.normalField = Math.round(message.normalField);
+    }
+    if (Object.hasOwn(message, "normalField")) {
+      obj2.normalField = message.normalField !== undefined ? Math.round(message.normalField) : message.normalField;
     }
     if (message.numberField !== 0) {
       obj.numberField = globalThis.Number(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (Object.hasOwn(message, "numberField")) {
+      obj2.numberField = message.numberField !== undefined
+        ? globalThis.Number(message.numberField)
+        : message.numberField;
+    }
+    if (message.stringField !== "") {
       obj.stringField = globalThis.String(message.stringField);
     }
-    return obj;
+    if (Object.hasOwn(message, "stringField")) {
+      obj2.stringField = message.stringField !== undefined
+        ? globalThis.String(message.stringField)
+        : message.stringField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Fixed64FieldOption>, I>>(base?: I): Fixed64FieldOption {
     return Fixed64FieldOption.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Fixed64FieldOption>, I>>(object: I): Fixed64FieldOption {
+  fromPartial<I extends Exact<DeepPartial<Fixed64FieldOption>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Fixed64FieldOption {
     const message = createBaseFixed64FieldOption();
     message.normalField = object.normalField ?? 0;
     message.numberField = object.numberField ?? 0;
-    message.stringField = object.stringField ?? "0";
+    message.stringField = object.stringField ?? "";
     return message;
   },
 };
 
 function createBaseSFixed64FieldOption(): SFixed64FieldOption {
-  return { normalField: 0, numberField: 0, stringField: "0" };
+  return { normalField: 0, numberField: 0, stringField: "" };
 }
 
 export const SFixed64FieldOption: MessageFns<SFixed64FieldOption> = {
@@ -416,7 +484,7 @@ export const SFixed64FieldOption: MessageFns<SFixed64FieldOption> = {
     if (message.numberField !== 0) {
       writer.uint32(17).sfixed64(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (message.stringField !== "") {
       writer.uint32(25).sfixed64(message.stringField);
     }
     return writer;
@@ -466,32 +534,49 @@ export const SFixed64FieldOption: MessageFns<SFixed64FieldOption> = {
     return {
       normalField: isSet(object.normalField) ? globalThis.Number(object.normalField) : 0,
       numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : 0,
-      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "0",
+      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "",
     };
   },
 
-  toJSON(message: SFixed64FieldOption): unknown {
+  toJSON(message: SFixed64FieldOption, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.normalField !== 0) {
       obj.normalField = Math.round(message.normalField);
+    }
+    if (Object.hasOwn(message, "normalField")) {
+      obj2.normalField = message.normalField !== undefined ? Math.round(message.normalField) : message.normalField;
     }
     if (message.numberField !== 0) {
       obj.numberField = globalThis.Number(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (Object.hasOwn(message, "numberField")) {
+      obj2.numberField = message.numberField !== undefined
+        ? globalThis.Number(message.numberField)
+        : message.numberField;
+    }
+    if (message.stringField !== "") {
       obj.stringField = globalThis.String(message.stringField);
     }
-    return obj;
+    if (Object.hasOwn(message, "stringField")) {
+      obj2.stringField = message.stringField !== undefined
+        ? globalThis.String(message.stringField)
+        : message.stringField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SFixed64FieldOption>, I>>(base?: I): SFixed64FieldOption {
     return SFixed64FieldOption.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SFixed64FieldOption>, I>>(object: I): SFixed64FieldOption {
+  fromPartial<I extends Exact<DeepPartial<SFixed64FieldOption>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SFixed64FieldOption {
     const message = createBaseSFixed64FieldOption();
     message.normalField = object.normalField ?? 0;
     message.numberField = object.numberField ?? 0;
-    message.stringField = object.stringField ?? "0";
+    message.stringField = object.stringField ?? "";
     return message;
   },
 };
@@ -501,7 +586,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -527,7 +612,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

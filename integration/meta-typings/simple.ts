@@ -28,13 +28,15 @@ export interface Simple {
   /** Name field */
   name: string;
   /** Age */
-  age: number;
+  age?:
+    | number
+    | undefined;
   /** This comment will also attach */
   createdAt: Date | undefined;
   child: Child | undefined;
   state: StateEnum;
   grandChildren: Child[];
-  coins: number[];
+  coins?: number[] | undefined;
   snacks: string[];
   oldStates: StateEnum[];
   /** A thing (imported from thing) */
@@ -93,7 +95,7 @@ export interface SimpleWithWrappers {
 }
 
 export interface Entity {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface SimpleWithMap {
@@ -158,7 +160,7 @@ export interface PingResponse {
 export interface Numbers {
   double: number;
   float: number;
-  int32: number;
+  int32?: number | undefined;
   int64: number;
   uint32: number;
   uint64: number;
@@ -217,7 +219,7 @@ export const Simple: MessageFns<Simple> = {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    if (message.age !== 0) {
+    if (message.age !== undefined && message.age !== 0) {
       writer.uint32(16).int32(message.age);
     }
     if (message.createdAt !== undefined) {
@@ -229,27 +231,37 @@ export const Simple: MessageFns<Simple> = {
     if (message.state !== 0) {
       writer.uint32(32).int32(message.state);
     }
-    for (const v of message.grandChildren) {
-      Child.encode(v!, writer.uint32(42).fork()).join();
+    if (message.grandChildren !== undefined && message.grandChildren.length !== 0) {
+      for (const v of message.grandChildren) {
+        Child.encode(v!, writer.uint32(42).fork()).join();
+      }
     }
-    writer.uint32(50).fork();
-    for (const v of message.coins) {
-      writer.int32(v);
+    if (message.coins !== undefined && message.coins.length !== 0) {
+      writer.uint32(50).fork();
+      for (const v of message.coins) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
-    for (const v of message.snacks) {
-      writer.uint32(58).string(v!);
+    if (message.snacks !== undefined && message.snacks.length !== 0) {
+      for (const v of message.snacks) {
+        writer.uint32(58).string(v!);
+      }
     }
-    writer.uint32(66).fork();
-    for (const v of message.oldStates) {
-      writer.int32(v);
+    if (message.oldStates !== undefined && message.oldStates.length !== 0) {
+      writer.uint32(66).fork();
+      for (const v of message.oldStates) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
     if (message.thing !== undefined) {
       ImportedThing.encode(message.thing, writer.uint32(82).fork()).join();
     }
-    for (const v of message.blobs) {
-      writer.uint32(90).bytes(v!);
+    if (message.blobs !== undefined && message.blobs.length !== 0) {
+      for (const v of message.blobs) {
+        writer.uint32(90).bytes(v!);
+      }
     }
     if (message.birthday !== undefined) {
       DateMessage.encode(message.birthday, writer.uint32(98).fork()).join();
@@ -312,12 +324,12 @@ export const Simple: MessageFns<Simple> = {
             break;
           }
 
-          message.grandChildren.push(Child.decode(reader, reader.uint32()));
+          message.grandChildren?.push(Child.decode(reader, reader.uint32()));
           continue;
         }
         case 6: {
           if (tag === 48) {
-            message.coins.push(reader.int32());
+            message.coins?.push(reader.int32());
 
             continue;
           }
@@ -325,7 +337,7 @@ export const Simple: MessageFns<Simple> = {
           if (tag === 50) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.coins.push(reader.int32());
+              message.coins?.push(reader.int32());
             }
 
             continue;
@@ -338,12 +350,12 @@ export const Simple: MessageFns<Simple> = {
             break;
           }
 
-          message.snacks.push(reader.string());
+          message.snacks?.push(reader.string());
           continue;
         }
         case 8: {
           if (tag === 64) {
-            message.oldStates.push(reader.int32() as any);
+            message.oldStates?.push(reader.int32() as any);
 
             continue;
           }
@@ -351,7 +363,7 @@ export const Simple: MessageFns<Simple> = {
           if (tag === 66) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.oldStates.push(reader.int32() as any);
+              message.oldStates?.push(reader.int32() as any);
             }
 
             continue;
@@ -372,7 +384,7 @@ export const Simple: MessageFns<Simple> = {
             break;
           }
 
-          message.blobs.push(reader.bytes());
+          message.blobs?.push(reader.bytes());
           continue;
         }
         case 12: {
@@ -656,11 +668,15 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
     if (message.enabled !== undefined) {
       BoolValue.encode({ value: message.enabled! }, writer.uint32(26).fork()).join();
     }
-    for (const v of message.coins) {
-      Int32Value.encode({ value: v!! }, writer.uint32(50).fork()).join();
+    if (message.coins !== undefined && message.coins.length !== 0) {
+      for (const v of message.coins) {
+        Int32Value.encode({ value: v!! }, writer.uint32(50).fork()).join();
+      }
     }
-    for (const v of message.snacks) {
-      StringValue.encode({ value: v!! }, writer.uint32(58).fork()).join();
+    if (message.snacks !== undefined && message.snacks.length !== 0) {
+      for (const v of message.snacks) {
+        StringValue.encode({ value: v!! }, writer.uint32(58).fork()).join();
+      }
     }
     return writer;
   },
@@ -701,7 +717,7 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
             break;
           }
 
-          message.coins.push(Int32Value.decode(reader, reader.uint32()).value);
+          message.coins?.push(Int32Value.decode(reader, reader.uint32()).value);
           continue;
         }
         case 7: {
@@ -709,7 +725,7 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
             break;
           }
 
-          message.snacks.push(StringValue.decode(reader, reader.uint32()).value);
+          message.snacks?.push(StringValue.decode(reader, reader.uint32()).value);
           continue;
         }
       }
@@ -728,7 +744,7 @@ function createBaseEntity(): Entity {
 
 export const Entity: MessageFns<Entity> = {
   encode(message: Entity, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     return writer;
@@ -1370,7 +1386,7 @@ export const Numbers: MessageFns<Numbers> = {
     if (message.float !== 0) {
       writer.uint32(21).float(message.float);
     }
-    if (message.int32 !== 0) {
+    if (message.int32 !== undefined && message.int32 !== 0) {
       writer.uint32(24).int32(message.int32);
     }
     if (message.int64 !== 0) {
@@ -1598,7 +1614,10 @@ export const SimpleButOptional: MessageFns<SimpleButOptional> = {
             break;
           }
 
-          message.state = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.state = _enumValue;
+          }
           continue;
         }
         case 10: {

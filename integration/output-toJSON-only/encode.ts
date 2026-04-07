@@ -10,15 +10,19 @@ export interface Encode {
 }
 
 export const Encode: MessageFns<Encode> = {
-  toJSON(message: Encode): unknown {
+  toJSON(message: Encode, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.encode !== "") {
       obj.encode = message.encode;
     }
-    return obj;
+    if (Object.hasOwn(message, "encode")) {
+      obj2.encode = message.encode !== undefined ? message.encode : message.encode;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export interface MessageFns<T> {
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
 }

@@ -12,22 +12,22 @@ import { Timestamp } from "./google/protobuf/timestamp";
 export const protobufPackage = "hero";
 
 export interface HeroById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface VillainById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface Hero {
-  id: number;
+  id?: number | undefined;
   name: string;
   birthDate: Timestamp | undefined;
   externalData: { [key: string]: any } | undefined;
 }
 
 export interface Villain {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 

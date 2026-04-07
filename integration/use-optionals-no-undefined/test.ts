@@ -208,7 +208,10 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             break;
           }
 
-          message.state = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.state = _enumValue;
+          }
           continue;
         }
         case 4: {
@@ -248,7 +251,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             if (message.repId === undefined) {
               message.repId = [];
             }
-            message.repId!.push(reader.int32());
+            message.repId!?.push(reader.int32());
 
             continue;
           }
@@ -259,7 +262,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.repId!.push(reader.int32());
+              message.repId!?.push(reader.int32());
             }
 
             continue;
@@ -277,7 +280,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
           }
           const el = Child.decode(reader, reader.uint32());
           if (el !== undefined) {
-            message.repChild!.push(el);
+            message.repChild!?.push(el);
           }
           continue;
         }
@@ -286,7 +289,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             if (message.repState === undefined) {
               message.repState = [];
             }
-            message.repState!.push(reader.int32() as any);
+            message.repState!?.push(reader.int32() as any);
 
             continue;
           }
@@ -297,7 +300,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.repState!.push(reader.int32() as any);
+              message.repState!?.push(reader.int32() as any);
             }
 
             continue;
@@ -310,7 +313,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             if (message.repLong === undefined) {
               message.repLong = [];
             }
-            message.repLong!.push(longToNumber(reader.int64()));
+            message.repLong!?.push(longToNumber(reader.int64()));
 
             continue;
           }
@@ -321,7 +324,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.repLong!.push(longToNumber(reader.int64()));
+              message.repLong!?.push(longToNumber(reader.int64()));
             }
 
             continue;
@@ -334,7 +337,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             if (message.repTruth === undefined) {
               message.repTruth = [];
             }
-            message.repTruth!.push(reader.bool());
+            message.repTruth!?.push(reader.bool());
 
             continue;
           }
@@ -345,7 +348,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.repTruth!.push(reader.bool());
+              message.repTruth!?.push(reader.bool());
             }
 
             continue;
@@ -363,7 +366,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
           }
           const el = reader.string();
           if (el !== undefined) {
-            message.repDescription!.push(el);
+            message.repDescription!?.push(el);
           }
           continue;
         }
@@ -377,7 +380,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
           }
           const el = reader.bytes();
           if (el !== undefined) {
-            message.repData!.push(el);
+            message.repData!?.push(el);
           }
           continue;
         }
@@ -402,7 +405,10 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
             break;
           }
 
-          message.optState = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.optState = _enumValue;
+          }
           continue;
         }
         case 24: {
@@ -505,7 +511,7 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
       optData: isSet(object.optData) ? bytesFromBase64(object.optData) : undefined,
       translations: isObject(object.translations)
         ? Object.entries(object.translations).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-          acc[key] = String(value);
+          acc[key] = globalThis.String(value);
           return acc;
         }, {})
         : undefined,
@@ -513,111 +519,185 @@ export const OptionalsTest: MessageFns<OptionalsTest> = {
     };
   },
 
-  toJSON(message: OptionalsTest): unknown {
+  toJSON(message: OptionalsTest, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.id !== undefined && message.id !== 0) {
       obj.id = Math.round(message.id);
+    }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
     }
     if (message.child !== undefined) {
       obj.child = Child.toJSON(message.child);
     }
+    if (Object.hasOwn(message, "child")) {
+      obj2.child = message.child !== undefined ? Child.toJSON(message.child, true) : message.child;
+    }
     if (message.state !== undefined && message.state !== 0) {
       obj.state = stateEnumToJSON(message.state);
+    }
+    if (Object.hasOwn(message, "state")) {
+      obj2.state = message.state !== undefined ? stateEnumToJSON(message.state) : message.state;
     }
     if (message.long !== undefined && message.long !== 0) {
       obj.long = Math.round(message.long);
     }
+    if (Object.hasOwn(message, "long")) {
+      obj2.long = message.long !== undefined ? Math.round(message.long) : message.long;
+    }
     if (message.truth !== undefined && message.truth !== false) {
       obj.truth = message.truth;
+    }
+    if (Object.hasOwn(message, "truth")) {
+      obj2.truth = message.truth !== undefined ? message.truth : message.truth;
     }
     if (message.description !== undefined && message.description !== "") {
       obj.description = message.description;
     }
+    if (Object.hasOwn(message, "description")) {
+      obj2.description = message.description !== undefined ? message.description : message.description;
+    }
     if (message.data !== undefined && message.data.length !== 0) {
       obj.data = base64FromBytes(message.data);
     }
+    if (Object.hasOwn(message, "data")) {
+      obj2.data = message.data !== undefined ? base64FromBytes(message.data) : message.data;
+    }
     if (message.repId?.length) {
-      obj.repId = message.repId.map((e) => Math.round(e));
+      obj.repId = message.repId?.map((e) => Math.round(e));
+    }
+    if (message.repId) {
+      obj2.rep_id = message.repId?.map((e) => Math.round(e));
     }
     if (message.repChild?.length) {
-      obj.repChild = message.repChild.map((e) => Child.toJSON(e));
+      obj.repChild = message.repChild?.map((e) => Child.toJSON(e));
+    }
+    if (message.repChild) {
+      obj2.rep_child = message.repChild?.map((e) => Child.toJSON(e, true));
     }
     if (message.repState?.length) {
-      obj.repState = message.repState.map((e) => stateEnumToJSON(e));
+      obj.repState = message.repState?.map((e) => stateEnumToJSON(e));
+    }
+    if (message.repState) {
+      obj2.rep_state = message.repState?.map((e) => stateEnumToJSON(e));
     }
     if (message.repLong?.length) {
-      obj.repLong = message.repLong.map((e) => Math.round(e));
+      obj.repLong = message.repLong?.map((e) => Math.round(e));
+    }
+    if (message.repLong) {
+      obj2.rep_long = message.repLong?.map((e) => Math.round(e));
     }
     if (message.repTruth?.length) {
       obj.repTruth = message.repTruth;
     }
+    if (message.repTruth) {
+      obj2.rep_truth = message.repTruth;
+    }
     if (message.repDescription?.length) {
       obj.repDescription = message.repDescription;
     }
+    if (message.repDescription) {
+      obj2.rep_description = message.repDescription;
+    }
     if (message.repData?.length) {
-      obj.repData = message.repData.map((e) => base64FromBytes(e));
+      obj.repData = message.repData?.map((e) => base64FromBytes(e));
+    }
+    if (message.repData) {
+      obj2.rep_data = message.repData?.map((e) => base64FromBytes(e));
     }
     if (message.optId !== undefined) {
       obj.optId = Math.round(message.optId);
     }
+    if (Object.hasOwn(message, "optId")) {
+      obj2.opt_id = message.optId !== undefined ? Math.round(message.optId) : message.optId;
+    }
     if (message.optChild !== undefined) {
       obj.optChild = Child.toJSON(message.optChild);
+    }
+    if (Object.hasOwn(message, "optChild")) {
+      obj2.opt_child = message.optChild !== undefined ? Child.toJSON(message.optChild, true) : message.optChild;
     }
     if (message.optState !== undefined) {
       obj.optState = stateEnumToJSON(message.optState);
     }
+    if (Object.hasOwn(message, "optState")) {
+      obj2.opt_state = message.optState !== undefined ? stateEnumToJSON(message.optState) : message.optState;
+    }
     if (message.optLong !== undefined) {
       obj.optLong = Math.round(message.optLong);
+    }
+    if (Object.hasOwn(message, "optLong")) {
+      obj2.opt_long = message.optLong !== undefined ? Math.round(message.optLong) : message.optLong;
     }
     if (message.optTruth !== undefined) {
       obj.optTruth = message.optTruth;
     }
+    if (Object.hasOwn(message, "optTruth")) {
+      obj2.opt_truth = message.optTruth !== undefined ? message.optTruth : message.optTruth;
+    }
     if (message.optDescription !== undefined) {
       obj.optDescription = message.optDescription;
     }
+    if (Object.hasOwn(message, "optDescription")) {
+      obj2.opt_description = message.optDescription !== undefined ? message.optDescription : message.optDescription;
+    }
     if (message.optData !== undefined) {
       obj.optData = base64FromBytes(message.optData);
+    }
+    if (Object.hasOwn(message, "optData")) {
+      obj2.opt_data = message.optData !== undefined ? base64FromBytes(message.optData) : message.optData;
     }
     if (message.translations) {
       const entries = Object.entries(message.translations);
       if (entries.length > 0) {
         obj.translations = {};
+        obj2.translations = {};
         entries.forEach(([k, v]) => {
           obj.translations[k] = v;
+          obj2.translations[k] = v;
         });
       }
     }
     if (message.struct !== undefined) {
       obj.struct = message.struct;
     }
-    return obj;
+    if (Object.hasOwn(message, "struct")) {
+      obj2.struct = message.struct !== undefined ? message.struct : message.struct;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<OptionalsTest>, I>>(base?: I): OptionalsTest {
     return OptionalsTest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<OptionalsTest>, I>>(object: I): OptionalsTest {
+  fromPartial<I extends Exact<DeepPartial<OptionalsTest>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): OptionalsTest {
     const message = createBaseOptionalsTest();
-    message.id = object.id ?? undefined;
-    message.child = (object.child !== undefined && object.child !== null) ? Child.fromPartial(object.child) : undefined;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
+    message.child = (object.child !== undefined && object.child !== null)
+      ? Child.fromPartial(object.child, options)
+      : undefined;
     message.state = object.state ?? undefined;
-    message.long = object.long ?? undefined;
+    message.long = object.long ?? (options?.defaultZeroFields?.includes("long") ? "0" : undefined);
     message.truth = object.truth ?? undefined;
     message.description = object.description ?? undefined;
     message.data = object.data ?? undefined;
-    message.repId = object.repId?.map((e) => e) || undefined;
-    message.repChild = object.repChild?.map((e) => Child.fromPartial(e)) || undefined;
-    message.repState = object.repState?.map((e) => e) || undefined;
-    message.repLong = object.repLong?.map((e) => e) || undefined;
-    message.repTruth = object.repTruth?.map((e) => e) || undefined;
-    message.repDescription = object.repDescription?.map((e) => e) || undefined;
-    message.repData = object.repData?.map((e) => e) || undefined;
-    message.optId = object.optId ?? undefined;
+    message.repId = object.repId?.map((e) => e) as any;
+    message.repChild = object.repChild?.map((e) => Child.fromPartial(e, options)) as any;
+    message.repState = object.repState?.map((e) => e) as any;
+    message.repLong = object.repLong?.map((e) => e) as any;
+    message.repTruth = object.repTruth?.map((e) => e) as any;
+    message.repDescription = object.repDescription?.map((e) => e) as any;
+    message.repData = object.repData?.map((e) => e) as any;
+    message.optId = object.optId ?? (options?.defaultZeroFields?.includes("optId") ? 0 : undefined);
     message.optChild = (object.optChild !== undefined && object.optChild !== null)
-      ? Child.fromPartial(object.optChild)
+      ? Child.fromPartial(object.optChild, options)
       : undefined;
     message.optState = object.optState ?? undefined;
-    message.optLong = object.optLong ?? undefined;
+    message.optLong = object.optLong ?? (options?.defaultZeroFields?.includes("optLong") ? "0" : undefined);
     message.optTruth = object.optTruth ?? undefined;
     message.optDescription = object.optDescription ?? undefined;
     message.optData = object.optData ?? undefined;
@@ -688,15 +768,22 @@ export const OptionalsTest_TranslationsEntry: MessageFns<OptionalsTest_Translati
     };
   },
 
-  toJSON(message: OptionalsTest_TranslationsEntry): unknown {
+  toJSON(message: OptionalsTest_TranslationsEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<OptionalsTest_TranslationsEntry>, I>>(base?: I): OptionalsTest_TranslationsEntry {
@@ -704,6 +791,7 @@ export const OptionalsTest_TranslationsEntry: MessageFns<OptionalsTest_Translati
   },
   fromPartial<I extends Exact<DeepPartial<OptionalsTest_TranslationsEntry>, I>>(
     object: I,
+    options?: { defaultZeroFields?: string[] },
   ): OptionalsTest_TranslationsEntry {
     const message = createBaseOptionalsTest_TranslationsEntry();
     message.key = object.key ?? "";
@@ -741,15 +829,16 @@ export const Child: MessageFns<Child> = {
     return {};
   },
 
-  toJSON(_: Child): unknown {
+  toJSON(_: Child, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Child>, I>>(base?: I): Child {
     return Child.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Child>, I>>(_: I): Child {
+  fromPartial<I extends Exact<DeepPartial<Child>, I>>(_: I, options?: { defaultZeroFields?: string[] }): Child {
     const message = createBaseChild();
     return message;
   },
@@ -785,7 +874,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -815,7 +904,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

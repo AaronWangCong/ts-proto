@@ -11,32 +11,32 @@ import { Observable } from "rxjs";
 export const protobufPackage = "hero";
 
 export interface HeroById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface VillainById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface Hero {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 
 export interface Villain {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 
 export const HERO_PACKAGE_NAME = "hero";
 
 function createBaseHeroById(): HeroById {
-  return { id: 0 };
+  return {};
 }
 
 export const HeroById: MessageFns<HeroById> = {
   encode(message: HeroById, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     return writer;
@@ -68,12 +68,12 @@ export const HeroById: MessageFns<HeroById> = {
 };
 
 function createBaseVillainById(): VillainById {
-  return { id: 0 };
+  return {};
 }
 
 export const VillainById: MessageFns<VillainById> = {
   encode(message: VillainById, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     return writer;
@@ -105,12 +105,12 @@ export const VillainById: MessageFns<VillainById> = {
 };
 
 function createBaseHero(): Hero {
-  return { id: 0, name: "" };
+  return { name: "" };
 }
 
 export const Hero: MessageFns<Hero> = {
   encode(message: Hero, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     if (message.name !== "") {
@@ -153,12 +153,12 @@ export const Hero: MessageFns<Hero> = {
 };
 
 function createBaseVillain(): Villain {
-  return { id: 0, name: "" };
+  return { name: "" };
 }
 
 export const Villain: MessageFns<Villain> = {
   encode(message: Villain, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     if (message.name !== "") {

@@ -9,7 +9,7 @@ import { Empty } from "./google/protobuf/empty";
 export const protobufPackage = "hero";
 
 export interface User {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 

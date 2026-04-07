@@ -7,7 +7,7 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 export const protobufPackage = "angular";
 
 export interface SimpleMessage {
-  numberField: number;
+  numberField?: number | undefined;
 }
 
 function createBaseSimpleMessage(): SimpleMessage {
@@ -16,7 +16,7 @@ function createBaseSimpleMessage(): SimpleMessage {
 
 export const SimpleMessage: MessageFns<SimpleMessage> = {
   encode(message: SimpleMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.numberField !== 0) {
+    if (message.numberField !== undefined && message.numberField !== 0) {
       writer.uint32(8).int32(message.numberField);
     }
     return writer;
@@ -47,23 +47,30 @@ export const SimpleMessage: MessageFns<SimpleMessage> = {
   },
 
   fromJSON(object: any): SimpleMessage {
-    return { numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : 0 };
+    return { numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : undefined };
   },
 
-  toJSON(message: SimpleMessage): unknown {
+  toJSON(message: SimpleMessage, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.numberField !== 0) {
+    const obj2: any = {};
+    if (message.numberField !== undefined && message.numberField !== 0) {
       obj.numberField = Math.round(message.numberField);
     }
-    return obj;
+    if (Object.hasOwn(message, "numberField")) {
+      obj2.number_field = message.numberField !== undefined ? Math.round(message.numberField) : message.numberField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleMessage>, I>>(base?: I): SimpleMessage {
     return SimpleMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SimpleMessage>, I>>(object: I): SimpleMessage {
+  fromPartial<I extends Exact<DeepPartial<SimpleMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SimpleMessage {
     const message = createBaseSimpleMessage();
-    message.numberField = object.numberField ?? 0;
+    message.numberField = object.numberField ?? (options?.defaultZeroFields?.includes("numberField") ? 0 : undefined);
     return message;
   },
 };
@@ -73,7 +80,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -88,7 +95,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

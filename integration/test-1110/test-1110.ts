@@ -8,20 +8,20 @@ export const protobufPackage = "";
 
 export interface UserRule {
   /** just some fake rule for testing */
-  UUID: string;
+  uuid: string;
 }
 
-export interface Object {
+export interface ObjectMessage {
   namespace: string;
   name: string;
 }
 
-export interface Boolean {
+export interface BooleanMessage {
   namespace: string;
   name: string;
 }
 
-export interface Symbol {
+export interface SymbolMessage {
   namespace: string;
   name: string;
 }
@@ -40,13 +40,13 @@ export interface Nested_Function {
 }
 
 function createBaseUserRule(): UserRule {
-  return { UUID: "" };
+  return { uuid: "" };
 }
 
 export const UserRule: MessageFns<UserRule> = {
   encode(message: UserRule, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.UUID !== "") {
-      writer.uint32(10).string(message.UUID);
+    if (message.uuid !== "") {
+      writer.uint32(10).string(message.uuid);
     }
     return writer;
   },
@@ -63,7 +63,7 @@ export const UserRule: MessageFns<UserRule> = {
             break;
           }
 
-          message.UUID = reader.string();
+          message.uuid = reader.string();
           continue;
         }
       }
@@ -76,33 +76,37 @@ export const UserRule: MessageFns<UserRule> = {
   },
 
   fromJSON(object: any): UserRule {
-    return { UUID: isSet(object.uuid) ? globalThis.String(object.uuid) : "" };
+    return { uuid: isSet(object.uuid) ? globalThis.String(object.uuid) : "" };
   },
 
-  toJSON(message: UserRule): unknown {
+  toJSON(message: UserRule, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.UUID !== "") {
-      obj.uuid = message.UUID;
+    const obj2: any = {};
+    if (message.uuid !== "") {
+      obj.uuid = message.uuid;
     }
-    return obj;
+    if (Object.hasOwn(message, "uuid")) {
+      obj2.UUID = message.uuid !== undefined ? message.uuid : message.uuid;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create(base?: DeepPartial<UserRule>): UserRule {
     return UserRule.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<UserRule>): UserRule {
+  fromPartial(object: DeepPartial<UserRule>, options?: { defaultZeroFields?: string[] }): UserRule {
     const message = createBaseUserRule();
-    message.UUID = object.UUID ?? "";
+    message.uuid = object.uuid ?? "";
     return message;
   },
 };
 
-function createBaseObject(): Object {
+function createBaseObjectMessage(): ObjectMessage {
   return { namespace: "", name: "" };
 }
 
-export const Object: MessageFns<Object> = {
-  encode(message: Object, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const ObjectMessage: MessageFns<ObjectMessage> = {
+  encode(message: ObjectMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.namespace !== "") {
       writer.uint32(10).string(message.namespace);
     }
@@ -112,10 +116,10 @@ export const Object: MessageFns<Object> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Object {
+  decode(input: BinaryReader | Uint8Array, length?: number): ObjectMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseObject();
+    const message = createBaseObjectMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -144,41 +148,48 @@ export const Object: MessageFns<Object> = {
     return message;
   },
 
-  fromJSON(object: any): Object {
+  fromJSON(object: any): ObjectMessage {
     return {
       namespace: isSet(object.namespace) ? globalThis.String(object.namespace) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
     };
   },
 
-  toJSON(message: Object): unknown {
+  toJSON(message: ObjectMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.namespace !== "") {
       obj.namespace = message.namespace;
+    }
+    if (Object.hasOwn(message, "namespace")) {
+      obj2.namespace = message.namespace !== undefined ? message.namespace : message.namespace;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create(base?: DeepPartial<Object>): Object {
-    return Object.fromPartial(base ?? {});
+  create(base?: DeepPartial<ObjectMessage>): ObjectMessage {
+    return ObjectMessage.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<Object>): Object {
-    const message = createBaseObject();
+  fromPartial(object: DeepPartial<ObjectMessage>, options?: { defaultZeroFields?: string[] }): ObjectMessage {
+    const message = createBaseObjectMessage();
     message.namespace = object.namespace ?? "";
     message.name = object.name ?? "";
     return message;
   },
 };
 
-function createBaseBoolean(): Boolean {
+function createBaseBooleanMessage(): BooleanMessage {
   return { namespace: "", name: "" };
 }
 
-export const Boolean: MessageFns<Boolean> = {
-  encode(message: Boolean, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const BooleanMessage: MessageFns<BooleanMessage> = {
+  encode(message: BooleanMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.namespace !== "") {
       writer.uint32(10).string(message.namespace);
     }
@@ -188,10 +199,10 @@ export const Boolean: MessageFns<Boolean> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Boolean {
+  decode(input: BinaryReader | Uint8Array, length?: number): BooleanMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBoolean();
+    const message = createBaseBooleanMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -220,41 +231,48 @@ export const Boolean: MessageFns<Boolean> = {
     return message;
   },
 
-  fromJSON(object: any): Boolean {
+  fromJSON(object: any): BooleanMessage {
     return {
       namespace: isSet(object.namespace) ? globalThis.String(object.namespace) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
     };
   },
 
-  toJSON(message: Boolean): unknown {
+  toJSON(message: BooleanMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.namespace !== "") {
       obj.namespace = message.namespace;
+    }
+    if (Object.hasOwn(message, "namespace")) {
+      obj2.namespace = message.namespace !== undefined ? message.namespace : message.namespace;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create(base?: DeepPartial<Boolean>): Boolean {
-    return Boolean.fromPartial(base ?? {});
+  create(base?: DeepPartial<BooleanMessage>): BooleanMessage {
+    return BooleanMessage.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<Boolean>): Boolean {
-    const message = createBaseBoolean();
+  fromPartial(object: DeepPartial<BooleanMessage>, options?: { defaultZeroFields?: string[] }): BooleanMessage {
+    const message = createBaseBooleanMessage();
     message.namespace = object.namespace ?? "";
     message.name = object.name ?? "";
     return message;
   },
 };
 
-function createBaseSymbol(): Symbol {
+function createBaseSymbolMessage(): SymbolMessage {
   return { namespace: "", name: "" };
 }
 
-export const Symbol: MessageFns<Symbol> = {
-  encode(message: Symbol, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const SymbolMessage: MessageFns<SymbolMessage> = {
+  encode(message: SymbolMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.namespace !== "") {
       writer.uint32(10).string(message.namespace);
     }
@@ -264,10 +282,10 @@ export const Symbol: MessageFns<Symbol> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Symbol {
+  decode(input: BinaryReader | Uint8Array, length?: number): SymbolMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSymbol();
+    const message = createBaseSymbolMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -296,29 +314,36 @@ export const Symbol: MessageFns<Symbol> = {
     return message;
   },
 
-  fromJSON(object: any): Symbol {
+  fromJSON(object: any): SymbolMessage {
     return {
       namespace: isSet(object.namespace) ? globalThis.String(object.namespace) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
     };
   },
 
-  toJSON(message: Symbol): unknown {
+  toJSON(message: SymbolMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.namespace !== "") {
       obj.namespace = message.namespace;
+    }
+    if (Object.hasOwn(message, "namespace")) {
+      obj2.namespace = message.namespace !== undefined ? message.namespace : message.namespace;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create(base?: DeepPartial<Symbol>): Symbol {
-    return Symbol.fromPartial(base ?? {});
+  create(base?: DeepPartial<SymbolMessage>): SymbolMessage {
+    return SymbolMessage.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<Symbol>): Symbol {
-    const message = createBaseSymbol();
+  fromPartial(object: DeepPartial<SymbolMessage>, options?: { defaultZeroFields?: string[] }): SymbolMessage {
+    const message = createBaseSymbolMessage();
     message.namespace = object.namespace ?? "";
     message.name = object.name ?? "";
     return message;
@@ -379,21 +404,28 @@ export const FunctionMessage: MessageFns<FunctionMessage> = {
     };
   },
 
-  toJSON(message: FunctionMessage): unknown {
+  toJSON(message: FunctionMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.namespace !== "") {
       obj.namespace = message.namespace;
+    }
+    if (Object.hasOwn(message, "namespace")) {
+      obj2.namespace = message.namespace !== undefined ? message.namespace : message.namespace;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create(base?: DeepPartial<FunctionMessage>): FunctionMessage {
     return FunctionMessage.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<FunctionMessage>): FunctionMessage {
+  fromPartial(object: DeepPartial<FunctionMessage>, options?: { defaultZeroFields?: string[] }): FunctionMessage {
     const message = createBaseFunctionMessage();
     message.namespace = object.namespace ?? "";
     message.name = object.name ?? "";
@@ -430,15 +462,16 @@ export const Nested: MessageFns<Nested> = {
     return {};
   },
 
-  toJSON(_: Nested): unknown {
+  toJSON(_: Nested, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 
   create(base?: DeepPartial<Nested>): Nested {
     return Nested.fromPartial(base ?? {});
   },
-  fromPartial(_: DeepPartial<Nested>): Nested {
+  fromPartial(_: DeepPartial<Nested>, options?: { defaultZeroFields?: string[] }): Nested {
     const message = createBaseNested();
     return message;
   },
@@ -498,21 +531,28 @@ export const Nested_Function: MessageFns<Nested_Function> = {
     };
   },
 
-  toJSON(message: Nested_Function): unknown {
+  toJSON(message: Nested_Function, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.namespace !== "") {
       obj.namespace = message.namespace;
+    }
+    if (Object.hasOwn(message, "namespace")) {
+      obj2.namespace = message.namespace !== undefined ? message.namespace : message.namespace;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create(base?: DeepPartial<Nested_Function>): Nested_Function {
     return Nested_Function.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<Nested_Function>): Nested_Function {
+  fromPartial(object: DeepPartial<Nested_Function>, options?: { defaultZeroFields?: string[] }): Nested_Function {
     const message = createBaseNested_Function();
     message.namespace = object.namespace ?? "";
     message.name = object.name ?? "";
@@ -542,7 +582,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 function isSet(value: any): boolean {
@@ -553,7 +593,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create(base?: DeepPartial<T>): T;
-  fromPartial(object: DeepPartial<T>): T;
+  fromPartial(object: DeepPartial<T>, options?: { defaultZeroFields?: string[] }): T;
 }

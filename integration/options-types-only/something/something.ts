@@ -9,7 +9,7 @@ export const protobufPackage = "something";
 
 export interface Something {
   hello: string;
-  foo: number[];
+  foo?: number[] | undefined;
 }
 
 type ProtoMetaMessageOptions = {

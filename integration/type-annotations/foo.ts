@@ -65,18 +65,22 @@ export const Foo: MessageFns<Foo, "foo.Foo"> = {
     return { $type: Foo.$type, timestamp: isSet(object.timestamp) ? fromJsonTimestamp(object.timestamp) : undefined };
   },
 
-  toJSON(message: Foo): unknown {
+  toJSON(message: Foo, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.timestamp !== undefined) {
       obj.timestamp = message.timestamp.toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "timestamp")) {
+      obj2.timestamp = message.timestamp !== undefined ? message.timestamp.toISOString() : message.timestamp;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Foo>, I>>(base?: I): Foo {
     return Foo.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Foo>, I>>(object: I): Foo {
+  fromPartial<I extends Exact<DeepPartial<Foo>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Foo {
     const message = createBaseFoo();
     message.timestamp = object.timestamp ?? undefined;
     return message;
@@ -125,18 +129,22 @@ export const Foo2: MessageFns<Foo2, "foo.Foo2"> = {
     return { $type: Foo2.$type, timestamp: isSet(object.timestamp) ? fromJsonTimestamp(object.timestamp) : undefined };
   },
 
-  toJSON(message: Foo2): unknown {
+  toJSON(message: Foo2, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.timestamp !== undefined) {
       obj.timestamp = message.timestamp.toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "timestamp")) {
+      obj2.timestamp = message.timestamp !== undefined ? message.timestamp.toISOString() : message.timestamp;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Foo2>, I>>(base?: I): Foo2 {
     return Foo2.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Foo2>, I>>(object: I): Foo2 {
+  fromPartial<I extends Exact<DeepPartial<Foo2>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Foo2 {
     const message = createBaseFoo2();
     message.timestamp = object.timestamp ?? undefined;
     return message;
@@ -185,18 +193,25 @@ export const WithStruct: MessageFns<WithStruct, "foo.WithStruct"> = {
     return { $type: WithStruct.$type, struct: isObject(object.struct) ? object.struct : undefined };
   },
 
-  toJSON(message: WithStruct): unknown {
+  toJSON(message: WithStruct, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.struct !== undefined) {
       obj.struct = message.struct;
     }
-    return obj;
+    if (Object.hasOwn(message, "struct")) {
+      obj2.struct = message.struct !== undefined ? message.struct : message.struct;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<WithStruct>, I>>(base?: I): WithStruct {
     return WithStruct.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<WithStruct>, I>>(object: I): WithStruct {
+  fromPartial<I extends Exact<DeepPartial<WithStruct>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): WithStruct {
     const message = createBaseWithStruct();
     message.struct = object.struct ?? undefined;
     return message;
@@ -208,7 +223,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in Exclude<keyof T, "$type">]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in Exclude<keyof T, "$type">]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -250,7 +265,7 @@ export interface MessageFns<T, V extends string> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

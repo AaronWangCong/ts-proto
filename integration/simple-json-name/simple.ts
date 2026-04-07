@@ -54,8 +54,10 @@ export const Simple: MessageFns<Simple> = {
     if (message.dollarEnd !== "") {
       writer.uint32(50).string(message.dollarEnd);
     }
-    for (const v of message.hyphenList) {
-      writer.uint32(58).string(v!);
+    if (message.hyphenList !== undefined && message.hyphenList.length !== 0) {
+      for (const v of message.hyphenList) {
+        writer.uint32(58).string(v!);
+      }
     }
     return writer;
   },
@@ -128,7 +130,7 @@ export const Simple: MessageFns<Simple> = {
             break;
           }
 
-          message.hyphenList.push(reader.string());
+          message.hyphenList?.push(reader.string());
           continue;
         }
       }
@@ -155,48 +157,73 @@ export const Simple: MessageFns<Simple> = {
     };
   },
 
-  toJSON(message: Simple): unknown {
+  toJSON(message: Simple, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.other_name = message.name;
+    }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
     }
     if (message.age !== undefined) {
       obj.other_age = Math.round(message.age);
     }
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? Math.round(message.age) : message.age;
+    }
     if (message.createdAt !== undefined) {
       obj.createdAt = message.createdAt.toISOString();
+    }
+    if (Object.hasOwn(message, "createdAt")) {
+      obj2.created_at = message.createdAt !== undefined ? message.createdAt.toISOString() : message.createdAt;
     }
     if (message.hyphen !== "") {
       obj["hyphened-name"] = message.hyphen;
     }
+    if (Object.hasOwn(message, "hyphen")) {
+      obj2.hyphen = message.hyphen !== undefined ? message.hyphen : message.hyphen;
+    }
     if (message.spaces !== "") {
       obj["name with spaces"] = message.spaces;
+    }
+    if (Object.hasOwn(message, "spaces")) {
+      obj2.spaces = message.spaces !== undefined ? message.spaces : message.spaces;
     }
     if (message.dollarStart !== "") {
       obj.$dollar = message.dollarStart;
     }
+    if (Object.hasOwn(message, "dollarStart")) {
+      obj2.dollarStart = message.dollarStart !== undefined ? message.dollarStart : message.dollarStart;
+    }
     if (message.dollarEnd !== "") {
       obj.dollar$ = message.dollarEnd;
+    }
+    if (Object.hasOwn(message, "dollarEnd")) {
+      obj2.dollarEnd = message.dollarEnd !== undefined ? message.dollarEnd : message.dollarEnd;
     }
     if (message.hyphenList?.length) {
       obj["hyphen-list"] = message.hyphenList;
     }
-    return obj;
+    if (message.hyphenList) {
+      obj2.hyphenList = message.hyphenList;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Simple>, I>>(base?: I): Simple {
     return Simple.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I): Simple {
+  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Simple {
     const message = createBaseSimple();
     message.name = object.name ?? "";
-    message.age = object.age ?? undefined;
+    message.age = object.age ?? (options?.defaultZeroFields?.includes("age") ? 0 : undefined);
     message.createdAt = object.createdAt ?? undefined;
     message.hyphen = object.hyphen ?? "";
     message.spaces = object.spaces ?? "";
     message.dollarStart = object.dollarStart ?? "";
     message.dollarEnd = object.dollarEnd ?? "";
-    message.hyphenList = object.hyphenList?.map((e) => e) || [];
+    message.hyphenList = object.hyphenList?.map((e) => e) as any;
     return message;
   },
 };
@@ -206,7 +233,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -243,7 +270,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

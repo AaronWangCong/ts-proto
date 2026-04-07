@@ -139,27 +139,36 @@ export const DividerData: MessageFns<DividerData> = {
     };
   },
 
-  toJSON(message: DividerData): unknown {
+  toJSON(message: DividerData, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.type !== DividerData_DividerType.DOUBLE) {
       obj.type = dividerData_DividerTypeToJSON(message.type);
+    }
+    if (Object.hasOwn(message, "type")) {
+      obj2.type = message.type !== undefined ? dividerData_DividerTypeToJSON(message.type) : message.type;
     }
     if (message.typeMap) {
       const entries = Object.entries(message.typeMap);
       if (entries.length > 0) {
         obj.typeMap = {};
+        obj2.typeMap = {};
         entries.forEach(([k, v]) => {
           obj.typeMap[k] = dividerData_DividerTypeToJSON(v);
+          obj2.typeMap[k] = dividerData_DividerTypeToJSON(v);
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DividerData>, I>>(base?: I): DividerData {
     return DividerData.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DividerData>, I>>(object: I): DividerData {
+  fromPartial<I extends Exact<DeepPartial<DividerData>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DividerData {
     const message = createBaseDividerData();
     message.type = object.type ?? DividerData_DividerType.DOUBLE;
     message.typeMap = Object.entries(object.typeMap ?? {}).reduce<{ [key: string]: DividerData_DividerType }>(
@@ -229,21 +238,31 @@ export const DividerData_TypeMapEntry: MessageFns<DividerData_TypeMapEntry> = {
     };
   },
 
-  toJSON(message: DividerData_TypeMapEntry): unknown {
+  toJSON(message: DividerData_TypeMapEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== DividerData_DividerType.DOUBLE) {
       obj.value = dividerData_DividerTypeToJSON(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? dividerData_DividerTypeToJSON(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DividerData_TypeMapEntry>, I>>(base?: I): DividerData_TypeMapEntry {
     return DividerData_TypeMapEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DividerData_TypeMapEntry>, I>>(object: I): DividerData_TypeMapEntry {
+  fromPartial<I extends Exact<DeepPartial<DividerData_TypeMapEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DividerData_TypeMapEntry {
     const message = createBaseDividerData_TypeMapEntry();
     message.key = object.key ?? "";
     message.value = object.value ?? DividerData_DividerType.DOUBLE;
@@ -256,7 +275,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -275,7 +294,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

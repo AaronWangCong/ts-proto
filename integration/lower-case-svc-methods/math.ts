@@ -75,21 +75,31 @@ export const NumPair: MessageFns<NumPair> = {
     };
   },
 
-  toJSON(message: NumPair): unknown {
+  toJSON(message: NumPair, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.num1 !== 0) {
       obj.num1 = message.num1;
+    }
+    if (Object.hasOwn(message, "num1")) {
+      obj2.num1 = message.num1 !== undefined ? message.num1 : message.num1;
     }
     if (message.num2 !== 0) {
       obj.num2 = message.num2;
     }
-    return obj;
+    if (Object.hasOwn(message, "num2")) {
+      obj2.num2 = message.num2 !== undefined ? message.num2 : message.num2;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<NumPair>, I>>(base?: I): NumPair {
     return NumPair.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<NumPair>, I>>(object: I): NumPair {
+  fromPartial<I extends Exact<DeepPartial<NumPair>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): NumPair {
     const message = createBaseNumPair();
     message.num1 = object.num1 ?? 0;
     message.num2 = object.num2 ?? 0;
@@ -137,18 +147,25 @@ export const NumSingle: MessageFns<NumSingle> = {
     return { num: isSet(object.num) ? globalThis.Number(object.num) : 0 };
   },
 
-  toJSON(message: NumSingle): unknown {
+  toJSON(message: NumSingle, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.num !== 0) {
       obj.num = message.num;
     }
-    return obj;
+    if (Object.hasOwn(message, "num")) {
+      obj2.num = message.num !== undefined ? message.num : message.num;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<NumSingle>, I>>(base?: I): NumSingle {
     return NumSingle.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<NumSingle>, I>>(object: I): NumSingle {
+  fromPartial<I extends Exact<DeepPartial<NumSingle>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): NumSingle {
     const message = createBaseNumSingle();
     message.num = object.num ?? 0;
     return message;
@@ -161,11 +178,13 @@ function createBaseNumbers(): Numbers {
 
 export const Numbers: MessageFns<Numbers> = {
   encode(message: Numbers, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    writer.uint32(10).fork();
-    for (const v of message.num) {
-      writer.double(v);
+    if (message.num !== undefined && message.num.length !== 0) {
+      writer.uint32(10).fork();
+      for (const v of message.num) {
+        writer.double(v);
+      }
+      writer.join();
     }
-    writer.join();
     return writer;
   },
 
@@ -178,7 +197,7 @@ export const Numbers: MessageFns<Numbers> = {
       switch (tag >>> 3) {
         case 1: {
           if (tag === 9) {
-            message.num.push(reader.double());
+            message.num?.push(reader.double());
 
             continue;
           }
@@ -186,7 +205,7 @@ export const Numbers: MessageFns<Numbers> = {
           if (tag === 10) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.num.push(reader.double());
+              message.num?.push(reader.double());
             }
 
             continue;
@@ -207,20 +226,27 @@ export const Numbers: MessageFns<Numbers> = {
     return { num: globalThis.Array.isArray(object?.num) ? object.num.map((e: any) => globalThis.Number(e)) : [] };
   },
 
-  toJSON(message: Numbers): unknown {
+  toJSON(message: Numbers, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.num?.length) {
       obj.num = message.num;
     }
-    return obj;
+    if (message.num) {
+      obj2.num = message.num;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Numbers>, I>>(base?: I): Numbers {
     return Numbers.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(object: I): Numbers {
+  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Numbers {
     const message = createBaseNumbers();
-    message.num = object.num?.map((e) => e) || [];
+    message.num = object.num?.map((e) => e) as any;
     return message;
   },
 };
@@ -290,7 +316,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -305,7 +331,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

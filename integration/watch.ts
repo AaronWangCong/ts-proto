@@ -1,5 +1,5 @@
-const chokidar = require("chokidar");
-const spawn = require("child_process").spawn;
+import chokidar from "chokidar";
+import { spawn } from "child_process";
 type FsEvent = "add" | "addDir" | "change" | "unlink" | "unlinkDir";
 
 const colors = {
@@ -55,13 +55,13 @@ Watches the src directory and regenerates given TEST files.
 Usage:
     $ yarn watch [options] [TEST, TEST2, ...]
     $ ts-node watch.ts [options] [TEST, TEST2, ...]
-    
+
 Options:
     -h, --help    Show this help message.
     --polling     Use polling instead of native watchers.
     TEST          Regenerate the specified TEST(s) when implementation files change.
                   Equivalent to running 'yarn proto2ts TEST' manually each time.
-    
+
 Examples:
     $ yarn watch
     $ yarn watch --polling
@@ -92,12 +92,14 @@ function integrationHandler(yarn: string, task: string) {
   };
 }
 
-function yarnRun(yarn: string, task: string, header: string, taskArgument?: string) {
-  const yarnArgs = taskArgument ? [task, taskArgument] : [task];
+function yarnRun(yarn: string, task: string, header: string, ...taskArguments: string[]) {
+  const yarnArgs = [task, ...taskArguments];
+  const command = process.platform === "win32" ? "cmd.exe" : yarn;
+  const spawnArgs = process.platform === "win32" ? ["/d", "/c", yarn, ...yarnArgs] : yarnArgs;
 
   console.log(formatLog(colors.green, header, task, `${yarn} ${yarnArgs.join(" ")}`));
 
-  const yarnProcess = spawn(yarn, yarnArgs);
+  const yarnProcess = spawn(command, spawnArgs, { windowsHide: true });
   yarnProcess.stdout.on("data", (data: Buffer) => console.log(formatLog(colors.none, header, task, data.toString())));
   yarnProcess.stderr.on("data", (data: Buffer) => console.error(formatLog(colors.red, header, task, data.toString())));
   yarnProcess.on("error", (err: Error) => console.error(formatLog(colors.red, header, task, err.message)));
@@ -117,7 +119,7 @@ function srcHandler(yarn: string, task: string, tests: string[]) {
       const notice = `Plugin modified! Press [enter] to regenerate all integration tests or run 'yarn watch [TEST, ...]'. See 'yarn watch --help'.`;
       console.log(formatLog(colors.yellow, triggerPath, "watch", notice));
     } else {
-      yarnRun(yarn, task, triggerPath, tests.join(" "));
+      yarnRun(yarn, task, triggerPath, ...tests);
     }
   };
 }

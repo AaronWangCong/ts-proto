@@ -55,18 +55,25 @@ export const ProduceRequest: MessageFns<ProduceRequest> = {
     return { ingredients: isSet(object.ingredients) ? globalThis.String(object.ingredients) : "" };
   },
 
-  toJSON(message: ProduceRequest): unknown {
+  toJSON(message: ProduceRequest, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.ingredients !== "") {
       obj.ingredients = message.ingredients;
     }
-    return obj;
+    if (Object.hasOwn(message, "ingredients")) {
+      obj2.ingredients = message.ingredients !== undefined ? message.ingredients : message.ingredients;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ProduceRequest>, I>>(base?: I): ProduceRequest {
     return ProduceRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ProduceRequest>, I>>(object: I): ProduceRequest {
+  fromPartial<I extends Exact<DeepPartial<ProduceRequest>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ProduceRequest {
     const message = createBaseProduceRequest();
     message.ingredients = object.ingredients ?? "";
     return message;
@@ -113,18 +120,25 @@ export const ProduceReply: MessageFns<ProduceReply> = {
     return { result: isSet(object.result) ? globalThis.String(object.result) : "" };
   },
 
-  toJSON(message: ProduceReply): unknown {
+  toJSON(message: ProduceReply, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.result !== "") {
       obj.result = message.result;
     }
-    return obj;
+    if (Object.hasOwn(message, "result")) {
+      obj2.result = message.result !== undefined ? message.result : message.result;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ProduceReply>, I>>(base?: I): ProduceReply {
     return ProduceReply.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ProduceReply>, I>>(object: I): ProduceReply {
+  fromPartial<I extends Exact<DeepPartial<ProduceReply>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ProduceReply {
     const message = createBaseProduceReply();
     message.result = object.result ?? "";
     return message;
@@ -140,7 +154,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -155,7 +169,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

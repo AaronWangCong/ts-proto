@@ -10,7 +10,7 @@ export const protobufPackage = "google.protobuf";
  * `NullValue` is a singleton enumeration to represent the null value for the
  * `Value` type union.
  *
- *  The JSON representation for `NullValue` is JSON `null`.
+ * The JSON representation for `NullValue` is JSON `null`.
  */
 export enum GRPCPNullValueGRPCS {
   /** NULL_VALUE - Null value. */
@@ -155,24 +155,30 @@ export const GRPCPStructGRPCS: MessageFns<GRPCPStructGRPCS> & StructWrapperFns =
     };
   },
 
-  toJSON(message: GRPCPStructGRPCS): unknown {
+  toJSON(message: GRPCPStructGRPCS, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.fields) {
       const entries = Object.entries(message.fields);
       if (entries.length > 0) {
         obj.fields = {};
+        obj2.fields = {};
         entries.forEach(([k, v]) => {
           obj.fields[k] = v;
+          obj2.fields[k] = v;
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GRPCPStructGRPCS>, I>>(base?: I): GRPCPStructGRPCS {
     return GRPCPStructGRPCS.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GRPCPStructGRPCS>, I>>(object: I): GRPCPStructGRPCS {
+  fromPartial<I extends Exact<DeepPartial<GRPCPStructGRPCS>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GRPCPStructGRPCS {
     const message = createBaseGRPCPStructGRPCS();
     message.fields = Object.entries(object.fields ?? {}).reduce<{ [key: string]: any | undefined }>(
       (acc, [key, value]) => {
@@ -262,21 +268,31 @@ export const GRPCPStruct_FieldsEntryGRPCS: MessageFns<GRPCPStruct_FieldsEntryGRP
     };
   },
 
-  toJSON(message: GRPCPStruct_FieldsEntryGRPCS): unknown {
+  toJSON(message: GRPCPStruct_FieldsEntryGRPCS, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== undefined) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GRPCPStruct_FieldsEntryGRPCS>, I>>(base?: I): GRPCPStruct_FieldsEntryGRPCS {
     return GRPCPStruct_FieldsEntryGRPCS.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GRPCPStruct_FieldsEntryGRPCS>, I>>(object: I): GRPCPStruct_FieldsEntryGRPCS {
+  fromPartial<I extends Exact<DeepPartial<GRPCPStruct_FieldsEntryGRPCS>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GRPCPStruct_FieldsEntryGRPCS {
     const message = createBaseGRPCPStruct_FieldsEntryGRPCS();
     message.key = object.key ?? "";
     message.value = object.value ?? undefined;
@@ -330,7 +346,10 @@ export const GRPCPValueGRPCS: MessageFns<GRPCPValueGRPCS> & AnyValueWrapperFns =
             break;
           }
 
-          message.nullValue = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.nullValue = _enumValue;
+          }
           continue;
         }
         case 2: {
@@ -393,33 +412,57 @@ export const GRPCPValueGRPCS: MessageFns<GRPCPValueGRPCS> & AnyValueWrapperFns =
     };
   },
 
-  toJSON(message: GRPCPValueGRPCS): unknown {
+  toJSON(message: GRPCPValueGRPCS, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.nullValue !== undefined) {
       obj.nullValue = gRPCPNullValueGRPCSToJSON(message.nullValue);
+    }
+    if (Object.hasOwn(message, "nullValue")) {
+      obj2.null_value = message.nullValue !== undefined
+        ? gRPCPNullValueGRPCSToJSON(message.nullValue)
+        : message.nullValue;
     }
     if (message.numberValue !== undefined) {
       obj.numberValue = message.numberValue;
     }
+    if (Object.hasOwn(message, "numberValue")) {
+      obj2.number_value = message.numberValue !== undefined ? message.numberValue : message.numberValue;
+    }
     if (message.stringValue !== undefined) {
       obj.stringValue = message.stringValue;
+    }
+    if (Object.hasOwn(message, "stringValue")) {
+      obj2.string_value = message.stringValue !== undefined ? message.stringValue : message.stringValue;
     }
     if (message.boolValue !== undefined) {
       obj.boolValue = message.boolValue;
     }
+    if (Object.hasOwn(message, "boolValue")) {
+      obj2.bool_value = message.boolValue !== undefined ? message.boolValue : message.boolValue;
+    }
     if (message.structValue !== undefined) {
       obj.structValue = message.structValue;
+    }
+    if (Object.hasOwn(message, "structValue")) {
+      obj2.struct_value = message.structValue !== undefined ? message.structValue : message.structValue;
     }
     if (message.listValue !== undefined) {
       obj.listValue = message.listValue;
     }
-    return obj;
+    if (Object.hasOwn(message, "listValue")) {
+      obj2.list_value = message.listValue !== undefined ? message.listValue : message.listValue;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GRPCPValueGRPCS>, I>>(base?: I): GRPCPValueGRPCS {
     return GRPCPValueGRPCS.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GRPCPValueGRPCS>, I>>(object: I): GRPCPValueGRPCS {
+  fromPartial<I extends Exact<DeepPartial<GRPCPValueGRPCS>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GRPCPValueGRPCS {
     const message = createBaseGRPCPValueGRPCS();
     message.nullValue = object.nullValue ?? undefined;
     message.numberValue = object.numberValue ?? undefined;
@@ -474,8 +517,10 @@ function createBaseGRPCPListValueGRPCS(): GRPCPListValueGRPCS {
 
 export const GRPCPListValueGRPCS: MessageFns<GRPCPListValueGRPCS> & ListValueWrapperFns = {
   encode(message: GRPCPListValueGRPCS, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.values) {
-      GRPCPValueGRPCS.encode(GRPCPValueGRPCS.wrap(v!), writer.uint32(10).fork()).join();
+    if (message.values !== undefined && message.values.length !== 0) {
+      for (const v of message.values) {
+        GRPCPValueGRPCS.encode(GRPCPValueGRPCS.wrap(v!), writer.uint32(10).fork()).join();
+      }
     }
     return writer;
   },
@@ -492,7 +537,7 @@ export const GRPCPListValueGRPCS: MessageFns<GRPCPListValueGRPCS> & ListValueWra
             break;
           }
 
-          message.values.push(GRPCPValueGRPCS.unwrap(GRPCPValueGRPCS.decode(reader, reader.uint32())));
+          message.values?.push(GRPCPValueGRPCS.unwrap(GRPCPValueGRPCS.decode(reader, reader.uint32())));
           continue;
         }
       }
@@ -508,20 +553,27 @@ export const GRPCPListValueGRPCS: MessageFns<GRPCPListValueGRPCS> & ListValueWra
     return { values: globalThis.Array.isArray(object?.values) ? [...object.values] : [] };
   },
 
-  toJSON(message: GRPCPListValueGRPCS): unknown {
+  toJSON(message: GRPCPListValueGRPCS, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.values?.length) {
       obj.values = message.values;
     }
-    return obj;
+    if (message.values) {
+      obj2.values = message.values;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GRPCPListValueGRPCS>, I>>(base?: I): GRPCPListValueGRPCS {
     return GRPCPListValueGRPCS.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GRPCPListValueGRPCS>, I>>(object: I): GRPCPListValueGRPCS {
+  fromPartial<I extends Exact<DeepPartial<GRPCPListValueGRPCS>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GRPCPListValueGRPCS {
     const message = createBaseGRPCPListValueGRPCS();
-    message.values = object.values?.map((e) => e) || [];
+    message.values = object.values?.map((e) => e) as any;
     return message;
   },
 
@@ -545,7 +597,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -564,9 +616,9 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }
 
 export interface StructWrapperFns {

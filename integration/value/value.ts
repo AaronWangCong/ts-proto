@@ -28,11 +28,15 @@ export const ValueMessage: MessageFns<ValueMessage> = {
     if (message.anyList !== undefined) {
       ListValue.encode(ListValue.wrap(message.anyList), writer.uint32(18).fork()).join();
     }
-    for (const v of message.repeatedAny) {
-      Value.encode(Value.wrap(v!), writer.uint32(26).fork()).join();
+    if (message.repeatedAny !== undefined && message.repeatedAny.length !== 0) {
+      for (const v of message.repeatedAny) {
+        Value.encode(Value.wrap(v!), writer.uint32(26).fork()).join();
+      }
     }
-    for (const v of message.repeatedStrings) {
-      StringValue.encode({ value: v!! }, writer.uint32(34).fork()).join();
+    if (message.repeatedStrings !== undefined && message.repeatedStrings.length !== 0) {
+      for (const v of message.repeatedStrings) {
+        StringValue.encode({ value: v!! }, writer.uint32(34).fork()).join();
+      }
     }
     if (message.structValue !== undefined) {
       Struct.encode(Struct.wrap(message.structValue), writer.uint32(42).fork()).join();
@@ -68,7 +72,7 @@ export const ValueMessage: MessageFns<ValueMessage> = {
             break;
           }
 
-          message.repeatedAny.push(Value.unwrap(Value.decode(reader, reader.uint32())));
+          message.repeatedAny?.push(Value.unwrap(Value.decode(reader, reader.uint32())));
           continue;
         }
         case 4: {
@@ -76,7 +80,7 @@ export const ValueMessage: MessageFns<ValueMessage> = {
             break;
           }
 
-          message.repeatedStrings.push(StringValue.decode(reader, reader.uint32()).value);
+          message.repeatedStrings?.push(StringValue.decode(reader, reader.uint32()).value);
           continue;
         }
         case 5: {
@@ -102,41 +106,60 @@ export const ValueMessage: MessageFns<ValueMessage> = {
       anyList: globalThis.Array.isArray(object.anyList) ? [...object.anyList] : undefined,
       repeatedAny: globalThis.Array.isArray(object?.repeatedAny) ? [...object.repeatedAny] : [],
       repeatedStrings: globalThis.Array.isArray(object?.repeatedStrings)
-        ? object.repeatedStrings.map((e: any) => String(e))
+        ? object.repeatedStrings.map((e: any) => globalThis.String(e))
         : [],
       structValue: isObject(object.structValue) ? object.structValue : undefined,
     };
   },
 
-  toJSON(message: ValueMessage): unknown {
+  toJSON(message: ValueMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined) {
       obj.value = message.value;
+    }
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
     }
     if (message.anyList !== undefined) {
       obj.anyList = message.anyList;
     }
+    if (Object.hasOwn(message, "anyList")) {
+      obj2.anyList = message.anyList !== undefined ? message.anyList : message.anyList;
+    }
     if (message.repeatedAny?.length) {
       obj.repeatedAny = message.repeatedAny;
+    }
+    if (message.repeatedAny) {
+      obj2.repeatedAny = message.repeatedAny;
     }
     if (message.repeatedStrings?.length) {
       obj.repeatedStrings = message.repeatedStrings;
     }
+    if (message.repeatedStrings) {
+      obj2.repeatedStrings = message.repeatedStrings;
+    }
     if (message.structValue !== undefined) {
       obj.structValue = message.structValue;
     }
-    return obj;
+    if (Object.hasOwn(message, "structValue")) {
+      obj2.structValue = message.structValue !== undefined ? message.structValue : message.structValue;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ValueMessage>, I>>(base?: I): ValueMessage {
     return ValueMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ValueMessage>, I>>(object: I): ValueMessage {
+  fromPartial<I extends Exact<DeepPartial<ValueMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ValueMessage {
     const message = createBaseValueMessage();
     message.value = object.value ?? undefined;
     message.anyList = object.anyList ?? undefined;
-    message.repeatedAny = object.repeatedAny?.map((e) => e) || [];
-    message.repeatedStrings = object.repeatedStrings?.map((e) => e) || [];
+    message.repeatedAny = object.repeatedAny?.map((e) => e) as any;
+    message.repeatedStrings = object.repeatedStrings?.map((e) => e) as any;
     message.structValue = object.structValue ?? undefined;
     return message;
   },
@@ -147,7 +170,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -166,7 +189,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

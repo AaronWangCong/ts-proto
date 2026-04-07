@@ -83,28 +83,38 @@ export const MapBigInt: MessageFns<MapBigInt> = {
     return {
       map: isObject(object.map)
         ? Object.entries(object.map).reduce<Map<string, string>>((acc, [key, value]) => {
-          acc.set(key, String(value));
+          acc.set(key, globalThis.String(value));
           return acc;
         }, new Map())
         : undefined,
     };
   },
 
-  toJSON(message: MapBigInt): unknown {
+  toJSON(message: MapBigInt, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.map?.size) {
       obj.map = {};
       message.map.forEach((v, k) => {
         obj.map[k] = v;
       });
     }
-    return obj;
+    if (message.map) {
+      obj2.map = {};
+      message.map.forEach((v, k) => {
+        obj2.map[k] = v;
+      });
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<MapBigInt>, I>>(base?: I): MapBigInt {
     return MapBigInt.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<MapBigInt>, I>>(object: I): MapBigInt {
+  fromPartial<I extends Exact<DeepPartial<MapBigInt>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): MapBigInt {
     const message = createBaseMapBigInt();
     message.map = (object.map === undefined || object.map === null) ? undefined : (() => {
       const m = new Map();
@@ -120,15 +130,15 @@ export const MapBigInt: MessageFns<MapBigInt> = {
 };
 
 function createBaseMapBigInt_MapEntry(): MapBigInt_MapEntry {
-  return { key: "0", value: "0" };
+  return { key: "", value: "" };
 }
 
 export const MapBigInt_MapEntry: MessageFns<MapBigInt_MapEntry> = {
   encode(message: MapBigInt_MapEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.key !== "0") {
+    if (message.key !== "") {
       writer.uint32(9).fixed64(message.key);
     }
-    if (message.value !== "0") {
+    if (message.value !== "") {
       writer.uint32(16).int64(message.value);
     }
     if (message._unknownFields !== undefined) {
@@ -188,28 +198,38 @@ export const MapBigInt_MapEntry: MessageFns<MapBigInt_MapEntry> = {
 
   fromJSON(object: any): MapBigInt_MapEntry {
     return {
-      key: isSet(object.key) ? globalThis.String(object.key) : "0",
-      value: isSet(object.value) ? globalThis.String(object.value) : "0",
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
     };
   },
 
-  toJSON(message: MapBigInt_MapEntry): unknown {
+  toJSON(message: MapBigInt_MapEntry, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.key !== "0") {
+    const obj2: any = {};
+    if (message.key !== "") {
       obj.key = message.key;
     }
-    if (message.value !== "0") {
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
+    }
+    if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<MapBigInt_MapEntry>, I>>(base?: I): MapBigInt_MapEntry {
     return MapBigInt_MapEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<MapBigInt_MapEntry>, I>>(object: I): MapBigInt_MapEntry {
+  fromPartial<I extends Exact<DeepPartial<MapBigInt_MapEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): MapBigInt_MapEntry {
     const message = createBaseMapBigInt_MapEntry();
-    message.key = object.key ?? "0";
+    message.key = object.key ?? "";
     message.value = object.value ?? "0";
     return message;
   },
@@ -220,7 +240,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -239,7 +259,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

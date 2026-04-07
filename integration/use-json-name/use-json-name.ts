@@ -68,8 +68,10 @@ export const JsonName: MessageFns<JsonName> = {
     if (message.dollar$ !== "") {
       writer.uint32(50).string(message.dollar$);
     }
-    for (const v of message["hyphen-list"]) {
-      writer.uint32(58).string(v!);
+    if (message["hyphen-list"] !== undefined && message["hyphen-list"].length !== 0) {
+      for (const v of message["hyphen-list"]) {
+        writer.uint32(58).string(v!);
+      }
     }
     if (message.A !== undefined) {
       writer.uint32(82).string(message.A);
@@ -157,7 +159,7 @@ export const JsonName: MessageFns<JsonName> = {
             break;
           }
 
-          message["hyphen-list"].push(reader.string());
+          message["hyphen-list"]?.push(reader.string());
           continue;
         }
         case 10: {
@@ -229,67 +231,112 @@ export const JsonName: MessageFns<JsonName> = {
     };
   },
 
-  toJSON(message: JsonName): unknown {
+  toJSON(message: JsonName, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.other_name !== "") {
       obj.other_name = message.other_name;
+    }
+    if (Object.hasOwn(message, "other_name")) {
+      obj2.name = message.other_name !== undefined ? message.other_name : message.other_name;
     }
     if (message.other_age !== undefined) {
       obj.other_age = Math.round(message.other_age);
     }
+    if (Object.hasOwn(message, "other_age")) {
+      obj2.age = message.other_age !== undefined ? Math.round(message.other_age) : message.other_age;
+    }
     if (message.createdAt !== undefined) {
       obj.createdAt = message.createdAt.toISOString();
+    }
+    if (Object.hasOwn(message, "createdAt")) {
+      obj2.created_at = message.createdAt !== undefined ? message.createdAt.toISOString() : message.createdAt;
     }
     if (message["hyphened-name"] !== "") {
       obj["hyphened-name"] = message["hyphened-name"];
     }
+    if (Object.hasOwn(message, "hyphened-name")) {
+      obj2.hyphen = message["hyphened-name"] !== undefined ? message["hyphened-name"] : message["hyphened-name"];
+    }
     if (message["name with spaces"] !== "") {
       obj["name with spaces"] = message["name with spaces"];
+    }
+    if (Object.hasOwn(message, "name with spaces")) {
+      obj2.spaces = message["name with spaces"] !== undefined
+        ? message["name with spaces"]
+        : message["name with spaces"];
     }
     if (message.$dollar !== "") {
       obj.$dollar = message.$dollar;
     }
+    if (Object.hasOwn(message, "$dollar")) {
+      obj2.dollarStart = message.$dollar !== undefined ? message.$dollar : message.$dollar;
+    }
     if (message.dollar$ !== "") {
       obj.dollar$ = message.dollar$;
+    }
+    if (Object.hasOwn(message, "dollar$")) {
+      obj2.dollarEnd = message.dollar$ !== undefined ? message.dollar$ : message.dollar$;
     }
     if (message["hyphen-list"]?.length) {
       obj["hyphen-list"] = message["hyphen-list"];
     }
+    if (message["hyphen-list"]) {
+      obj2.hyphenList = message["hyphen-list"];
+    }
     if (message.A !== undefined) {
       obj.A = message.A;
+    }
+    if (Object.hasOwn(message, "A")) {
+      obj2.a = message.A !== undefined ? message.A : message.A;
     }
     if (message.b !== undefined) {
       obj.b = message.b;
     }
+    if (Object.hasOwn(message, "b")) {
+      obj2.B = message.b !== undefined ? message.b : message.b;
+    }
     if (message._C !== undefined) {
       obj._C = message._C;
+    }
+    if (Object.hasOwn(message, "_C")) {
+      obj2._c = message._C !== undefined ? message._C : message._C;
     }
     if (message.d !== undefined) {
       obj.d = NestedOneOf.toJSON(message.d);
     }
+    if (Object.hasOwn(message, "d")) {
+      obj2.d = message.d !== undefined ? NestedOneOf.toJSON(message.d, true) : message.d;
+    }
     if (message.noJsonName !== "") {
       obj.noJsonName = message.noJsonName;
     }
-    return obj;
+    if (Object.hasOwn(message, "noJsonName")) {
+      obj2.noJsonName = message.noJsonName !== undefined ? message.noJsonName : message.noJsonName;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<JsonName>, I>>(base?: I): JsonName {
     return JsonName.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<JsonName>, I>>(object: I): JsonName {
+  fromPartial<I extends Exact<DeepPartial<JsonName>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): JsonName {
     const message = createBaseJsonName();
     message.other_name = object.other_name ?? "";
-    message.other_age = object.other_age ?? undefined;
+    message.other_age = object.other_age ?? (options?.defaultZeroFields?.includes("other_age") ? 0 : undefined);
     message.createdAt = object.createdAt ?? undefined;
     message["hyphened-name"] = object["hyphened-name"] ?? "";
     message["name with spaces"] = object["name with spaces"] ?? "";
     message.$dollar = object.$dollar ?? "";
     message.dollar$ = object.dollar$ ?? "";
-    message["hyphen-list"] = object["hyphen-list"]?.map((e) => e) || [];
+    message["hyphen-list"] = object["hyphen-list"]?.map((e) => e) as any;
     message.A = object.A ?? undefined;
     message.b = object.b ?? undefined;
     message._C = object._C ?? undefined;
-    message.d = (object.d !== undefined && object.d !== null) ? NestedOneOf.fromPartial(object.d) : undefined;
+    message.d = (object.d !== undefined && object.d !== null) ? NestedOneOf.fromPartial(object.d, options) : undefined;
     message.noJsonName = object.noJsonName ?? "";
     return message;
   },
@@ -337,18 +384,27 @@ export const NestedOneOf: MessageFns<NestedOneOf> = {
     };
   },
 
-  toJSON(message: NestedOneOf): unknown {
+  toJSON(message: NestedOneOf, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.nestedOneOfField !== undefined) {
       obj.nestedOneOfField = message.nestedOneOfField;
     }
-    return obj;
+    if (Object.hasOwn(message, "nestedOneOfField")) {
+      obj2.nestedOneOf_field = message.nestedOneOfField !== undefined
+        ? message.nestedOneOfField
+        : message.nestedOneOfField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<NestedOneOf>, I>>(base?: I): NestedOneOf {
     return NestedOneOf.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<NestedOneOf>, I>>(object: I): NestedOneOf {
+  fromPartial<I extends Exact<DeepPartial<NestedOneOf>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): NestedOneOf {
     const message = createBaseNestedOneOf();
     message.nestedOneOfField = object.nestedOneOfField ?? undefined;
     return message;
@@ -360,7 +416,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -397,7 +453,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

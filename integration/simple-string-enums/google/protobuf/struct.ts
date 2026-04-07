@@ -10,7 +10,7 @@ export const protobufPackage = "google.protobuf";
  * `NullValue` is a singleton enumeration to represent the null value for the
  * `Value` type union.
  *
- *  The JSON representation for `NullValue` is JSON `null`.
+ * The JSON representation for `NullValue` is JSON `null`.
  */
 export enum NullValue {
   /** NULL_VALUE - Null value. */
@@ -165,24 +165,27 @@ export const Struct: MessageFns<Struct> & StructWrapperFns = {
     };
   },
 
-  toJSON(message: Struct): unknown {
+  toJSON(message: Struct, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.fields) {
       const entries = Object.entries(message.fields);
       if (entries.length > 0) {
         obj.fields = {};
+        obj2.fields = {};
         entries.forEach(([k, v]) => {
           obj.fields[k] = v;
+          obj2.fields[k] = v;
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Struct>, I>>(base?: I): Struct {
     return Struct.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Struct>, I>>(object: I): Struct {
+  fromPartial<I extends Exact<DeepPartial<Struct>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Struct {
     const message = createBaseStruct();
     message.fields = Object.entries(object.fields ?? {}).reduce<{ [key: string]: any | undefined }>(
       (acc, [key, value]) => {
@@ -272,21 +275,31 @@ export const Struct_FieldsEntry: MessageFns<Struct_FieldsEntry> = {
     };
   },
 
-  toJSON(message: Struct_FieldsEntry): unknown {
+  toJSON(message: Struct_FieldsEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== undefined) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(base?: I): Struct_FieldsEntry {
     return Struct_FieldsEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(object: I): Struct_FieldsEntry {
+  fromPartial<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Struct_FieldsEntry {
     const message = createBaseStruct_FieldsEntry();
     message.key = object.key ?? "";
     message.value = object.value ?? undefined;
@@ -340,7 +353,10 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
             break;
           }
 
-          message.nullValue = nullValueFromJSON(reader.int32());
+          const _enumValue = nullValueFromJSON(reader.int32());
+          if (_enumValue !== 0) {
+            message.nullValue = _enumValue;
+          }
           continue;
         }
         case 2: {
@@ -403,33 +419,52 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
     };
   },
 
-  toJSON(message: Value): unknown {
+  toJSON(message: Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.nullValue !== undefined) {
       obj.nullValue = nullValueToJSON(message.nullValue);
+    }
+    if (Object.hasOwn(message, "nullValue")) {
+      obj2.null_value = message.nullValue !== undefined ? nullValueToJSON(message.nullValue) : message.nullValue;
     }
     if (message.numberValue !== undefined) {
       obj.numberValue = message.numberValue;
     }
+    if (Object.hasOwn(message, "numberValue")) {
+      obj2.number_value = message.numberValue !== undefined ? message.numberValue : message.numberValue;
+    }
     if (message.stringValue !== undefined) {
       obj.stringValue = message.stringValue;
+    }
+    if (Object.hasOwn(message, "stringValue")) {
+      obj2.string_value = message.stringValue !== undefined ? message.stringValue : message.stringValue;
     }
     if (message.boolValue !== undefined) {
       obj.boolValue = message.boolValue;
     }
+    if (Object.hasOwn(message, "boolValue")) {
+      obj2.bool_value = message.boolValue !== undefined ? message.boolValue : message.boolValue;
+    }
     if (message.structValue !== undefined) {
       obj.structValue = message.structValue;
+    }
+    if (Object.hasOwn(message, "structValue")) {
+      obj2.struct_value = message.structValue !== undefined ? message.structValue : message.structValue;
     }
     if (message.listValue !== undefined) {
       obj.listValue = message.listValue;
     }
-    return obj;
+    if (Object.hasOwn(message, "listValue")) {
+      obj2.list_value = message.listValue !== undefined ? message.listValue : message.listValue;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Value>, I>>(base?: I): Value {
     return Value.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I): Value {
+  fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Value {
     const message = createBaseValue();
     message.nullValue = object.nullValue ?? undefined;
     message.numberValue = object.numberValue ?? undefined;
@@ -484,8 +519,10 @@ function createBaseListValue(): ListValue {
 
 export const ListValue: MessageFns<ListValue> & ListValueWrapperFns = {
   encode(message: ListValue, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.values) {
-      Value.encode(Value.wrap(v!), writer.uint32(10).fork()).join();
+    if (message.values !== undefined && message.values.length !== 0) {
+      for (const v of message.values) {
+        Value.encode(Value.wrap(v!), writer.uint32(10).fork()).join();
+      }
     }
     return writer;
   },
@@ -502,7 +539,7 @@ export const ListValue: MessageFns<ListValue> & ListValueWrapperFns = {
             break;
           }
 
-          message.values.push(Value.unwrap(Value.decode(reader, reader.uint32())));
+          message.values?.push(Value.unwrap(Value.decode(reader, reader.uint32())));
           continue;
         }
       }
@@ -518,20 +555,27 @@ export const ListValue: MessageFns<ListValue> & ListValueWrapperFns = {
     return { values: globalThis.Array.isArray(object?.values) ? [...object.values] : [] };
   },
 
-  toJSON(message: ListValue): unknown {
+  toJSON(message: ListValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.values?.length) {
       obj.values = message.values;
     }
-    return obj;
+    if (message.values) {
+      obj2.values = message.values;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ListValue>, I>>(base?: I): ListValue {
     return ListValue.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ListValue>, I>>(object: I): ListValue {
+  fromPartial<I extends Exact<DeepPartial<ListValue>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ListValue {
     const message = createBaseListValue();
-    message.values = object.values?.map((e) => e) || [];
+    message.values = object.values?.map((e) => e) as any;
     return message;
   },
 
@@ -555,7 +599,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -574,9 +618,9 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }
 
 export interface StructWrapperFns {

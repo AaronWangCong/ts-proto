@@ -239,7 +239,7 @@ export const FieldMask: MessageFns<FieldMask> & FieldMaskWrapperFns = {
 
           const el = reader.string();
           if (el !== undefined) {
-            message.paths!.push(el);
+            message.paths!?.push(el);
           }
           continue;
         }
@@ -269,9 +269,12 @@ export const FieldMask: MessageFns<FieldMask> & FieldMaskWrapperFns = {
   create<I extends Exact<DeepPartial<FieldMask>, I>>(base?: I): FieldMask {
     return FieldMask.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<FieldMask>, I>>(object: I): FieldMask {
+  fromPartial<I extends Exact<DeepPartial<FieldMask>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): FieldMask {
     const message = createBaseFieldMask();
-    message.paths = object.paths?.map((e) => e) || [];
+    message.paths = object.paths?.map((e) => e) as any;
     return message;
   },
 
@@ -291,7 +294,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -302,9 +305,9 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }
 
 export interface FieldMaskWrapperFns {

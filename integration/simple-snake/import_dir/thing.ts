@@ -8,17 +8,17 @@ import { Timestamp } from "../google/protobuf/timestamp";
 export const protobufPackage = "simple";
 
 export interface ImportedThing {
-  created_at: Date | undefined;
+  createdAt: Date | undefined;
 }
 
 function createBaseImportedThing(): ImportedThing {
-  return { created_at: undefined };
+  return { createdAt: undefined };
 }
 
 export const ImportedThing: MessageFns<ImportedThing> = {
   encode(message: ImportedThing, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.created_at !== undefined) {
-      Timestamp.encode(toTimestamp(message.created_at), writer.uint32(10).fork()).join();
+    if (message.createdAt !== undefined) {
+      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(10).fork()).join();
     }
     return writer;
   },
@@ -35,7 +35,7 @@ export const ImportedThing: MessageFns<ImportedThing> = {
             break;
           }
 
-          message.created_at = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -48,23 +48,30 @@ export const ImportedThing: MessageFns<ImportedThing> = {
   },
 
   fromJSON(object: any): ImportedThing {
-    return { created_at: isSet(object.created_at) ? fromJsonTimestamp(object.created_at) : undefined };
+    return { createdAt: isSet(object.created_at) ? fromJsonTimestamp(object.created_at) : undefined };
   },
 
-  toJSON(message: ImportedThing): unknown {
+  toJSON(message: ImportedThing, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.created_at !== undefined) {
-      obj.created_at = message.created_at.toISOString();
+    const obj2: any = {};
+    if (message.createdAt !== undefined) {
+      obj.created_at = message.createdAt.toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "createdAt")) {
+      obj2.created_at = message.createdAt !== undefined ? message.createdAt.toISOString() : message.createdAt;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ImportedThing>, I>>(base?: I): ImportedThing {
     return ImportedThing.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ImportedThing>, I>>(object: I): ImportedThing {
+  fromPartial<I extends Exact<DeepPartial<ImportedThing>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ImportedThing {
     const message = createBaseImportedThing();
-    message.created_at = object.created_at ?? undefined;
+    message.createdAt = object.createdAt ?? undefined;
     return message;
   },
 };
@@ -74,7 +81,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -111,7 +118,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

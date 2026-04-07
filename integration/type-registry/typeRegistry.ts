@@ -8,7 +8,7 @@ export interface MessageType<Message extends UnknownMessage = UnknownMessage> {
   encode(message: Message, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): Message;
   fromJSON(object: any): Message;
-  toJSON(message: Message): unknown;
+  toJSON(message: Message, isProto?: boolean): unknown;
   fromPartial(object: DeepPartial<Message>): Message;
 }
 
@@ -20,5 +20,5 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in Exclude<keyof T, "$type">]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in Exclude<keyof T, "$type">]?: DeepPartial<T[K]> }
   : Partial<T>;

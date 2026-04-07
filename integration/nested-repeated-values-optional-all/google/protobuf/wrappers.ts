@@ -10,6 +10,9 @@ export const protobufPackage = "google.protobuf";
  * Wrapper message for `double`.
  *
  * The JSON representation for `DoubleValue` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface DoubleValue {
   /** The double value. */
@@ -20,6 +23,9 @@ export interface DoubleValue {
  * Wrapper message for `float`.
  *
  * The JSON representation for `FloatValue` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface FloatValue {
   /** The float value. */
@@ -30,6 +36,9 @@ export interface FloatValue {
  * Wrapper message for `int64`.
  *
  * The JSON representation for `Int64Value` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface Int64Value {
   /** The int64 value. */
@@ -40,6 +49,9 @@ export interface Int64Value {
  * Wrapper message for `uint64`.
  *
  * The JSON representation for `UInt64Value` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface UInt64Value {
   /** The uint64 value. */
@@ -50,6 +62,9 @@ export interface UInt64Value {
  * Wrapper message for `int32`.
  *
  * The JSON representation for `Int32Value` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface Int32Value {
   /** The int32 value. */
@@ -60,6 +75,9 @@ export interface Int32Value {
  * Wrapper message for `uint32`.
  *
  * The JSON representation for `UInt32Value` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface UInt32Value {
   /** The uint32 value. */
@@ -70,6 +88,9 @@ export interface UInt32Value {
  * Wrapper message for `bool`.
  *
  * The JSON representation for `BoolValue` is JSON `true` and `false`.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface BoolValue {
   /** The bool value. */
@@ -80,6 +101,9 @@ export interface BoolValue {
  * Wrapper message for `string`.
  *
  * The JSON representation for `StringValue` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface StringValue {
   /** The string value. */
@@ -90,6 +114,9 @@ export interface StringValue {
  * Wrapper message for `bytes`.
  *
  * The JSON representation for `BytesValue` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface BytesValue {
   /** The bytes value. */
@@ -136,18 +163,25 @@ export const DoubleValue: MessageFns<DoubleValue> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: DoubleValue): unknown {
+  toJSON(message: DoubleValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== 0) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DoubleValue>, I>>(base?: I): DoubleValue {
     return DoubleValue.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DoubleValue>, I>>(object: I): DoubleValue {
+  fromPartial<I extends Exact<DeepPartial<DoubleValue>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DoubleValue {
     const message = createBaseDoubleValue();
     message.value = object.value ?? 0;
     return message;
@@ -194,18 +228,25 @@ export const FloatValue: MessageFns<FloatValue> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: FloatValue): unknown {
+  toJSON(message: FloatValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== 0) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<FloatValue>, I>>(base?: I): FloatValue {
     return FloatValue.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<FloatValue>, I>>(object: I): FloatValue {
+  fromPartial<I extends Exact<DeepPartial<FloatValue>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): FloatValue {
     const message = createBaseFloatValue();
     message.value = object.value ?? 0;
     return message;
@@ -252,20 +293,27 @@ export const Int64Value: MessageFns<Int64Value> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: Int64Value): unknown {
+  toJSON(message: Int64Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Int64Value>, I>>(base?: I): Int64Value {
     return Int64Value.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Int64Value>, I>>(object: I): Int64Value {
+  fromPartial<I extends Exact<DeepPartial<Int64Value>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Int64Value {
     const message = createBaseInt64Value();
-    message.value = object.value ?? 0;
+    message.value = object.value ?? (options?.defaultZeroFields?.includes("value") ? "0" : undefined);
     return message;
   },
 };
@@ -310,18 +358,25 @@ export const UInt64Value: MessageFns<UInt64Value> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: UInt64Value): unknown {
+  toJSON(message: UInt64Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<UInt64Value>, I>>(base?: I): UInt64Value {
     return UInt64Value.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<UInt64Value>, I>>(object: I): UInt64Value {
+  fromPartial<I extends Exact<DeepPartial<UInt64Value>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): UInt64Value {
     const message = createBaseUInt64Value();
     message.value = object.value ?? 0;
     return message;
@@ -365,23 +420,30 @@ export const Int32Value: MessageFns<Int32Value> = {
   },
 
   fromJSON(object: any): Int32Value {
-    return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
+    return { value: isSet(object.value) ? globalThis.Number(object.value) : undefined };
   },
 
-  toJSON(message: Int32Value): unknown {
+  toJSON(message: Int32Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Int32Value>, I>>(base?: I): Int32Value {
     return Int32Value.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Int32Value>, I>>(object: I): Int32Value {
+  fromPartial<I extends Exact<DeepPartial<Int32Value>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Int32Value {
     const message = createBaseInt32Value();
-    message.value = object.value ?? 0;
+    message.value = object.value ?? (options?.defaultZeroFields?.includes("value") ? 0 : undefined);
     return message;
   },
 };
@@ -426,18 +488,25 @@ export const UInt32Value: MessageFns<UInt32Value> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: UInt32Value): unknown {
+  toJSON(message: UInt32Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<UInt32Value>, I>>(base?: I): UInt32Value {
     return UInt32Value.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<UInt32Value>, I>>(object: I): UInt32Value {
+  fromPartial<I extends Exact<DeepPartial<UInt32Value>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): UInt32Value {
     const message = createBaseUInt32Value();
     message.value = object.value ?? 0;
     return message;
@@ -484,18 +553,25 @@ export const BoolValue: MessageFns<BoolValue> = {
     return { value: isSet(object.value) ? globalThis.Boolean(object.value) : false };
   },
 
-  toJSON(message: BoolValue): unknown {
+  toJSON(message: BoolValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== false) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<BoolValue>, I>>(base?: I): BoolValue {
     return BoolValue.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<BoolValue>, I>>(object: I): BoolValue {
+  fromPartial<I extends Exact<DeepPartial<BoolValue>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): BoolValue {
     const message = createBaseBoolValue();
     message.value = object.value ?? false;
     return message;
@@ -542,18 +618,25 @@ export const StringValue: MessageFns<StringValue> = {
     return { value: isSet(object.value) ? globalThis.String(object.value) : "" };
   },
 
-  toJSON(message: StringValue): unknown {
+  toJSON(message: StringValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<StringValue>, I>>(base?: I): StringValue {
     return StringValue.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<StringValue>, I>>(object: I): StringValue {
+  fromPartial<I extends Exact<DeepPartial<StringValue>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): StringValue {
     const message = createBaseStringValue();
     message.value = object.value ?? "";
     return message;
@@ -600,18 +683,25 @@ export const BytesValue: MessageFns<BytesValue> = {
     return { value: isSet(object.value) ? bytesFromBase64(object.value) : new Uint8Array(0) };
   },
 
-  toJSON(message: BytesValue): unknown {
+  toJSON(message: BytesValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== undefined && message.value.length !== 0) {
       obj.value = base64FromBytes(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? base64FromBytes(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<BytesValue>, I>>(base?: I): BytesValue {
     return BytesValue.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<BytesValue>, I>>(object: I): BytesValue {
+  fromPartial<I extends Exact<DeepPartial<BytesValue>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): BytesValue {
     const message = createBaseBytesValue();
     message.value = object.value ?? new Uint8Array(0);
     return message;
@@ -648,7 +738,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -674,7 +764,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

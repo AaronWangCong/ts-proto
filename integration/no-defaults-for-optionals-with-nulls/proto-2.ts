@@ -97,43 +97,58 @@ export const Proto2TestMessage: MessageFns<Proto2TestMessage> = {
       stringValue: isSet(object.stringValue) ? globalThis.String(object.stringValue) : null,
       mapValue: isObject(object.mapValue)
         ? Object.entries(object.mapValue).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-          acc[key] = String(value);
+          acc[key] = globalThis.String(value);
           return acc;
         }, {})
         : {},
     };
   },
 
-  toJSON(message: Proto2TestMessage): unknown {
+  toJSON(message: Proto2TestMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.boolValue !== undefined && message.boolValue !== null) {
       obj.boolValue = message.boolValue;
+    }
+    if (Object.hasOwn(message, "boolValue")) {
+      obj2.boolValue = message.boolValue !== undefined ? message.boolValue : message.boolValue;
     }
     if (message.intValue !== undefined && message.intValue !== null) {
       obj.intValue = Math.round(message.intValue);
     }
+    if (Object.hasOwn(message, "intValue")) {
+      obj2.intValue = message.intValue !== undefined ? Math.round(message.intValue) : message.intValue;
+    }
     if (message.stringValue !== undefined && message.stringValue !== null) {
       obj.stringValue = message.stringValue;
+    }
+    if (Object.hasOwn(message, "stringValue")) {
+      obj2.stringValue = message.stringValue !== undefined ? message.stringValue : message.stringValue;
     }
     if (message.mapValue) {
       const entries = Object.entries(message.mapValue);
       if (entries.length > 0) {
         obj.mapValue = {};
+        obj2.mapValue = {};
         entries.forEach(([k, v]) => {
           obj.mapValue[k] = v;
+          obj2.mapValue[k] = v;
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Proto2TestMessage>, I>>(base?: I): Proto2TestMessage {
     return Proto2TestMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Proto2TestMessage>, I>>(object: I): Proto2TestMessage {
+  fromPartial<I extends Exact<DeepPartial<Proto2TestMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Proto2TestMessage {
     const message = createBaseProto2TestMessage();
     message.boolValue = object.boolValue ?? null;
-    message.intValue = object.intValue ?? null;
+    message.intValue = object.intValue ?? (options?.defaultZeroFields?.includes("intValue") ? 0 : undefined);
     message.stringValue = object.stringValue ?? null;
     message.mapValue = Object.entries(object.mapValue ?? {}).reduce<{ [key: string]: string }>((acc, [key, value]) => {
       if (value !== undefined) {
@@ -199,15 +214,22 @@ export const Proto2TestMessage_MapValueEntry: MessageFns<Proto2TestMessage_MapVa
     };
   },
 
-  toJSON(message: Proto2TestMessage_MapValueEntry): unknown {
+  toJSON(message: Proto2TestMessage_MapValueEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== undefined && message.key !== null) {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== undefined && message.value !== null) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Proto2TestMessage_MapValueEntry>, I>>(base?: I): Proto2TestMessage_MapValueEntry {
@@ -215,6 +237,7 @@ export const Proto2TestMessage_MapValueEntry: MessageFns<Proto2TestMessage_MapVa
   },
   fromPartial<I extends Exact<DeepPartial<Proto2TestMessage_MapValueEntry>, I>>(
     object: I,
+    options?: { defaultZeroFields?: string[] },
   ): Proto2TestMessage_MapValueEntry {
     const message = createBaseProto2TestMessage_MapValueEntry();
     message.key = object.key ?? null;
@@ -228,7 +251,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -247,7 +270,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

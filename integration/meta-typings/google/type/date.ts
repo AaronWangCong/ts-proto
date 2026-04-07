@@ -24,18 +24,22 @@ export interface DateMessage {
    * Year of date. Must be from 1 to 9999, or 0 if specifying a date without
    * a year.
    */
-  year: number;
+  year?:
+    | number
+    | undefined;
   /**
    * Month of year. Must be from 1 to 12, or 0 if specifying a year without a
    * month and day.
    */
-  month: number;
+  month?:
+    | number
+    | undefined;
   /**
    * Day of month. Must be from 1 to 31 and valid for the year and month, or 0
    * if specifying a year by itself or a year and month where the day is not
    * significant.
    */
-  day: number;
+  day?: number | undefined;
 }
 
 function createBaseDateMessage(): DateMessage {
@@ -44,13 +48,13 @@ function createBaseDateMessage(): DateMessage {
 
 export const DateMessage: MessageFns<DateMessage> = {
   encode(message: DateMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.year !== 0) {
+    if (message.year !== undefined && message.year !== 0) {
       writer.uint32(8).int32(message.year);
     }
-    if (message.month !== 0) {
+    if (message.month !== undefined && message.month !== 0) {
       writer.uint32(16).int32(message.month);
     }
-    if (message.day !== 0) {
+    if (message.day !== undefined && message.day !== 0) {
       writer.uint32(24).int32(message.day);
     }
     return writer;

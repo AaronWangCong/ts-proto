@@ -23,18 +23,22 @@ export interface DateMessage {
    * Year of date. Must be from 1 to 9999, or 0 if specifying a date without
    * a year.
    */
-  year: number;
+  year?:
+    | number
+    | undefined;
   /**
    * Month of year. Must be from 1 to 12, or 0 if specifying a year without a
    * month and day.
    */
-  month: number;
+  month?:
+    | number
+    | undefined;
   /**
    * Day of month. Must be from 1 to 31 and valid for the year and month, or 0
    * if specifying a year by itself or a year and month where the day is not
    * significant.
    */
-  day: number;
+  day?: number | undefined;
 }
 
 function createBaseDateMessage(): DateMessage {
@@ -43,13 +47,13 @@ function createBaseDateMessage(): DateMessage {
 
 export const DateMessage: MessageFns<DateMessage> = {
   encode(message: DateMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.year !== 0) {
+    if (message.year !== undefined && message.year !== 0) {
       writer.uint32(8).int32(message.year);
     }
-    if (message.month !== 0) {
+    if (message.month !== undefined && message.month !== 0) {
       writer.uint32(16).int32(message.month);
     }
-    if (message.day !== 0) {
+    if (message.day !== undefined && message.day !== 0) {
       writer.uint32(24).int32(message.day);
     }
     return writer;
@@ -97,34 +101,47 @@ export const DateMessage: MessageFns<DateMessage> = {
 
   fromJSON(object: any): DateMessage {
     return {
-      year: isSet(object.year) ? globalThis.Number(object.year) : 0,
-      month: isSet(object.month) ? globalThis.Number(object.month) : 0,
-      day: isSet(object.day) ? globalThis.Number(object.day) : 0,
+      year: isSet(object.year) ? globalThis.Number(object.year) : undefined,
+      month: isSet(object.month) ? globalThis.Number(object.month) : undefined,
+      day: isSet(object.day) ? globalThis.Number(object.day) : undefined,
     };
   },
 
-  toJSON(message: DateMessage): unknown {
+  toJSON(message: DateMessage, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.year !== 0) {
+    const obj2: any = {};
+    if (message.year !== undefined && message.year !== 0) {
       obj.year = Math.round(message.year);
     }
-    if (message.month !== 0) {
+    if (Object.hasOwn(message, "year")) {
+      obj2.year = message.year !== undefined ? Math.round(message.year) : message.year;
+    }
+    if (message.month !== undefined && message.month !== 0) {
       obj.month = Math.round(message.month);
     }
-    if (message.day !== 0) {
+    if (Object.hasOwn(message, "month")) {
+      obj2.month = message.month !== undefined ? Math.round(message.month) : message.month;
+    }
+    if (message.day !== undefined && message.day !== 0) {
       obj.day = Math.round(message.day);
     }
-    return obj;
+    if (Object.hasOwn(message, "day")) {
+      obj2.day = message.day !== undefined ? Math.round(message.day) : message.day;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DateMessage>, I>>(base?: I): DateMessage {
     return DateMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DateMessage>, I>>(object: I): DateMessage {
+  fromPartial<I extends Exact<DeepPartial<DateMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DateMessage {
     const message = createBaseDateMessage();
-    message.year = object.year ?? 0;
-    message.month = object.month ?? 0;
-    message.day = object.day ?? 0;
+    message.year = object.year ?? (options?.defaultZeroFields?.includes("year") ? 0 : undefined);
+    message.month = object.month ?? (options?.defaultZeroFields?.includes("month") ? 0 : undefined);
+    message.day = object.day ?? (options?.defaultZeroFields?.includes("day") ? 0 : undefined);
     return message;
   },
 };
@@ -134,7 +151,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -149,7 +166,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

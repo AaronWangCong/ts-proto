@@ -126,21 +126,31 @@ export const DashFlash: MessageFns<DashFlash> = {
     };
   },
 
-  toJSON(message: DashFlash): unknown {
+  toJSON(message: DashFlash, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.msg !== "") {
       obj.msg = message.msg;
+    }
+    if (Object.hasOwn(message, "msg")) {
+      obj2.msg = message.msg !== undefined ? message.msg : message.msg;
     }
     if (message.type !== 0) {
       obj.type = dashFlash_TypeToJSON(message.type);
     }
-    return obj;
+    if (Object.hasOwn(message, "type")) {
+      obj2.type = message.type !== undefined ? dashFlash_TypeToJSON(message.type) : message.type;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashFlash>, I>>(base?: I): DashFlash {
     return DashFlash.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashFlash>, I>>(object: I): DashFlash {
+  fromPartial<I extends Exact<DeepPartial<DashFlash>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashFlash {
     const message = createBaseDashFlash();
     message.msg = object.msg ?? "";
     message.type = object.type ?? 0;
@@ -160,8 +170,10 @@ export const DashUserSettingsState: MessageFns<DashUserSettingsState> = {
     if (message.urls !== undefined) {
       DashUserSettingsState_URLs.encode(message.urls, writer.uint32(50).fork()).join();
     }
-    for (const v of message.flashes) {
-      DashFlash.encode(v!, writer.uint32(58).fork()).join();
+    if (message.flashes !== undefined && message.flashes.length !== 0) {
+      for (const v of message.flashes) {
+        DashFlash.encode(v!, writer.uint32(58).fork()).join();
+      }
     }
     return writer;
   },
@@ -194,7 +206,7 @@ export const DashUserSettingsState: MessageFns<DashUserSettingsState> = {
             break;
           }
 
-          message.flashes.push(DashFlash.decode(reader, reader.uint32()));
+          message.flashes?.push(DashFlash.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -214,30 +226,43 @@ export const DashUserSettingsState: MessageFns<DashUserSettingsState> = {
     };
   },
 
-  toJSON(message: DashUserSettingsState): unknown {
+  toJSON(message: DashUserSettingsState, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.email !== "") {
       obj.email = message.email;
+    }
+    if (Object.hasOwn(message, "email")) {
+      obj2.email = message.email !== undefined ? message.email : message.email;
     }
     if (message.urls !== undefined) {
       obj.urls = DashUserSettingsState_URLs.toJSON(message.urls);
     }
-    if (message.flashes?.length) {
-      obj.flashes = message.flashes.map((e) => DashFlash.toJSON(e));
+    if (Object.hasOwn(message, "urls")) {
+      obj2.urls = message.urls !== undefined ? DashUserSettingsState_URLs.toJSON(message.urls, true) : message.urls;
     }
-    return obj;
+    if (message.flashes?.length) {
+      obj.flashes = message.flashes?.map((e) => DashFlash.toJSON(e));
+    }
+    if (message.flashes) {
+      obj2.flashes = message.flashes?.map((e) => DashFlash.toJSON(e, true));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashUserSettingsState>, I>>(base?: I): DashUserSettingsState {
     return DashUserSettingsState.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState>, I>>(object: I): DashUserSettingsState {
+  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashUserSettingsState {
     const message = createBaseDashUserSettingsState();
     message.email = object.email ?? "";
     message.urls = (object.urls !== undefined && object.urls !== null)
-      ? DashUserSettingsState_URLs.fromPartial(object.urls)
+      ? DashUserSettingsState_URLs.fromPartial(object.urls, options)
       : undefined;
-    message.flashes = object.flashes?.map((e) => DashFlash.fromPartial(e)) || [];
+    message.flashes = object.flashes?.map((e) => DashFlash.fromPartial(e, options)) as any;
     return message;
   },
 };
@@ -296,21 +321,31 @@ export const DashUserSettingsState_URLs: MessageFns<DashUserSettingsState_URLs> 
     };
   },
 
-  toJSON(message: DashUserSettingsState_URLs): unknown {
+  toJSON(message: DashUserSettingsState_URLs, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.connectGoogle !== "") {
       obj.connectGoogle = message.connectGoogle;
+    }
+    if (Object.hasOwn(message, "connectGoogle")) {
+      obj2.connect_google = message.connectGoogle !== undefined ? message.connectGoogle : message.connectGoogle;
     }
     if (message.connectGithub !== "") {
       obj.connectGithub = message.connectGithub;
     }
-    return obj;
+    if (Object.hasOwn(message, "connectGithub")) {
+      obj2.connect_github = message.connectGithub !== undefined ? message.connectGithub : message.connectGithub;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashUserSettingsState_URLs>, I>>(base?: I): DashUserSettingsState_URLs {
     return DashUserSettingsState_URLs.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState_URLs>, I>>(object: I): DashUserSettingsState_URLs {
+  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState_URLs>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashUserSettingsState_URLs {
     const message = createBaseDashUserSettingsState_URLs();
     message.connectGoogle = object.connectGoogle ?? "";
     message.connectGithub = object.connectGithub ?? "";
@@ -347,15 +382,16 @@ export const Empty: MessageFns<Empty> = {
     return {};
   },
 
-  toJSON(_: Empty): unknown {
+  toJSON(_: Empty, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Empty>, I>>(base?: I): Empty {
     return Empty.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Empty>, I>>(_: I): Empty {
+  fromPartial<I extends Exact<DeepPartial<Empty>, I>>(_: I, options?: { defaultZeroFields?: string[] }): Empty {
     const message = createBaseEmpty();
     return message;
   },
@@ -377,12 +413,17 @@ export class DashStateClientImpl implements DashState {
     this.UserSettings = this.UserSettings.bind(this);
   }
 
-  UserSettings(request: DeepPartial<Empty>, metadata?: grpc.Metadata): Promise<DashUserSettingsState> {
-    return this.rpc.unary(DashStateUserSettingsDesc, Empty.fromPartial(request), metadata);
+  UserSettings(
+    request: DeepPartial<Empty>,
+    metadata?: grpc.Metadata,
+    options?: { defaultZeroFields?: string[] },
+  ): Promise<DashUserSettingsState> {
+    const _request = Empty.fromPartial(request, options);
+    return this.rpc.unary(DashStateUserSettingsDesc, _request, Empty.toJSON(request as Empty, true), metadata);
   }
 }
 
-export const DashStateDesc = { serviceName: "rpx.DashState" };
+export const DashStateDesc = { serviceName: "rpx.DashState", servicePackage: "rpx" };
 
 export const DashStateUserSettingsDesc: UnaryMethodDefinitionish = {
   methodName: "UserSettings",
@@ -418,6 +459,7 @@ interface Rpc {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     request: any,
+    protoReq: any,
     metadata: grpc.Metadata | undefined,
   ): Promise<any>;
 }
@@ -449,6 +491,7 @@ export class GrpcWebImpl {
   unary<T extends UnaryMethodDefinitionish>(
     methodDesc: T,
     _request: any,
+    protoReq: any,
     metadata: grpc.Metadata | undefined,
   ): Promise<any> {
     const request = { ..._request, ...methodDesc.requestType };
@@ -480,7 +523,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -501,7 +544,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

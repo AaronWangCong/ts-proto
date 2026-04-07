@@ -71,11 +71,13 @@ export const Simple: MessageFns<Simple> = {
     if (message.state !== 0) {
       writer.uint32(32).int32(message.state);
     }
-    writer.uint32(42).fork();
-    for (const v of message.states) {
-      writer.int32(v);
+    if (message.states !== undefined && message.states.length !== 0) {
+      writer.uint32(42).fork();
+      for (const v of message.states) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
     if (message.nullValue !== 0) {
       writer.uint32(48).int32(message.nullValue);
     }
@@ -110,7 +112,7 @@ export const Simple: MessageFns<Simple> = {
         }
         case 5: {
           if (tag === 40) {
-            message.states.push(reader.int32() as any);
+            message.states?.push(reader.int32() as any);
 
             continue;
           }
@@ -118,7 +120,7 @@ export const Simple: MessageFns<Simple> = {
           if (tag === 42) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.states.push(reader.int32() as any);
+              message.states?.push(reader.int32() as any);
             }
 
             continue;
@@ -169,40 +171,55 @@ export const Simple: MessageFns<Simple> = {
     };
   },
 
-  toJSON(message: Simple): unknown {
+  toJSON(message: Simple, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
+    }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
     }
     if (message.state !== 0) {
       obj.state = stateEnumToJSON(message.state);
     }
+    if (Object.hasOwn(message, "state")) {
+      obj2.state = message.state !== undefined ? stateEnumToJSON(message.state) : message.state;
+    }
     if (message.states?.length) {
-      obj.states = message.states.map((e) => stateEnumToJSON(e));
+      obj.states = message.states?.map((e) => stateEnumToJSON(e));
+    }
+    if (message.states) {
+      obj2.states = message.states?.map((e) => stateEnumToJSON(e));
     }
     if (message.nullValue !== 0) {
       obj.nullValue = nullValueToJSON(message.nullValue);
+    }
+    if (Object.hasOwn(message, "nullValue")) {
+      obj2.nullValue = message.nullValue !== undefined ? nullValueToJSON(message.nullValue) : message.nullValue;
     }
     if (message.stateMap) {
       const entries = Object.entries(message.stateMap);
       if (entries.length > 0) {
         obj.stateMap = {};
+        obj2.stateMap = {};
         entries.forEach(([k, v]) => {
           obj.stateMap[k] = stateEnumToJSON(v);
+          obj2.stateMap[k] = stateEnumToJSON(v);
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Simple>, I>>(base?: I): Simple {
     return Simple.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I): Simple {
+  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Simple {
     const message = createBaseSimple();
     message.name = object.name ?? "";
     message.state = object.state ?? 0;
-    message.states = object.states?.map((e) => e) || [];
+    message.states = object.states?.map((e) => e) as any;
     message.nullValue = object.nullValue ?? 0;
     message.stateMap = Object.entries(object.stateMap ?? {}).reduce<{ [key: string]: StateEnum }>(
       (acc, [key, value]) => {
@@ -271,21 +288,31 @@ export const Simple_StateMapEntry: MessageFns<Simple_StateMapEntry> = {
     };
   },
 
-  toJSON(message: Simple_StateMapEntry): unknown {
+  toJSON(message: Simple_StateMapEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== 0) {
       obj.value = stateEnumToJSON(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? stateEnumToJSON(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Simple_StateMapEntry>, I>>(base?: I): Simple_StateMapEntry {
     return Simple_StateMapEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Simple_StateMapEntry>, I>>(object: I): Simple_StateMapEntry {
+  fromPartial<I extends Exact<DeepPartial<Simple_StateMapEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Simple_StateMapEntry {
     const message = createBaseSimple_StateMapEntry();
     message.key = object.key ?? "";
     message.value = object.value ?? 0;
@@ -298,7 +325,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -317,7 +344,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

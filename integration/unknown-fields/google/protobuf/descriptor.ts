@@ -28,12 +28,16 @@ export interface FileDescriptorProto {
   /** Names of files imported by this file. */
   dependency: string[];
   /** Indexes of the public imported files in the dependency list above. */
-  publicDependency: number[];
+  publicDependency?:
+    | number[]
+    | undefined;
   /**
    * Indexes of the weak imported files in the dependency list.
    * For Google-internal migration only. Do not use.
    */
-  weakDependency: number[];
+  weakDependency?:
+    | number[]
+    | undefined;
   /** All top-level definitions in this file. */
   messageType: DescriptorProto[];
   enumType: EnumDescriptorProto[];
@@ -877,7 +881,9 @@ export interface SourceCodeInfo_Location {
    * this path refers to the whole field declaration (from the beginning
    * of the label to the terminating semicolon).
    */
-  path: number[];
+  path?:
+    | number[]
+    | undefined;
   /**
    * Always has exactly three or four elements: start line, start column,
    * end line (optional, otherwise assumed same as start line), end column.
@@ -885,7 +891,9 @@ export interface SourceCodeInfo_Location {
    * and column numbers are zero-based -- typically you will want to add
    * 1 to each before displaying to a user.
    */
-  span: number[];
+  span?:
+    | number[]
+    | undefined;
   /**
    * If this SourceCodeInfo represents a complete declaration, these are any
    * comments appearing before and after the declaration which appear to be
@@ -960,7 +968,9 @@ export interface GeneratedCodeInfo_Annotation {
    * Identifies the element in the original source .proto file. This field
    * is formatted the same as SourceCodeInfo.Location.path.
    */
-  path: number[];
+  path?:
+    | number[]
+    | undefined;
   /** Identifies the filesystem path to the original source .proto. */
   sourceFile?:
     | string
@@ -987,8 +997,10 @@ function createBaseFileDescriptorSet(): FileDescriptorSet {
 
 export const FileDescriptorSet: MessageFns<FileDescriptorSet> = {
   encode(message: FileDescriptorSet, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.file) {
-      FileDescriptorProto.encode(v!, writer.uint32(10).fork()).join();
+    if (message.file !== undefined && message.file.length !== 0) {
+      for (const v of message.file) {
+        FileDescriptorProto.encode(v!, writer.uint32(10).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -1013,7 +1025,7 @@ export const FileDescriptorSet: MessageFns<FileDescriptorSet> = {
             break;
           }
 
-          message.file.push(FileDescriptorProto.decode(reader, reader.uint32()));
+          message.file?.push(FileDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -1060,30 +1072,44 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
     if (message.package !== undefined && message.package !== "") {
       writer.uint32(18).string(message.package);
     }
-    for (const v of message.dependency) {
-      writer.uint32(26).string(v!);
+    if (message.dependency !== undefined && message.dependency.length !== 0) {
+      for (const v of message.dependency) {
+        writer.uint32(26).string(v!);
+      }
     }
-    writer.uint32(82).fork();
-    for (const v of message.publicDependency) {
-      writer.int32(v);
+    if (message.publicDependency !== undefined && message.publicDependency.length !== 0) {
+      writer.uint32(82).fork();
+      for (const v of message.publicDependency) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
-    writer.uint32(90).fork();
-    for (const v of message.weakDependency) {
-      writer.int32(v);
+    if (message.weakDependency !== undefined && message.weakDependency.length !== 0) {
+      writer.uint32(90).fork();
+      for (const v of message.weakDependency) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
-    for (const v of message.messageType) {
-      DescriptorProto.encode(v!, writer.uint32(34).fork()).join();
+    if (message.messageType !== undefined && message.messageType.length !== 0) {
+      for (const v of message.messageType) {
+        DescriptorProto.encode(v!, writer.uint32(34).fork()).join();
+      }
     }
-    for (const v of message.enumType) {
-      EnumDescriptorProto.encode(v!, writer.uint32(42).fork()).join();
+    if (message.enumType !== undefined && message.enumType.length !== 0) {
+      for (const v of message.enumType) {
+        EnumDescriptorProto.encode(v!, writer.uint32(42).fork()).join();
+      }
     }
-    for (const v of message.service) {
-      ServiceDescriptorProto.encode(v!, writer.uint32(50).fork()).join();
+    if (message.service !== undefined && message.service.length !== 0) {
+      for (const v of message.service) {
+        ServiceDescriptorProto.encode(v!, writer.uint32(50).fork()).join();
+      }
     }
-    for (const v of message.extension) {
-      FieldDescriptorProto.encode(v!, writer.uint32(58).fork()).join();
+    if (message.extension !== undefined && message.extension.length !== 0) {
+      for (const v of message.extension) {
+        FieldDescriptorProto.encode(v!, writer.uint32(58).fork()).join();
+      }
     }
     if (message.options !== undefined) {
       FileOptions.encode(message.options, writer.uint32(66).fork()).join();
@@ -1133,12 +1159,12 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
             break;
           }
 
-          message.dependency.push(reader.string());
+          message.dependency?.push(reader.string());
           continue;
         }
         case 10: {
           if (tag === 80) {
-            message.publicDependency.push(reader.int32());
+            message.publicDependency?.push(reader.int32());
 
             continue;
           }
@@ -1146,7 +1172,7 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
           if (tag === 82) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.publicDependency.push(reader.int32());
+              message.publicDependency?.push(reader.int32());
             }
 
             continue;
@@ -1156,7 +1182,7 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
         }
         case 11: {
           if (tag === 88) {
-            message.weakDependency.push(reader.int32());
+            message.weakDependency?.push(reader.int32());
 
             continue;
           }
@@ -1164,7 +1190,7 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
           if (tag === 90) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.weakDependency.push(reader.int32());
+              message.weakDependency?.push(reader.int32());
             }
 
             continue;
@@ -1177,7 +1203,7 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
             break;
           }
 
-          message.messageType.push(DescriptorProto.decode(reader, reader.uint32()));
+          message.messageType?.push(DescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 5: {
@@ -1185,7 +1211,7 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
             break;
           }
 
-          message.enumType.push(EnumDescriptorProto.decode(reader, reader.uint32()));
+          message.enumType?.push(EnumDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 6: {
@@ -1193,7 +1219,7 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
             break;
           }
 
-          message.service.push(ServiceDescriptorProto.decode(reader, reader.uint32()));
+          message.service?.push(ServiceDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 7: {
@@ -1201,7 +1227,7 @@ export const FileDescriptorProto: MessageFns<FileDescriptorProto> = {
             break;
           }
 
-          message.extension.push(FieldDescriptorProto.decode(reader, reader.uint32()));
+          message.extension?.push(FieldDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 8: {
@@ -1267,32 +1293,48 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
     if (message.name !== undefined && message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    for (const v of message.field) {
-      FieldDescriptorProto.encode(v!, writer.uint32(18).fork()).join();
+    if (message.field !== undefined && message.field.length !== 0) {
+      for (const v of message.field) {
+        FieldDescriptorProto.encode(v!, writer.uint32(18).fork()).join();
+      }
     }
-    for (const v of message.extension) {
-      FieldDescriptorProto.encode(v!, writer.uint32(50).fork()).join();
+    if (message.extension !== undefined && message.extension.length !== 0) {
+      for (const v of message.extension) {
+        FieldDescriptorProto.encode(v!, writer.uint32(50).fork()).join();
+      }
     }
-    for (const v of message.nestedType) {
-      DescriptorProto.encode(v!, writer.uint32(26).fork()).join();
+    if (message.nestedType !== undefined && message.nestedType.length !== 0) {
+      for (const v of message.nestedType) {
+        DescriptorProto.encode(v!, writer.uint32(26).fork()).join();
+      }
     }
-    for (const v of message.enumType) {
-      EnumDescriptorProto.encode(v!, writer.uint32(34).fork()).join();
+    if (message.enumType !== undefined && message.enumType.length !== 0) {
+      for (const v of message.enumType) {
+        EnumDescriptorProto.encode(v!, writer.uint32(34).fork()).join();
+      }
     }
-    for (const v of message.extensionRange) {
-      DescriptorProto_ExtensionRange.encode(v!, writer.uint32(42).fork()).join();
+    if (message.extensionRange !== undefined && message.extensionRange.length !== 0) {
+      for (const v of message.extensionRange) {
+        DescriptorProto_ExtensionRange.encode(v!, writer.uint32(42).fork()).join();
+      }
     }
-    for (const v of message.oneofDecl) {
-      OneofDescriptorProto.encode(v!, writer.uint32(66).fork()).join();
+    if (message.oneofDecl !== undefined && message.oneofDecl.length !== 0) {
+      for (const v of message.oneofDecl) {
+        OneofDescriptorProto.encode(v!, writer.uint32(66).fork()).join();
+      }
     }
     if (message.options !== undefined) {
       MessageOptions.encode(message.options, writer.uint32(58).fork()).join();
     }
-    for (const v of message.reservedRange) {
-      DescriptorProto_ReservedRange.encode(v!, writer.uint32(74).fork()).join();
+    if (message.reservedRange !== undefined && message.reservedRange.length !== 0) {
+      for (const v of message.reservedRange) {
+        DescriptorProto_ReservedRange.encode(v!, writer.uint32(74).fork()).join();
+      }
     }
-    for (const v of message.reservedName) {
-      writer.uint32(82).string(v!);
+    if (message.reservedName !== undefined && message.reservedName.length !== 0) {
+      for (const v of message.reservedName) {
+        writer.uint32(82).string(v!);
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -1325,7 +1367,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.field.push(FieldDescriptorProto.decode(reader, reader.uint32()));
+          message.field?.push(FieldDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 6: {
@@ -1333,7 +1375,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.extension.push(FieldDescriptorProto.decode(reader, reader.uint32()));
+          message.extension?.push(FieldDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 3: {
@@ -1341,7 +1383,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.nestedType.push(DescriptorProto.decode(reader, reader.uint32()));
+          message.nestedType?.push(DescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 4: {
@@ -1349,7 +1391,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.enumType.push(EnumDescriptorProto.decode(reader, reader.uint32()));
+          message.enumType?.push(EnumDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 5: {
@@ -1357,7 +1399,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.extensionRange.push(DescriptorProto_ExtensionRange.decode(reader, reader.uint32()));
+          message.extensionRange?.push(DescriptorProto_ExtensionRange.decode(reader, reader.uint32()));
           continue;
         }
         case 8: {
@@ -1365,7 +1407,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.oneofDecl.push(OneofDescriptorProto.decode(reader, reader.uint32()));
+          message.oneofDecl?.push(OneofDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 7: {
@@ -1381,7 +1423,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.reservedRange.push(DescriptorProto_ReservedRange.decode(reader, reader.uint32()));
+          message.reservedRange?.push(DescriptorProto_ReservedRange.decode(reader, reader.uint32()));
           continue;
         }
         case 10: {
@@ -1389,7 +1431,7 @@ export const DescriptorProto: MessageFns<DescriptorProto> = {
             break;
           }
 
-          message.reservedName.push(reader.string());
+          message.reservedName?.push(reader.string());
           continue;
         }
       }
@@ -1555,8 +1597,10 @@ function createBaseExtensionRangeOptions(): ExtensionRangeOptions {
 
 export const ExtensionRangeOptions: MessageFns<ExtensionRangeOptions> = {
   encode(message: ExtensionRangeOptions, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -1581,7 +1625,7 @@ export const ExtensionRangeOptions: MessageFns<ExtensionRangeOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -1693,7 +1737,10 @@ export const FieldDescriptorProto: MessageFns<FieldDescriptorProto> = {
             break;
           }
 
-          message.label = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.label = _enumValue;
+          }
           continue;
         }
         case 5: {
@@ -1701,7 +1748,10 @@ export const FieldDescriptorProto: MessageFns<FieldDescriptorProto> = {
             break;
           }
 
-          message.type = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.type = _enumValue;
+          }
           continue;
         }
         case 6: {
@@ -1851,17 +1901,23 @@ export const EnumDescriptorProto: MessageFns<EnumDescriptorProto> = {
     if (message.name !== undefined && message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    for (const v of message.value) {
-      EnumValueDescriptorProto.encode(v!, writer.uint32(18).fork()).join();
+    if (message.value !== undefined && message.value.length !== 0) {
+      for (const v of message.value) {
+        EnumValueDescriptorProto.encode(v!, writer.uint32(18).fork()).join();
+      }
     }
     if (message.options !== undefined) {
       EnumOptions.encode(message.options, writer.uint32(26).fork()).join();
     }
-    for (const v of message.reservedRange) {
-      EnumDescriptorProto_EnumReservedRange.encode(v!, writer.uint32(34).fork()).join();
+    if (message.reservedRange !== undefined && message.reservedRange.length !== 0) {
+      for (const v of message.reservedRange) {
+        EnumDescriptorProto_EnumReservedRange.encode(v!, writer.uint32(34).fork()).join();
+      }
     }
-    for (const v of message.reservedName) {
-      writer.uint32(42).string(v!);
+    if (message.reservedName !== undefined && message.reservedName.length !== 0) {
+      for (const v of message.reservedName) {
+        writer.uint32(42).string(v!);
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -1894,7 +1950,7 @@ export const EnumDescriptorProto: MessageFns<EnumDescriptorProto> = {
             break;
           }
 
-          message.value.push(EnumValueDescriptorProto.decode(reader, reader.uint32()));
+          message.value?.push(EnumValueDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 3: {
@@ -1910,7 +1966,7 @@ export const EnumDescriptorProto: MessageFns<EnumDescriptorProto> = {
             break;
           }
 
-          message.reservedRange.push(EnumDescriptorProto_EnumReservedRange.decode(reader, reader.uint32()));
+          message.reservedRange?.push(EnumDescriptorProto_EnumReservedRange.decode(reader, reader.uint32()));
           continue;
         }
         case 5: {
@@ -1918,7 +1974,7 @@ export const EnumDescriptorProto: MessageFns<EnumDescriptorProto> = {
             break;
           }
 
-          message.reservedName.push(reader.string());
+          message.reservedName?.push(reader.string());
           continue;
         }
       }
@@ -2087,8 +2143,10 @@ export const ServiceDescriptorProto: MessageFns<ServiceDescriptorProto> = {
     if (message.name !== undefined && message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    for (const v of message.method) {
-      MethodDescriptorProto.encode(v!, writer.uint32(18).fork()).join();
+    if (message.method !== undefined && message.method.length !== 0) {
+      for (const v of message.method) {
+        MethodDescriptorProto.encode(v!, writer.uint32(18).fork()).join();
+      }
     }
     if (message.options !== undefined) {
       ServiceOptions.encode(message.options, writer.uint32(26).fork()).join();
@@ -2124,7 +2182,7 @@ export const ServiceDescriptorProto: MessageFns<ServiceDescriptorProto> = {
             break;
           }
 
-          message.method.push(MethodDescriptorProto.decode(reader, reader.uint32()));
+          message.method?.push(MethodDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 3: {
@@ -2358,8 +2416,10 @@ export const FileOptions: MessageFns<FileOptions> = {
     if (message.rubyPackage !== undefined && message.rubyPackage !== "") {
       writer.uint32(362).string(message.rubyPackage);
     }
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -2424,7 +2484,10 @@ export const FileOptions: MessageFns<FileOptions> = {
             break;
           }
 
-          message.optimizeFor = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.optimizeFor = _enumValue;
+          }
           continue;
         }
         case 11: {
@@ -2544,7 +2607,7 @@ export const FileOptions: MessageFns<FileOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2590,8 +2653,10 @@ export const MessageOptions: MessageFns<MessageOptions> = {
     if (message.mapEntry !== undefined && message.mapEntry !== false) {
       writer.uint32(56).bool(message.mapEntry);
     }
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -2648,7 +2713,7 @@ export const MessageOptions: MessageFns<MessageOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2702,8 +2767,10 @@ export const FieldOptions: MessageFns<FieldOptions> = {
     if (message.weak !== undefined && message.weak !== false) {
       writer.uint32(80).bool(message.weak);
     }
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -2728,7 +2795,10 @@ export const FieldOptions: MessageFns<FieldOptions> = {
             break;
           }
 
-          message.ctype = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.ctype = _enumValue;
+          }
           continue;
         }
         case 2: {
@@ -2744,7 +2814,10 @@ export const FieldOptions: MessageFns<FieldOptions> = {
             break;
           }
 
-          message.jstype = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.jstype = _enumValue;
+          }
           continue;
         }
         case 5: {
@@ -2776,7 +2849,7 @@ export const FieldOptions: MessageFns<FieldOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2803,8 +2876,10 @@ function createBaseOneofOptions(): OneofOptions {
 
 export const OneofOptions: MessageFns<OneofOptions> = {
   encode(message: OneofOptions, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -2829,7 +2904,7 @@ export const OneofOptions: MessageFns<OneofOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2862,8 +2937,10 @@ export const EnumOptions: MessageFns<EnumOptions> = {
     if (message.deprecated !== undefined && message.deprecated !== false) {
       writer.uint32(24).bool(message.deprecated);
     }
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -2904,7 +2981,7 @@ export const EnumOptions: MessageFns<EnumOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2934,8 +3011,10 @@ export const EnumValueOptions: MessageFns<EnumValueOptions> = {
     if (message.deprecated !== undefined && message.deprecated !== false) {
       writer.uint32(8).bool(message.deprecated);
     }
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -2968,7 +3047,7 @@ export const EnumValueOptions: MessageFns<EnumValueOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2998,8 +3077,10 @@ export const ServiceOptions: MessageFns<ServiceOptions> = {
     if (message.deprecated !== undefined && message.deprecated !== false) {
       writer.uint32(264).bool(message.deprecated);
     }
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -3032,7 +3113,7 @@ export const ServiceOptions: MessageFns<ServiceOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -3065,8 +3146,10 @@ export const MethodOptions: MessageFns<MethodOptions> = {
     if (message.idempotencyLevel !== undefined && message.idempotencyLevel !== 0) {
       writer.uint32(272).int32(message.idempotencyLevel);
     }
-    for (const v of message.uninterpretedOption) {
-      UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+    if (message.uninterpretedOption !== undefined && message.uninterpretedOption.length !== 0) {
+      for (const v of message.uninterpretedOption) {
+        UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -3099,7 +3182,10 @@ export const MethodOptions: MessageFns<MethodOptions> = {
             break;
           }
 
-          message.idempotencyLevel = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.idempotencyLevel = _enumValue;
+          }
           continue;
         }
         case 999: {
@@ -3107,7 +3193,7 @@ export const MethodOptions: MessageFns<MethodOptions> = {
             break;
           }
 
-          message.uninterpretedOption.push(UninterpretedOption.decode(reader, reader.uint32()));
+          message.uninterpretedOption?.push(UninterpretedOption.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -3143,8 +3229,10 @@ function createBaseUninterpretedOption(): UninterpretedOption {
 
 export const UninterpretedOption: MessageFns<UninterpretedOption> = {
   encode(message: UninterpretedOption, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.name) {
-      UninterpretedOption_NamePart.encode(v!, writer.uint32(18).fork()).join();
+    if (message.name !== undefined && message.name.length !== 0) {
+      for (const v of message.name) {
+        UninterpretedOption_NamePart.encode(v!, writer.uint32(18).fork()).join();
+      }
     }
     if (message.identifierValue !== undefined && message.identifierValue !== "") {
       writer.uint32(26).string(message.identifierValue);
@@ -3187,7 +3275,7 @@ export const UninterpretedOption: MessageFns<UninterpretedOption> = {
             break;
           }
 
-          message.name.push(UninterpretedOption_NamePart.decode(reader, reader.uint32()));
+          message.name?.push(UninterpretedOption_NamePart.decode(reader, reader.uint32()));
           continue;
         }
         case 3: {
@@ -3326,8 +3414,10 @@ function createBaseSourceCodeInfo(): SourceCodeInfo {
 
 export const SourceCodeInfo: MessageFns<SourceCodeInfo> = {
   encode(message: SourceCodeInfo, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.location) {
-      SourceCodeInfo_Location.encode(v!, writer.uint32(10).fork()).join();
+    if (message.location !== undefined && message.location.length !== 0) {
+      for (const v of message.location) {
+        SourceCodeInfo_Location.encode(v!, writer.uint32(10).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -3352,7 +3442,7 @@ export const SourceCodeInfo: MessageFns<SourceCodeInfo> = {
             break;
           }
 
-          message.location.push(SourceCodeInfo_Location.decode(reader, reader.uint32()));
+          message.location?.push(SourceCodeInfo_Location.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -3386,24 +3476,30 @@ function createBaseSourceCodeInfo_Location(): SourceCodeInfo_Location {
 
 export const SourceCodeInfo_Location: MessageFns<SourceCodeInfo_Location> = {
   encode(message: SourceCodeInfo_Location, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    writer.uint32(10).fork();
-    for (const v of message.path) {
-      writer.int32(v);
+    if (message.path !== undefined && message.path.length !== 0) {
+      writer.uint32(10).fork();
+      for (const v of message.path) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
-    writer.uint32(18).fork();
-    for (const v of message.span) {
-      writer.int32(v);
+    if (message.span !== undefined && message.span.length !== 0) {
+      writer.uint32(18).fork();
+      for (const v of message.span) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
     if (message.leadingComments !== undefined && message.leadingComments !== "") {
       writer.uint32(26).string(message.leadingComments);
     }
     if (message.trailingComments !== undefined && message.trailingComments !== "") {
       writer.uint32(34).string(message.trailingComments);
     }
-    for (const v of message.leadingDetachedComments) {
-      writer.uint32(50).string(v!);
+    if (message.leadingDetachedComments !== undefined && message.leadingDetachedComments.length !== 0) {
+      for (const v of message.leadingDetachedComments) {
+        writer.uint32(50).string(v!);
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -3425,7 +3521,7 @@ export const SourceCodeInfo_Location: MessageFns<SourceCodeInfo_Location> = {
       switch (tag >>> 3) {
         case 1: {
           if (tag === 8) {
-            message.path.push(reader.int32());
+            message.path?.push(reader.int32());
 
             continue;
           }
@@ -3433,7 +3529,7 @@ export const SourceCodeInfo_Location: MessageFns<SourceCodeInfo_Location> = {
           if (tag === 10) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.path.push(reader.int32());
+              message.path?.push(reader.int32());
             }
 
             continue;
@@ -3443,7 +3539,7 @@ export const SourceCodeInfo_Location: MessageFns<SourceCodeInfo_Location> = {
         }
         case 2: {
           if (tag === 16) {
-            message.span.push(reader.int32());
+            message.span?.push(reader.int32());
 
             continue;
           }
@@ -3451,7 +3547,7 @@ export const SourceCodeInfo_Location: MessageFns<SourceCodeInfo_Location> = {
           if (tag === 18) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.span.push(reader.int32());
+              message.span?.push(reader.int32());
             }
 
             continue;
@@ -3480,7 +3576,7 @@ export const SourceCodeInfo_Location: MessageFns<SourceCodeInfo_Location> = {
             break;
           }
 
-          message.leadingDetachedComments.push(reader.string());
+          message.leadingDetachedComments?.push(reader.string());
           continue;
         }
       }
@@ -3507,8 +3603,10 @@ function createBaseGeneratedCodeInfo(): GeneratedCodeInfo {
 
 export const GeneratedCodeInfo: MessageFns<GeneratedCodeInfo> = {
   encode(message: GeneratedCodeInfo, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.annotation) {
-      GeneratedCodeInfo_Annotation.encode(v!, writer.uint32(10).fork()).join();
+    if (message.annotation !== undefined && message.annotation.length !== 0) {
+      for (const v of message.annotation) {
+        GeneratedCodeInfo_Annotation.encode(v!, writer.uint32(10).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -3533,7 +3631,7 @@ export const GeneratedCodeInfo: MessageFns<GeneratedCodeInfo> = {
             break;
           }
 
-          message.annotation.push(GeneratedCodeInfo_Annotation.decode(reader, reader.uint32()));
+          message.annotation?.push(GeneratedCodeInfo_Annotation.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -3560,11 +3658,13 @@ function createBaseGeneratedCodeInfo_Annotation(): GeneratedCodeInfo_Annotation 
 
 export const GeneratedCodeInfo_Annotation: MessageFns<GeneratedCodeInfo_Annotation> = {
   encode(message: GeneratedCodeInfo_Annotation, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    writer.uint32(10).fork();
-    for (const v of message.path) {
-      writer.int32(v);
+    if (message.path !== undefined && message.path.length !== 0) {
+      writer.uint32(10).fork();
+      for (const v of message.path) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
     if (message.sourceFile !== undefined && message.sourceFile !== "") {
       writer.uint32(18).string(message.sourceFile);
     }
@@ -3594,7 +3694,7 @@ export const GeneratedCodeInfo_Annotation: MessageFns<GeneratedCodeInfo_Annotati
       switch (tag >>> 3) {
         case 1: {
           if (tag === 8) {
-            message.path.push(reader.int32());
+            message.path?.push(reader.int32());
 
             continue;
           }
@@ -3602,7 +3702,7 @@ export const GeneratedCodeInfo_Annotation: MessageFns<GeneratedCodeInfo_Annotati
           if (tag === 10) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.path.push(reader.int32());
+              message.path?.push(reader.int32());
             }
 
             continue;

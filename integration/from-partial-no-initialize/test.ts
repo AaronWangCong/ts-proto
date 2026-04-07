@@ -65,18 +65,25 @@ export const TPartialMessage: MessageFns<TPartialMessage> = {
     return { field: isSet(object.field) ? globalThis.String(object.field) : undefined };
   },
 
-  toJSON(message: TPartialMessage): unknown {
+  toJSON(message: TPartialMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.field !== undefined && message.field !== "") {
       obj.field = message.field;
     }
-    return obj;
+    if (Object.hasOwn(message, "field")) {
+      obj2.field = message.field !== undefined ? message.field : message.field;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<TPartialMessage>, I>>(base?: I): TPartialMessage {
     return TPartialMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TPartialMessage>, I>>(object: I): TPartialMessage {
+  fromPartial<I extends Exact<DeepPartial<TPartialMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): TPartialMessage {
     const message = createBaseTPartialMessage();
     message.field = object.field ?? undefined;
     return message;
@@ -176,7 +183,7 @@ export const TPartial: MessageFns<TPartial> = {
           }
           const el = TPartialMessage.decode(reader, reader.uint32());
           if (el !== undefined) {
-            message.repeatedMessage!.push(el);
+            message.repeatedMessage!?.push(el);
           }
           continue;
         }
@@ -190,7 +197,7 @@ export const TPartial: MessageFns<TPartial> = {
           }
           const el = reader.string();
           if (el !== undefined) {
-            message.repeatedString!.push(el);
+            message.repeatedString!?.push(el);
           }
           continue;
         }
@@ -199,7 +206,7 @@ export const TPartial: MessageFns<TPartial> = {
             if (message.repeatedNumber === undefined) {
               message.repeatedNumber = [];
             }
-            message.repeatedNumber!.push(reader.int32());
+            message.repeatedNumber!?.push(reader.int32());
 
             continue;
           }
@@ -210,7 +217,7 @@ export const TPartial: MessageFns<TPartial> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.repeatedNumber!.push(reader.int32());
+              message.repeatedNumber!?.push(reader.int32());
             }
 
             continue;
@@ -233,7 +240,7 @@ export const TPartial: MessageFns<TPartial> = {
       string: isSet(object.string) ? globalThis.String(object.string) : undefined,
       map: isObject(object.map)
         ? Object.entries(object.map).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-          acc[key] = String(value);
+          acc[key] = globalThis.String(value);
           return acc;
         }, {})
         : undefined,
@@ -250,44 +257,68 @@ export const TPartial: MessageFns<TPartial> = {
     };
   },
 
-  toJSON(message: TPartial): unknown {
+  toJSON(message: TPartial, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.number !== undefined && message.number !== 0) {
       obj.number = Math.round(message.number);
     }
+    if (Object.hasOwn(message, "number")) {
+      obj2.number = message.number !== undefined ? Math.round(message.number) : message.number;
+    }
     if (message.string !== undefined && message.string !== "") {
       obj.string = message.string;
+    }
+    if (Object.hasOwn(message, "string")) {
+      obj2.string = message.string !== undefined ? message.string : message.string;
     }
     if (message.map) {
       const entries = Object.entries(message.map);
       if (entries.length > 0) {
         obj.map = {};
+        obj2.map = {};
         entries.forEach(([k, v]) => {
           obj.map[k] = v;
+          obj2.map[k] = v;
         });
       }
     }
     if (message.message !== undefined) {
       obj.message = TPartialMessage.toJSON(message.message);
     }
+    if (Object.hasOwn(message, "message")) {
+      obj2.message = message.message !== undefined ? TPartialMessage.toJSON(message.message, true) : message.message;
+    }
     if (message.repeatedMessage?.length) {
-      obj.repeatedMessage = message.repeatedMessage.map((e) => TPartialMessage.toJSON(e));
+      obj.repeatedMessage = message.repeatedMessage?.map((e) => TPartialMessage.toJSON(e));
+    }
+    if (message.repeatedMessage) {
+      obj2.repeated_message = message.repeatedMessage?.map((e) => TPartialMessage.toJSON(e, true));
     }
     if (message.repeatedString?.length) {
       obj.repeatedString = message.repeatedString;
     }
-    if (message.repeatedNumber?.length) {
-      obj.repeatedNumber = message.repeatedNumber.map((e) => Math.round(e));
+    if (message.repeatedString) {
+      obj2.repeated_string = message.repeatedString;
     }
-    return obj;
+    if (message.repeatedNumber?.length) {
+      obj.repeatedNumber = message.repeatedNumber?.map((e) => Math.round(e));
+    }
+    if (message.repeatedNumber) {
+      obj2.repeated_number = message.repeatedNumber?.map((e) => Math.round(e));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<TPartial>, I>>(base?: I): TPartial {
     return TPartial.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TPartial>, I>>(object: I): TPartial {
+  fromPartial<I extends Exact<DeepPartial<TPartial>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): TPartial {
     const message = createBaseTPartial();
-    message.number = object.number ?? undefined;
+    message.number = object.number ?? (options?.defaultZeroFields?.includes("number") ? 0 : undefined);
     message.string = object.string ?? undefined;
     message.map = (object.map === undefined || object.map === null)
       ? undefined
@@ -298,11 +329,11 @@ export const TPartial: MessageFns<TPartial> = {
         return acc;
       }, {});
     message.message = (object.message !== undefined && object.message !== null)
-      ? TPartialMessage.fromPartial(object.message)
+      ? TPartialMessage.fromPartial(object.message, options)
       : undefined;
-    message.repeatedMessage = object.repeatedMessage?.map((e) => TPartialMessage.fromPartial(e)) || undefined;
-    message.repeatedString = object.repeatedString?.map((e) => e) || undefined;
-    message.repeatedNumber = object.repeatedNumber?.map((e) => e) || undefined;
+    message.repeatedMessage = object.repeatedMessage?.map((e) => TPartialMessage.fromPartial(e, options)) as any;
+    message.repeatedString = object.repeatedString?.map((e) => e) as any;
+    message.repeatedNumber = object.repeatedNumber?.map((e) => e) as any;
     return message;
   },
 };
@@ -361,21 +392,31 @@ export const TPartial_MapEntry: MessageFns<TPartial_MapEntry> = {
     };
   },
 
-  toJSON(message: TPartial_MapEntry): unknown {
+  toJSON(message: TPartial_MapEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<TPartial_MapEntry>, I>>(base?: I): TPartial_MapEntry {
     return TPartial_MapEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TPartial_MapEntry>, I>>(object: I): TPartial_MapEntry {
+  fromPartial<I extends Exact<DeepPartial<TPartial_MapEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): TPartial_MapEntry {
     const message = createBaseTPartial_MapEntry();
     message.key = object.key ?? "";
     message.value = object.value ?? "";
@@ -388,7 +429,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -407,7 +448,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

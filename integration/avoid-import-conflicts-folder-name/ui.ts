@@ -47,7 +47,7 @@ export function simpleEnumToJSON(object: SimpleEnum): string {
 
 export interface Simple {
   simple2Name: string;
-  simple2Age: number;
+  simple2Age?: number | undefined;
 }
 
 function createBaseSimple(): Simple {
@@ -59,7 +59,7 @@ export const Simple: MessageFns<Simple> = {
     if (message.simple2Name !== "") {
       writer.uint32(10).string(message.simple2Name);
     }
-    if (message.simple2Age !== 0) {
+    if (message.simple2Age !== undefined && message.simple2Age !== 0) {
       writer.uint32(16).int32(message.simple2Age);
     }
     return writer;
@@ -100,28 +100,35 @@ export const Simple: MessageFns<Simple> = {
   fromJSON(object: any): Simple {
     return {
       simple2Name: isSet(object.simple2Name) ? globalThis.String(object.simple2Name) : "",
-      simple2Age: isSet(object.simple2Age) ? globalThis.Number(object.simple2Age) : 0,
+      simple2Age: isSet(object.simple2Age) ? globalThis.Number(object.simple2Age) : undefined,
     };
   },
 
-  toJSON(message: Simple): unknown {
+  toJSON(message: Simple, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.simple2Name !== "") {
       obj.simple2Name = message.simple2Name;
     }
-    if (message.simple2Age !== 0) {
+    if (Object.hasOwn(message, "simple2Name")) {
+      obj2.simple2Name = message.simple2Name !== undefined ? message.simple2Name : message.simple2Name;
+    }
+    if (message.simple2Age !== undefined && message.simple2Age !== 0) {
       obj.simple2Age = Math.round(message.simple2Age);
     }
-    return obj;
+    if (Object.hasOwn(message, "simple2Age")) {
+      obj2.simple2Age = message.simple2Age !== undefined ? Math.round(message.simple2Age) : message.simple2Age;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Simple>, I>>(base?: I): Simple {
     return Simple.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I): Simple {
+  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Simple {
     const message = createBaseSimple();
     message.simple2Name = object.simple2Name ?? "";
-    message.simple2Age = object.simple2Age ?? 0;
+    message.simple2Age = object.simple2Age ?? (options?.defaultZeroFields?.includes("simple2Age") ? 0 : undefined);
     return message;
   },
 };
@@ -131,7 +138,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -146,7 +153,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

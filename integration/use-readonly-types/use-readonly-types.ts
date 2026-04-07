@@ -9,9 +9,9 @@ import { ListValue, Struct } from "./google/protobuf/struct";
 export const protobufPackage = "";
 
 export interface Entity {
-  readonly intVal: number;
+  readonly intVal?: number | undefined;
   readonly stringVal: string;
-  readonly intArray: readonly number[];
+  readonly intArray?: readonly number[] | undefined;
   readonly stringArray: readonly string[];
   readonly subEntity: SubEntity | undefined;
   readonly subEntityArray: readonly SubEntity[];
@@ -26,7 +26,7 @@ export interface Entity {
 }
 
 export interface SubEntity {
-  readonly subVal: number;
+  readonly subVal?: number | undefined;
 }
 
 function createBaseEntity(): Entity {
@@ -47,25 +47,31 @@ function createBaseEntity(): Entity {
 
 export const Entity: MessageFns<Entity> = {
   encode(message: Entity, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.intVal !== 0) {
+    if (message.intVal !== undefined && message.intVal !== 0) {
       writer.uint32(8).int32(message.intVal);
     }
     if (message.stringVal !== "") {
       writer.uint32(18).string(message.stringVal);
     }
-    writer.uint32(26).fork();
-    for (const v of message.intArray) {
-      writer.int32(v);
+    if (message.intArray !== undefined && message.intArray.length !== 0) {
+      writer.uint32(26).fork();
+      for (const v of message.intArray) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
-    for (const v of message.stringArray) {
-      writer.uint32(34).string(v!);
+    if (message.stringArray !== undefined && message.stringArray.length !== 0) {
+      for (const v of message.stringArray) {
+        writer.uint32(34).string(v!);
+      }
     }
     if (message.subEntity !== undefined) {
       SubEntity.encode(message.subEntity, writer.uint32(42).fork()).join();
     }
-    for (const v of message.subEntityArray) {
-      SubEntity.encode(v!, writer.uint32(50).fork()).join();
+    if (message.subEntityArray !== undefined && message.subEntityArray.length !== 0) {
+      for (const v of message.subEntityArray) {
+        SubEntity.encode(v!, writer.uint32(50).fork()).join();
+      }
     }
     if (message.optionalIntVal !== undefined) {
       writer.uint32(56).int32(message.optionalIntVal);
@@ -115,7 +121,7 @@ export const Entity: MessageFns<Entity> = {
         }
         case 3: {
           if (tag === 24) {
-            message.intArray.push(reader.int32());
+            message.intArray?.push(reader.int32());
 
             continue;
           }
@@ -123,7 +129,7 @@ export const Entity: MessageFns<Entity> = {
           if (tag === 26) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.intArray.push(reader.int32());
+              message.intArray?.push(reader.int32());
             }
 
             continue;
@@ -136,7 +142,7 @@ export const Entity: MessageFns<Entity> = {
             break;
           }
 
-          message.stringArray.push(reader.string());
+          message.stringArray?.push(reader.string());
           continue;
         }
         case 5: {
@@ -152,7 +158,7 @@ export const Entity: MessageFns<Entity> = {
             break;
           }
 
-          message.subEntityArray.push(SubEntity.decode(reader, reader.uint32()));
+          message.subEntityArray?.push(SubEntity.decode(reader, reader.uint32()));
           continue;
         }
         case 7: {
@@ -214,9 +220,11 @@ export const Entity: MessageFns<Entity> = {
 
   fromJSON(object: any): Entity {
     return {
-      intVal: isSet(object.intVal) ? globalThis.Number(object.intVal) : 0,
+      intVal: isSet(object.intVal) ? globalThis.Number(object.intVal) : undefined,
       stringVal: isSet(object.stringVal) ? globalThis.String(object.stringVal) : "",
-      intArray: globalThis.Array.isArray(object?.intArray) ? object.intArray.map((e: any) => globalThis.Number(e)) : [],
+      intArray: globalThis.Array.isArray(object?.intArray)
+        ? object.intArray.map((e: any) => globalThis.Number(e))
+        : undefined,
       stringArray: globalThis.Array.isArray(object?.stringArray)
         ? object.stringArray.map((e: any) => globalThis.String(e))
         : [],
@@ -236,60 +244,98 @@ export const Entity: MessageFns<Entity> = {
     };
   },
 
-  toJSON(message: Entity): unknown {
+  toJSON(message: Entity, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.intVal !== 0) {
+    const obj2: any = {};
+    if (message.intVal !== undefined && message.intVal !== 0) {
       obj.intVal = Math.round(message.intVal);
+    }
+    if (Object.hasOwn(message, "intVal")) {
+      obj2.intVal = message.intVal !== undefined ? Math.round(message.intVal) : message.intVal;
     }
     if (message.stringVal !== "") {
       obj.stringVal = message.stringVal;
     }
+    if (Object.hasOwn(message, "stringVal")) {
+      obj2.stringVal = message.stringVal !== undefined ? message.stringVal : message.stringVal;
+    }
     if (message.intArray?.length) {
-      obj.intArray = message.intArray.map((e) => Math.round(e));
+      obj.intArray = message.intArray?.map((e) => Math.round(e));
+    }
+    if (message.intArray) {
+      obj2.intArray = message.intArray?.map((e) => Math.round(e));
     }
     if (message.stringArray?.length) {
       obj.stringArray = message.stringArray;
     }
+    if (message.stringArray) {
+      obj2.stringArray = message.stringArray;
+    }
     if (message.subEntity !== undefined) {
       obj.subEntity = SubEntity.toJSON(message.subEntity);
     }
+    if (Object.hasOwn(message, "subEntity")) {
+      obj2.subEntity = message.subEntity !== undefined ? SubEntity.toJSON(message.subEntity, true) : message.subEntity;
+    }
     if (message.subEntityArray?.length) {
-      obj.subEntityArray = message.subEntityArray.map((e) => SubEntity.toJSON(e));
+      obj.subEntityArray = message.subEntityArray?.map((e) => SubEntity.toJSON(e));
+    }
+    if (message.subEntityArray) {
+      obj2.subEntityArray = message.subEntityArray?.map((e) => SubEntity.toJSON(e, true));
     }
     if (message.optionalIntVal !== undefined) {
       obj.optionalIntVal = Math.round(message.optionalIntVal);
     }
+    if (Object.hasOwn(message, "optionalIntVal")) {
+      obj2.optionalIntVal = message.optionalIntVal !== undefined
+        ? Math.round(message.optionalIntVal)
+        : message.optionalIntVal;
+    }
     if (message.fieldMask !== undefined) {
       obj.fieldMask = FieldMask.toJSON(FieldMask.wrap(message.fieldMask));
+    }
+    if (Object.hasOwn(message, "fieldMask")) {
+      obj2.fieldMask = message.fieldMask !== undefined
+        ? FieldMask.toJSON(FieldMask.wrap(message.fieldMask), true)
+        : message.fieldMask;
     }
     if (message.listValue !== undefined) {
       obj.listValue = message.listValue;
     }
+    if (Object.hasOwn(message, "listValue")) {
+      obj2.listValue = message.listValue !== undefined ? message.listValue : message.listValue;
+    }
     if (message.structValue !== undefined) {
       obj.structValue = message.structValue;
     }
+    if (Object.hasOwn(message, "structValue")) {
+      obj2.structValue = message.structValue !== undefined ? message.structValue : message.structValue;
+    }
     if (message.oneOfValue?.$case === "theStringValue") {
       obj.theStringValue = message.oneOfValue.theStringValue;
+      obj2.theStringValue = message.oneOfValue.theStringValue;
     } else if (message.oneOfValue?.$case === "theIntValue") {
       obj.theIntValue = Math.round(message.oneOfValue.theIntValue);
+      obj2.theIntValue = Math.round(message.oneOfValue.theIntValue);
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Entity>, I>>(base?: I): Entity {
     return Entity.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Entity>, I>>(object: I): Entity {
+  fromPartial<I extends Exact<DeepPartial<Entity>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Entity {
     const message = createBaseEntity() as any;
-    message.intVal = object.intVal ?? 0;
+    message.intVal = object.intVal ?? (options?.defaultZeroFields?.includes("intVal") ? 0 : undefined);
     message.stringVal = object.stringVal ?? "";
-    message.intArray = object.intArray?.map((e) => e) || [];
-    message.stringArray = object.stringArray?.map((e) => e) || [];
+    message.intArray = object.intArray?.map((e) => e) as any;
+    message.stringArray = object.stringArray?.map((e) => e) as any;
     message.subEntity = (object.subEntity !== undefined && object.subEntity !== null)
-      ? SubEntity.fromPartial(object.subEntity)
+      ? SubEntity.fromPartial(object.subEntity, options)
       : undefined;
-    message.subEntityArray = object.subEntityArray?.map((e) => SubEntity.fromPartial(e)) || [];
-    message.optionalIntVal = object.optionalIntVal ?? undefined;
+    message.subEntityArray = object.subEntityArray?.map((e) => SubEntity.fromPartial(e, options)) as any;
+    message.optionalIntVal = object.optionalIntVal ??
+      (options?.defaultZeroFields?.includes("optionalIntVal") ? 0 : undefined);
     message.fieldMask = object.fieldMask ?? undefined;
     message.listValue = object.listValue ?? undefined;
     message.structValue = object.structValue ?? undefined;
@@ -317,7 +363,7 @@ function createBaseSubEntity(): SubEntity {
 
 export const SubEntity: MessageFns<SubEntity> = {
   encode(message: SubEntity, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.subVal !== 0) {
+    if (message.subVal !== undefined && message.subVal !== 0) {
       writer.uint32(8).int32(message.subVal);
     }
     return writer;
@@ -348,23 +394,30 @@ export const SubEntity: MessageFns<SubEntity> = {
   },
 
   fromJSON(object: any): SubEntity {
-    return { subVal: isSet(object.subVal) ? globalThis.Number(object.subVal) : 0 };
+    return { subVal: isSet(object.subVal) ? globalThis.Number(object.subVal) : undefined };
   },
 
-  toJSON(message: SubEntity): unknown {
+  toJSON(message: SubEntity, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.subVal !== 0) {
+    const obj2: any = {};
+    if (message.subVal !== undefined && message.subVal !== 0) {
       obj.subVal = Math.round(message.subVal);
     }
-    return obj;
+    if (Object.hasOwn(message, "subVal")) {
+      obj2.subVal = message.subVal !== undefined ? Math.round(message.subVal) : message.subVal;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SubEntity>, I>>(base?: I): SubEntity {
     return SubEntity.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SubEntity>, I>>(object: I): SubEntity {
+  fromPartial<I extends Exact<DeepPartial<SubEntity>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SubEntity {
     const message = createBaseSubEntity() as any;
-    message.subVal = object.subVal ?? 0;
+    message.subVal = object.subVal ?? (options?.defaultZeroFields?.includes("subVal") ? 0 : undefined);
     return message;
   },
 };
@@ -376,7 +429,7 @@ export type DeepPartial<T> = T extends Builtin ? T
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends { readonly $case: string }
     ? { [K in keyof Omit<T, "$case">]?: DeepPartial<T[K]> } & { readonly $case: T["$case"] }
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -395,7 +448,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

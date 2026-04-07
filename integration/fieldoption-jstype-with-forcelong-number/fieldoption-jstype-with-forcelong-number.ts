@@ -13,7 +13,7 @@ export interface FieldOption {
 }
 
 function createBaseFieldOption(): FieldOption {
-  return { normalField: 0, numberField: 0, stringField: "0" };
+  return { normalField: 0, numberField: 0, stringField: "" };
 }
 
 export const FieldOption: MessageFns<FieldOption> = {
@@ -24,7 +24,7 @@ export const FieldOption: MessageFns<FieldOption> = {
     if (message.numberField !== 0) {
       writer.uint32(16).int64(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (message.stringField !== "") {
       writer.uint32(24).int64(message.stringField);
     }
     return writer;
@@ -74,31 +74,48 @@ export const FieldOption: MessageFns<FieldOption> = {
     return {
       normalField: isSet(object.normalField) ? globalThis.Number(object.normalField) : 0,
       numberField: isSet(object.numberField) ? globalThis.Number(object.numberField) : 0,
-      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "0",
+      stringField: isSet(object.stringField) ? globalThis.String(object.stringField) : "",
     };
   },
 
-  toJSON(message: FieldOption): unknown {
+  toJSON(message: FieldOption, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.normalField !== 0) {
       obj.normalField = Math.round(message.normalField);
+    }
+    if (Object.hasOwn(message, "normalField")) {
+      obj2.normalField = message.normalField !== undefined ? Math.round(message.normalField) : message.normalField;
     }
     if (message.numberField !== 0) {
       obj.numberField = globalThis.Number(message.numberField);
     }
-    if (message.stringField !== "0") {
+    if (Object.hasOwn(message, "numberField")) {
+      obj2.numberField = message.numberField !== undefined
+        ? globalThis.Number(message.numberField)
+        : message.numberField;
+    }
+    if (message.stringField !== "") {
       obj.stringField = globalThis.String(message.stringField);
     }
-    return obj;
+    if (Object.hasOwn(message, "stringField")) {
+      obj2.stringField = message.stringField !== undefined
+        ? globalThis.String(message.stringField)
+        : message.stringField;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<FieldOption>, I>>(base?: I): FieldOption {
     return FieldOption.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<FieldOption>, I>>(object: I): FieldOption {
+  fromPartial<I extends Exact<DeepPartial<FieldOption>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): FieldOption {
     const message = createBaseFieldOption();
-    message.normalField = object.normalField ?? 0;
-    message.numberField = object.numberField ?? 0;
+    message.normalField = object.normalField ?? "0";
+    message.numberField = object.numberField ?? "0";
     message.stringField = object.stringField ?? "0";
     return message;
   },
@@ -109,7 +126,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -135,7 +152,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

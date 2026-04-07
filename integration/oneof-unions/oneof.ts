@@ -295,47 +295,72 @@ export const PleaseChoose: MessageFns<PleaseChoose> = {
     };
   },
 
-  toJSON(message: PleaseChoose): unknown {
+  toJSON(message: PleaseChoose, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
     if (message.choice?.$case === "aNumber") {
       obj.aNumber = message.choice.aNumber;
+      obj2.a_number = message.choice.aNumber;
     } else if (message.choice?.$case === "aString") {
       obj.aString = message.choice.aString;
+      obj2.a_string = message.choice.aString;
     } else if (message.choice?.$case === "aMessage") {
       obj.aMessage = PleaseChoose_Submessage.toJSON(message.choice.aMessage);
+      obj2.a_message = PleaseChoose_Submessage.toJSON(message.choice.aMessage);
     } else if (message.choice?.$case === "aBool") {
       obj.aBool = message.choice.aBool;
+      obj2.a_bool = message.choice.aBool;
     } else if (message.choice?.$case === "bunchaBytes") {
       obj.bunchaBytes = base64FromBytes(message.choice.bunchaBytes);
+      obj2.buncha_bytes = base64FromBytes(message.choice.bunchaBytes);
     } else if (message.choice?.$case === "anEnum") {
       obj.anEnum = pleaseChoose_StateEnumToJSON(message.choice.anEnum);
+      obj2.anEnum = pleaseChoose_StateEnumToJSON(message.choice.anEnum);
     }
     if (message.age !== 0) {
       obj.age = Math.round(message.age);
     }
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? Math.round(message.age) : message.age;
+    }
     if (message.eitherOr?.$case === "either") {
       obj.either = message.eitherOr.either;
+      obj2.either = message.eitherOr.either;
     } else if (message.eitherOr?.$case === "or") {
       obj.or = message.eitherOr.or;
+      obj2.or = message.eitherOr.or;
     } else if (message.eitherOr?.$case === "thirdOption") {
       obj.thirdOption = message.eitherOr.thirdOption;
+      obj2.third_option = message.eitherOr.thirdOption;
     }
     if (message.signature.length !== 0) {
       obj.signature = base64FromBytes(message.signature);
     }
+    if (Object.hasOwn(message, "signature")) {
+      obj2.signature = message.signature !== undefined ? base64FromBytes(message.signature) : message.signature;
+    }
     if (message.value !== undefined) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PleaseChoose>, I>>(base?: I): PleaseChoose {
     return PleaseChoose.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PleaseChoose>, I>>(object: I): PleaseChoose {
+  fromPartial<I extends Exact<DeepPartial<PleaseChoose>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PleaseChoose {
     const message = createBasePleaseChoose();
     message.name = object.name ?? "";
     switch (object.choice?.$case) {
@@ -353,7 +378,10 @@ export const PleaseChoose: MessageFns<PleaseChoose> = {
       }
       case "aMessage": {
         if (object.choice?.aMessage !== undefined && object.choice?.aMessage !== null) {
-          message.choice = { $case: "aMessage", aMessage: PleaseChoose_Submessage.fromPartial(object.choice.aMessage) };
+          message.choice = {
+            $case: "aMessage",
+            aMessage: PleaseChoose_Submessage.fromPartial(object.choice.aMessage, options),
+          };
         }
         break;
       }
@@ -443,18 +471,25 @@ export const PleaseChoose_Submessage: MessageFns<PleaseChoose_Submessage> = {
     return { name: isSet(object.name) ? globalThis.String(object.name) : "" };
   },
 
-  toJSON(message: PleaseChoose_Submessage): unknown {
+  toJSON(message: PleaseChoose_Submessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PleaseChoose_Submessage>, I>>(base?: I): PleaseChoose_Submessage {
     return PleaseChoose_Submessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PleaseChoose_Submessage>, I>>(object: I): PleaseChoose_Submessage {
+  fromPartial<I extends Exact<DeepPartial<PleaseChoose_Submessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PleaseChoose_Submessage {
     const message = createBasePleaseChoose_Submessage();
     message.name = object.name ?? "";
     return message;
@@ -515,24 +550,34 @@ export const SimpleButOptional: MessageFns<SimpleButOptional> = {
     };
   },
 
-  toJSON(message: SimpleButOptional): unknown {
+  toJSON(message: SimpleButOptional, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== undefined) {
       obj.name = message.name;
+    }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
     }
     if (message.age !== undefined) {
       obj.age = Math.round(message.age);
     }
-    return obj;
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? Math.round(message.age) : message.age;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleButOptional>, I>>(base?: I): SimpleButOptional {
     return SimpleButOptional.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SimpleButOptional>, I>>(object: I): SimpleButOptional {
+  fromPartial<I extends Exact<DeepPartial<SimpleButOptional>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SimpleButOptional {
     const message = createBaseSimpleButOptional();
     message.name = object.name ?? undefined;
-    message.age = object.age ?? undefined;
+    message.age = object.age ?? (options?.defaultZeroFields?.includes("age") ? 0 : undefined);
     return message;
   },
 };
@@ -568,7 +613,7 @@ export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends { $case: string } ? { [K in keyof Omit<T, "$case">]?: DeepPartial<T[K]> } & { $case: T["$case"] }
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -583,7 +628,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

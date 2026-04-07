@@ -6,7 +6,7 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export interface Bar {
   name: string;
-  age: number;
+  age?: number | undefined;
 }
 
 function createBaseBar(): Bar {
@@ -18,7 +18,7 @@ export const Bar: MessageFns<Bar> = {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    if (message.age !== 0) {
+    if (message.age !== undefined && message.age !== 0) {
       writer.uint32(16).int32(message.age);
     }
     return writer;
@@ -59,28 +59,35 @@ export const Bar: MessageFns<Bar> = {
   fromJSON(object: any): Bar {
     return {
       name: isSet(object.name) ? globalThis.String(object.name) : "",
-      age: isSet(object.age) ? globalThis.Number(object.age) : 0,
+      age: isSet(object.age) ? globalThis.Number(object.age) : undefined,
     };
   },
 
-  toJSON(message: Bar): unknown {
+  toJSON(message: Bar, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    if (message.age !== 0) {
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    if (message.age !== undefined && message.age !== 0) {
       obj.age = Math.round(message.age);
     }
-    return obj;
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? Math.round(message.age) : message.age;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Bar>, I>>(base?: I): Bar {
     return Bar.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Bar>, I>>(object: I): Bar {
+  fromPartial<I extends Exact<DeepPartial<Bar>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Bar {
     const message = createBaseBar();
     message.name = object.name ?? "";
-    message.age = object.age ?? 0;
+    message.age = object.age ?? (options?.defaultZeroFields?.includes("age") ? 0 : undefined);
     return message;
   },
 };
@@ -90,7 +97,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -105,7 +112,7 @@ interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

@@ -65,21 +65,31 @@ export const TestMessage: MessageFns<TestMessage> = {
     };
   },
 
-  toJSON(message: TestMessage): unknown {
+  toJSON(message: TestMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.field1 !== false) {
       obj.field1 = message.field1;
+    }
+    if (Object.hasOwn(message, "field1")) {
+      obj2.field1 = message.field1 !== undefined ? message.field1 : message.field1;
     }
     if (message.field2 !== undefined) {
       obj.field2 = message.field2;
     }
-    return obj;
+    if (Object.hasOwn(message, "field2")) {
+      obj2.field2 = message.field2 !== undefined ? message.field2 : message.field2;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<TestMessage>, I>>(base?: I): TestMessage {
     return TestMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TestMessage>, I>>(object: I): TestMessage {
+  fromPartial<I extends Exact<DeepPartial<TestMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): TestMessage {
     const message = createBaseTestMessage();
     message.field1 = object.field1 ?? false;
     message.field2 = object.field2 ?? undefined;
@@ -92,7 +102,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -107,7 +117,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

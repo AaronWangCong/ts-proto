@@ -9,20 +9,20 @@ import { Observable } from "rxjs";
 export const protobufPackage = "hero";
 
 export interface HeroById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface VillainById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface Hero {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 
 export interface Villain {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 

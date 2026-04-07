@@ -10,6 +10,9 @@ export const protobufPackage = "google.protobuf";
  * Wrapper message for `double`.
  *
  * The JSON representation for `DoubleValue` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixDoubleValueSuffix {
   /** The double value. */
@@ -20,6 +23,9 @@ export interface PrefixDoubleValueSuffix {
  * Wrapper message for `float`.
  *
  * The JSON representation for `FloatValue` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixFloatValueSuffix {
   /** The float value. */
@@ -30,6 +36,9 @@ export interface PrefixFloatValueSuffix {
  * Wrapper message for `int64`.
  *
  * The JSON representation for `Int64Value` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixInt64ValueSuffix {
   /** The int64 value. */
@@ -40,6 +49,9 @@ export interface PrefixInt64ValueSuffix {
  * Wrapper message for `uint64`.
  *
  * The JSON representation for `UInt64Value` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixUInt64ValueSuffix {
   /** The uint64 value. */
@@ -50,16 +62,22 @@ export interface PrefixUInt64ValueSuffix {
  * Wrapper message for `int32`.
  *
  * The JSON representation for `Int32Value` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixInt32ValueSuffix {
   /** The int32 value. */
-  value: number;
+  value?: number | undefined;
 }
 
 /**
  * Wrapper message for `uint32`.
  *
  * The JSON representation for `UInt32Value` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixUInt32ValueSuffix {
   /** The uint32 value. */
@@ -70,6 +88,9 @@ export interface PrefixUInt32ValueSuffix {
  * Wrapper message for `bool`.
  *
  * The JSON representation for `BoolValue` is JSON `true` and `false`.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixBoolValueSuffix {
   /** The bool value. */
@@ -80,6 +101,9 @@ export interface PrefixBoolValueSuffix {
  * Wrapper message for `string`.
  *
  * The JSON representation for `StringValue` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixStringValueSuffix {
   /** The string value. */
@@ -90,6 +114,9 @@ export interface PrefixStringValueSuffix {
  * Wrapper message for `bytes`.
  *
  * The JSON representation for `BytesValue` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface PrefixBytesValueSuffix {
   /** The bytes value. */
@@ -136,18 +163,25 @@ export const PrefixDoubleValueSuffix: MessageFns<PrefixDoubleValueSuffix> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: PrefixDoubleValueSuffix): unknown {
+  toJSON(message: PrefixDoubleValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixDoubleValueSuffix>, I>>(base?: I): PrefixDoubleValueSuffix {
     return PrefixDoubleValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixDoubleValueSuffix>, I>>(object: I): PrefixDoubleValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixDoubleValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixDoubleValueSuffix {
     const message = createBasePrefixDoubleValueSuffix();
     message.value = object.value ?? 0;
     return message;
@@ -194,18 +228,25 @@ export const PrefixFloatValueSuffix: MessageFns<PrefixFloatValueSuffix> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: PrefixFloatValueSuffix): unknown {
+  toJSON(message: PrefixFloatValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixFloatValueSuffix>, I>>(base?: I): PrefixFloatValueSuffix {
     return PrefixFloatValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixFloatValueSuffix>, I>>(object: I): PrefixFloatValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixFloatValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixFloatValueSuffix {
     const message = createBasePrefixFloatValueSuffix();
     message.value = object.value ?? 0;
     return message;
@@ -252,20 +293,27 @@ export const PrefixInt64ValueSuffix: MessageFns<PrefixInt64ValueSuffix> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: PrefixInt64ValueSuffix): unknown {
+  toJSON(message: PrefixInt64ValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixInt64ValueSuffix>, I>>(base?: I): PrefixInt64ValueSuffix {
     return PrefixInt64ValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixInt64ValueSuffix>, I>>(object: I): PrefixInt64ValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixInt64ValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixInt64ValueSuffix {
     const message = createBasePrefixInt64ValueSuffix();
-    message.value = object.value ?? 0;
+    message.value = object.value ?? "0";
     return message;
   },
 };
@@ -310,18 +358,25 @@ export const PrefixUInt64ValueSuffix: MessageFns<PrefixUInt64ValueSuffix> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: PrefixUInt64ValueSuffix): unknown {
+  toJSON(message: PrefixUInt64ValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixUInt64ValueSuffix>, I>>(base?: I): PrefixUInt64ValueSuffix {
     return PrefixUInt64ValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixUInt64ValueSuffix>, I>>(object: I): PrefixUInt64ValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixUInt64ValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixUInt64ValueSuffix {
     const message = createBasePrefixUInt64ValueSuffix();
     message.value = object.value ?? 0;
     return message;
@@ -334,7 +389,7 @@ function createBasePrefixInt32ValueSuffix(): PrefixInt32ValueSuffix {
 
 export const PrefixInt32ValueSuffix: MessageFns<PrefixInt32ValueSuffix> = {
   encode(message: PrefixInt32ValueSuffix, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.value !== 0) {
+    if (message.value !== undefined && message.value !== 0) {
       writer.uint32(8).int32(message.value);
     }
     return writer;
@@ -365,23 +420,30 @@ export const PrefixInt32ValueSuffix: MessageFns<PrefixInt32ValueSuffix> = {
   },
 
   fromJSON(object: any): PrefixInt32ValueSuffix {
-    return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
+    return { value: isSet(object.value) ? globalThis.Number(object.value) : undefined };
   },
 
-  toJSON(message: PrefixInt32ValueSuffix): unknown {
+  toJSON(message: PrefixInt32ValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.value !== 0) {
+    const obj2: any = {};
+    if (message.value !== undefined && message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixInt32ValueSuffix>, I>>(base?: I): PrefixInt32ValueSuffix {
     return PrefixInt32ValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixInt32ValueSuffix>, I>>(object: I): PrefixInt32ValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixInt32ValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixInt32ValueSuffix {
     const message = createBasePrefixInt32ValueSuffix();
-    message.value = object.value ?? 0;
+    message.value = object.value ?? (options?.defaultZeroFields?.includes("value") ? 0 : undefined);
     return message;
   },
 };
@@ -426,18 +488,25 @@ export const PrefixUInt32ValueSuffix: MessageFns<PrefixUInt32ValueSuffix> = {
     return { value: isSet(object.value) ? globalThis.Number(object.value) : 0 };
   },
 
-  toJSON(message: PrefixUInt32ValueSuffix): unknown {
+  toJSON(message: PrefixUInt32ValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixUInt32ValueSuffix>, I>>(base?: I): PrefixUInt32ValueSuffix {
     return PrefixUInt32ValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixUInt32ValueSuffix>, I>>(object: I): PrefixUInt32ValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixUInt32ValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixUInt32ValueSuffix {
     const message = createBasePrefixUInt32ValueSuffix();
     message.value = object.value ?? 0;
     return message;
@@ -484,18 +553,25 @@ export const PrefixBoolValueSuffix: MessageFns<PrefixBoolValueSuffix> = {
     return { value: isSet(object.value) ? globalThis.Boolean(object.value) : false };
   },
 
-  toJSON(message: PrefixBoolValueSuffix): unknown {
+  toJSON(message: PrefixBoolValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== false) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixBoolValueSuffix>, I>>(base?: I): PrefixBoolValueSuffix {
     return PrefixBoolValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixBoolValueSuffix>, I>>(object: I): PrefixBoolValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixBoolValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixBoolValueSuffix {
     const message = createBasePrefixBoolValueSuffix();
     message.value = object.value ?? false;
     return message;
@@ -542,18 +618,25 @@ export const PrefixStringValueSuffix: MessageFns<PrefixStringValueSuffix> = {
     return { value: isSet(object.value) ? globalThis.String(object.value) : "" };
   },
 
-  toJSON(message: PrefixStringValueSuffix): unknown {
+  toJSON(message: PrefixStringValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixStringValueSuffix>, I>>(base?: I): PrefixStringValueSuffix {
     return PrefixStringValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixStringValueSuffix>, I>>(object: I): PrefixStringValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixStringValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixStringValueSuffix {
     const message = createBasePrefixStringValueSuffix();
     message.value = object.value ?? "";
     return message;
@@ -600,18 +683,25 @@ export const PrefixBytesValueSuffix: MessageFns<PrefixBytesValueSuffix> = {
     return { value: isSet(object.value) ? bytesFromBase64(object.value) : new Uint8Array(0) };
   },
 
-  toJSON(message: PrefixBytesValueSuffix): unknown {
+  toJSON(message: PrefixBytesValueSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value.length !== 0) {
       obj.value = base64FromBytes(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? base64FromBytes(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixBytesValueSuffix>, I>>(base?: I): PrefixBytesValueSuffix {
     return PrefixBytesValueSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixBytesValueSuffix>, I>>(object: I): PrefixBytesValueSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixBytesValueSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixBytesValueSuffix {
     const message = createBasePrefixBytesValueSuffix();
     message.value = object.value ?? new Uint8Array(0);
     return message;
@@ -648,7 +738,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -674,7 +764,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

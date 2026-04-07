@@ -8,7 +8,7 @@ export const protobufPackage = "something";
 
 export interface Something {
   hello: string;
-  foo: number[];
+  foo?: number[] | undefined;
   _unknownFields?: { [key: number]: Uint8Array[] } | undefined;
 }
 
@@ -21,11 +21,13 @@ export const Something: MessageFns<Something> = {
     if (message.hello !== "") {
       writer.uint32(10).string(message.hello);
     }
-    writer.uint32(18).fork();
-    for (const v of message.foo) {
-      writer.int32(v);
+    if (message.foo !== undefined && message.foo.length !== 0) {
+      writer.uint32(18).fork();
+      for (const v of message.foo) {
+        writer.int32(v);
+      }
+      writer.join();
     }
-    writer.join();
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
         const tag = parseInt(key, 10);
@@ -54,7 +56,7 @@ export const Something: MessageFns<Something> = {
         }
         case 2: {
           if (tag === 16) {
-            message.foo.push(reader.int32());
+            message.foo?.push(reader.int32());
 
             continue;
           }
@@ -62,7 +64,7 @@ export const Something: MessageFns<Something> = {
           if (tag === 18) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.foo.push(reader.int32());
+              message.foo?.push(reader.int32());
             }
 
             continue;

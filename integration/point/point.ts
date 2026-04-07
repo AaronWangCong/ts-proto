@@ -70,21 +70,28 @@ export const Point: MessageFns<Point> = {
     };
   },
 
-  toJSON(message: Point): unknown {
+  toJSON(message: Point, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.lat !== 0) {
       obj.lat = message.lat;
+    }
+    if (Object.hasOwn(message, "lat")) {
+      obj2.lat = message.lat !== undefined ? message.lat : message.lat;
     }
     if (message.lng !== 0) {
       obj.lng = message.lng;
     }
-    return obj;
+    if (Object.hasOwn(message, "lng")) {
+      obj2.lng = message.lng !== undefined ? message.lng : message.lng;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Point>, I>>(base?: I): Point {
     return Point.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Point>, I>>(object: I): Point {
+  fromPartial<I extends Exact<DeepPartial<Point>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Point {
     const message = createBasePoint();
     message.lat = object.lat ?? 0;
     message.lng = object.lng ?? 0;
@@ -146,24 +153,31 @@ export const Area: MessageFns<Area> = {
     };
   },
 
-  toJSON(message: Area): unknown {
+  toJSON(message: Area, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.nw !== undefined) {
       obj.nw = Point.toJSON(message.nw);
+    }
+    if (Object.hasOwn(message, "nw")) {
+      obj2.nw = message.nw !== undefined ? Point.toJSON(message.nw, true) : message.nw;
     }
     if (message.se !== undefined) {
       obj.se = Point.toJSON(message.se);
     }
-    return obj;
+    if (Object.hasOwn(message, "se")) {
+      obj2.se = message.se !== undefined ? Point.toJSON(message.se, true) : message.se;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Area>, I>>(base?: I): Area {
     return Area.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Area>, I>>(object: I): Area {
+  fromPartial<I extends Exact<DeepPartial<Area>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Area {
     const message = createBaseArea();
-    message.nw = (object.nw !== undefined && object.nw !== null) ? Point.fromPartial(object.nw) : undefined;
-    message.se = (object.se !== undefined && object.se !== null) ? Point.fromPartial(object.se) : undefined;
+    message.nw = (object.nw !== undefined && object.nw !== null) ? Point.fromPartial(object.nw, options) : undefined;
+    message.se = (object.se !== undefined && object.se !== null) ? Point.fromPartial(object.se, options) : undefined;
     return message;
   },
 };
@@ -173,7 +187,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -188,7 +202,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

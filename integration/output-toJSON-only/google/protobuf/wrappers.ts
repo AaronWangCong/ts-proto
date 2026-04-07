@@ -9,6 +9,9 @@ export const protobufPackage = "google.protobuf";
  * Wrapper message for `double`.
  *
  * The JSON representation for `DoubleValue` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface DoubleValue {
   /** The double value. */
@@ -19,6 +22,9 @@ export interface DoubleValue {
  * Wrapper message for `float`.
  *
  * The JSON representation for `FloatValue` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface FloatValue {
   /** The float value. */
@@ -29,6 +35,9 @@ export interface FloatValue {
  * Wrapper message for `int64`.
  *
  * The JSON representation for `Int64Value` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface Int64Value {
   /** The int64 value. */
@@ -39,6 +48,9 @@ export interface Int64Value {
  * Wrapper message for `uint64`.
  *
  * The JSON representation for `UInt64Value` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface UInt64Value {
   /** The uint64 value. */
@@ -49,16 +61,22 @@ export interface UInt64Value {
  * Wrapper message for `int32`.
  *
  * The JSON representation for `Int32Value` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface Int32Value {
   /** The int32 value. */
-  value: number;
+  value?: number | undefined;
 }
 
 /**
  * Wrapper message for `uint32`.
  *
  * The JSON representation for `UInt32Value` is JSON number.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface UInt32Value {
   /** The uint32 value. */
@@ -69,6 +87,9 @@ export interface UInt32Value {
  * Wrapper message for `bool`.
  *
  * The JSON representation for `BoolValue` is JSON `true` and `false`.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface BoolValue {
   /** The bool value. */
@@ -79,6 +100,9 @@ export interface BoolValue {
  * Wrapper message for `string`.
  *
  * The JSON representation for `StringValue` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface StringValue {
   /** The string value. */
@@ -89,6 +113,9 @@ export interface StringValue {
  * Wrapper message for `bytes`.
  *
  * The JSON representation for `BytesValue` is JSON string.
+ *
+ * Not recommended for use in new APIs, but still useful for legacy APIs and
+ * has no plan to be removed.
  */
 export interface BytesValue {
   /** The bytes value. */
@@ -96,92 +123,128 @@ export interface BytesValue {
 }
 
 export const DoubleValue: MessageFns<DoubleValue> = {
-  toJSON(message: DoubleValue): unknown {
+  toJSON(message: DoubleValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const FloatValue: MessageFns<FloatValue> = {
-  toJSON(message: FloatValue): unknown {
+  toJSON(message: FloatValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const Int64Value: MessageFns<Int64Value> = {
-  toJSON(message: Int64Value): unknown {
+  toJSON(message: Int64Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const UInt64Value: MessageFns<UInt64Value> = {
-  toJSON(message: UInt64Value): unknown {
+  toJSON(message: UInt64Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const Int32Value: MessageFns<Int32Value> = {
-  toJSON(message: Int32Value): unknown {
+  toJSON(message: Int32Value, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.value !== 0) {
+    const obj2: any = {};
+    if (message.value !== undefined && message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const UInt32Value: MessageFns<UInt32Value> = {
-  toJSON(message: UInt32Value): unknown {
+  toJSON(message: UInt32Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const BoolValue: MessageFns<BoolValue> = {
-  toJSON(message: BoolValue): unknown {
+  toJSON(message: BoolValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== false) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const StringValue: MessageFns<StringValue> = {
-  toJSON(message: StringValue): unknown {
+  toJSON(message: StringValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
 export const BytesValue: MessageFns<BytesValue> = {
-  toJSON(message: BytesValue): unknown {
+  toJSON(message: BytesValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value.length !== 0) {
       obj.value = base64FromBytes(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? base64FromBytes(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 };
 
@@ -198,5 +261,5 @@ function base64FromBytes(arr: Uint8Array): string {
 }
 
 export interface MessageFns<T> {
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
 }

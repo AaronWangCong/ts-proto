@@ -65,21 +65,28 @@ export const Foo: MessageFns<Foo> = {
     };
   },
 
-  toJSON(message: Foo): unknown {
+  toJSON(message: Foo, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.bar !== "") {
       obj.bar = message.bar;
+    }
+    if (Object.hasOwn(message, "bar")) {
+      obj2.bar = message.bar !== undefined ? message.bar : message.bar;
     }
     if (message.baz !== "") {
       obj.baz = message.baz;
     }
-    return obj;
+    if (Object.hasOwn(message, "baz")) {
+      obj2.baz = message.baz !== undefined ? message.baz : message.baz;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create(base?: DeepPartial<Foo>): Foo {
     return Foo.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<Foo>): Foo {
+  fromPartial(object: DeepPartial<Foo>, options?: { defaultZeroFields?: string[] }): Foo {
     const message = createBaseFoo();
     message.bar = object.bar ?? "";
     message.baz = object.baz ?? "";
@@ -92,7 +99,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 function isSet(value: any): boolean {
@@ -103,7 +110,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create(base?: DeepPartial<T>): T;
-  fromPartial(object: DeepPartial<T>): T;
+  fromPartial(object: DeepPartial<T>, options?: { defaultZeroFields?: string[] }): T;
 }

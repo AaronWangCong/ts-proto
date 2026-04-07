@@ -33,12 +33,13 @@ export function test_TestTypeToJSON(object: Test_TestType): string {
 }
 
 export const Test: MessageFns<Test> = {
-  toJSON(_: Test): unknown {
+  toJSON(_: Test, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 };
 
 export interface MessageFns<T> {
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
 }

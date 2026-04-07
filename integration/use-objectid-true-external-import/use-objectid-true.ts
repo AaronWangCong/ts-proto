@@ -33,8 +33,10 @@ export const Todo: MessageFns<Todo> = {
     if (message.oid !== undefined) {
       ObjectId.encode(toProtoObjectId(message.oid), writer.uint32(18).fork()).join();
     }
-    for (const v of message.repeatedOid) {
-      ObjectId.encode(toProtoObjectId(v!), writer.uint32(26).fork()).join();
+    if (message.repeatedOid !== undefined && message.repeatedOid.length !== 0) {
+      for (const v of message.repeatedOid) {
+        ObjectId.encode(toProtoObjectId(v!), writer.uint32(26).fork()).join();
+      }
     }
     if (message.optionalOid !== undefined) {
       ObjectId.encode(toProtoObjectId(message.optionalOid), writer.uint32(34).fork()).join();
@@ -73,7 +75,7 @@ export const Todo: MessageFns<Todo> = {
             break;
           }
 
-          message.repeatedOid.push(fromProtoObjectId(ObjectId.decode(reader, reader.uint32())));
+          message.repeatedOid?.push(fromProtoObjectId(ObjectId.decode(reader, reader.uint32())));
           continue;
         }
         case 4: {
@@ -121,40 +123,55 @@ export const Todo: MessageFns<Todo> = {
     };
   },
 
-  toJSON(message: Todo): unknown {
+  toJSON(message: Todo, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.id !== "") {
       obj.id = message.id;
+    }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? message.id : message.id;
     }
     if (message.oid !== undefined) {
       obj.oid = message.oid.toString();
     }
+    if (Object.hasOwn(message, "oid")) {
+      obj2.oid = message.oid !== undefined ? message.oid.toString() : message.oid;
+    }
     if (message.repeatedOid?.length) {
-      obj.repeatedOid = message.repeatedOid.map((e) => e.toString());
+      obj.repeatedOid = message.repeatedOid?.map((e) => e.toString());
+    }
+    if (message.repeatedOid) {
+      obj2.repeated_oid = message.repeatedOid?.map((e) => e.toString());
     }
     if (message.optionalOid !== undefined) {
       obj.optionalOid = message.optionalOid.toString();
+    }
+    if (Object.hasOwn(message, "optionalOid")) {
+      obj2.optional_oid = message.optionalOid !== undefined ? message.optionalOid.toString() : message.optionalOid;
     }
     if (message.mapOfOids) {
       const entries = Object.entries(message.mapOfOids);
       if (entries.length > 0) {
         obj.mapOfOids = {};
+        obj2.map_of_oids = {};
         entries.forEach(([k, v]) => {
           obj.mapOfOids[k] = v.toString();
+          obj2.map_of_oids[k] = v.toString();
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Todo>, I>>(base?: I): Todo {
     return Todo.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Todo>, I>>(object: I): Todo {
+  fromPartial<I extends Exact<DeepPartial<Todo>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Todo {
     const message = createBaseTodo();
     message.id = object.id ?? "";
     message.oid = (object.oid !== undefined && object.oid !== null) ? object.oid as mongodb.ObjectId : undefined;
-    message.repeatedOid = object.repeatedOid?.map((e) => e as mongodb.ObjectId) || [];
+    message.repeatedOid = object.repeatedOid?.map((e) => e as mongodb.ObjectId) as any;
     message.optionalOid = (object.optionalOid !== undefined && object.optionalOid !== null)
       ? object.optionalOid as mongodb.ObjectId
       : undefined;
@@ -225,21 +242,31 @@ export const Todo_MapOfOidsEntry: MessageFns<Todo_MapOfOidsEntry> = {
     };
   },
 
-  toJSON(message: Todo_MapOfOidsEntry): unknown {
+  toJSON(message: Todo_MapOfOidsEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== undefined) {
       obj.value = message.value.toString();
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value.toString() : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Todo_MapOfOidsEntry>, I>>(base?: I): Todo_MapOfOidsEntry {
     return Todo_MapOfOidsEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Todo_MapOfOidsEntry>, I>>(object: I): Todo_MapOfOidsEntry {
+  fromPartial<I extends Exact<DeepPartial<Todo_MapOfOidsEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Todo_MapOfOidsEntry {
     const message = createBaseTodo_MapOfOidsEntry();
     message.key = object.key ?? "";
     message.value = (object.value !== undefined && object.value !== null)
@@ -254,7 +281,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -292,7 +319,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

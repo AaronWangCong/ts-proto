@@ -87,8 +87,10 @@ function createBaseTile(): Tile {
 
 export const Tile: MessageFns<Tile> = {
   encode(message: Tile, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.layers) {
-      Tile_Layer.encode(v!, writer.uint32(26).fork()).join();
+    if (message.layers !== undefined && message.layers.length !== 0) {
+      for (const v of message.layers) {
+        Tile_Layer.encode(v!, writer.uint32(26).fork()).join();
+      }
     }
     return writer;
   },
@@ -105,7 +107,7 @@ export const Tile: MessageFns<Tile> = {
             break;
           }
 
-          message.layers.push(Tile_Layer.decode(reader, reader.uint32()));
+          message.layers?.push(Tile_Layer.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -123,20 +125,24 @@ export const Tile: MessageFns<Tile> = {
     };
   },
 
-  toJSON(message: Tile): unknown {
+  toJSON(message: Tile, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.layers?.length) {
-      obj.layers = message.layers.map((e) => Tile_Layer.toJSON(e));
+      obj.layers = message.layers?.map((e) => Tile_Layer.toJSON(e));
     }
-    return obj;
+    if (message.layers) {
+      obj2.layers = message.layers?.map((e) => Tile_Layer.toJSON(e, true));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Tile>, I>>(base?: I): Tile {
     return Tile.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Tile>, I>>(object: I): Tile {
+  fromPartial<I extends Exact<DeepPartial<Tile>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Tile {
     const message = createBaseTile();
-    message.layers = object.layers?.map((e) => Tile_Layer.fromPartial(e)) || [];
+    message.layers = object.layers?.map((e) => Tile_Layer.fromPartial(e, options)) as any;
     return message;
   },
 };
@@ -255,41 +261,66 @@ export const Tile_Value: MessageFns<Tile_Value> = {
     };
   },
 
-  toJSON(message: Tile_Value): unknown {
+  toJSON(message: Tile_Value, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.stringValue !== undefined && message.stringValue !== "") {
       obj.stringValue = message.stringValue;
+    }
+    if (Object.hasOwn(message, "stringValue")) {
+      obj2.string_value = message.stringValue !== undefined ? message.stringValue : message.stringValue;
     }
     if (message.floatValue !== undefined && message.floatValue !== 0) {
       obj.floatValue = message.floatValue;
     }
+    if (Object.hasOwn(message, "floatValue")) {
+      obj2.float_value = message.floatValue !== undefined ? message.floatValue : message.floatValue;
+    }
     if (message.doubleValue !== undefined && message.doubleValue !== 0) {
       obj.doubleValue = message.doubleValue;
+    }
+    if (Object.hasOwn(message, "doubleValue")) {
+      obj2.double_value = message.doubleValue !== undefined ? message.doubleValue : message.doubleValue;
     }
     if (message.intValue !== undefined && message.intValue !== 0) {
       obj.intValue = Math.round(message.intValue);
     }
+    if (Object.hasOwn(message, "intValue")) {
+      obj2.int_value = message.intValue !== undefined ? Math.round(message.intValue) : message.intValue;
+    }
     if (message.uintValue !== undefined && message.uintValue !== 0) {
       obj.uintValue = Math.round(message.uintValue);
+    }
+    if (Object.hasOwn(message, "uintValue")) {
+      obj2.uint_value = message.uintValue !== undefined ? Math.round(message.uintValue) : message.uintValue;
     }
     if (message.sintValue !== undefined && message.sintValue !== 0) {
       obj.sintValue = Math.round(message.sintValue);
     }
+    if (Object.hasOwn(message, "sintValue")) {
+      obj2.sint_value = message.sintValue !== undefined ? Math.round(message.sintValue) : message.sintValue;
+    }
     if (message.boolValue !== undefined && message.boolValue !== false) {
       obj.boolValue = message.boolValue;
     }
-    return obj;
+    if (Object.hasOwn(message, "boolValue")) {
+      obj2.bool_value = message.boolValue !== undefined ? message.boolValue : message.boolValue;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Tile_Value>, I>>(base?: I): Tile_Value {
     return Tile_Value.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Tile_Value>, I>>(object: I): Tile_Value {
+  fromPartial<I extends Exact<DeepPartial<Tile_Value>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Tile_Value {
     const message = createBaseTile_Value();
     message.stringValue = object.stringValue ?? "";
     message.floatValue = object.floatValue ?? 0;
     message.doubleValue = object.doubleValue ?? 0;
-    message.intValue = object.intValue ?? 0;
+    message.intValue = object.intValue ?? "0";
     message.uintValue = object.uintValue ?? 0;
     message.sintValue = object.sintValue ?? 0;
     message.boolValue = object.boolValue ?? false;
@@ -306,19 +337,23 @@ export const Tile_Feature: MessageFns<Tile_Feature> = {
     if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
-    writer.uint32(18).fork();
-    for (const v of message.tags) {
-      writer.uint32(v);
+    if (message.tags !== undefined && message.tags.length !== 0) {
+      writer.uint32(18).fork();
+      for (const v of message.tags) {
+        writer.uint32(v);
+      }
+      writer.join();
     }
-    writer.join();
     if (message.type !== undefined && message.type !== 0) {
       writer.uint32(24).int32(message.type);
     }
-    writer.uint32(34).fork();
-    for (const v of message.geometry) {
-      writer.uint32(v);
+    if (message.geometry !== undefined && message.geometry.length !== 0) {
+      writer.uint32(34).fork();
+      for (const v of message.geometry) {
+        writer.uint32(v);
+      }
+      writer.join();
     }
-    writer.join();
     return writer;
   },
 
@@ -339,7 +374,7 @@ export const Tile_Feature: MessageFns<Tile_Feature> = {
         }
         case 2: {
           if (tag === 16) {
-            message.tags.push(reader.uint32());
+            message.tags?.push(reader.uint32());
 
             continue;
           }
@@ -347,7 +382,7 @@ export const Tile_Feature: MessageFns<Tile_Feature> = {
           if (tag === 18) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.tags.push(reader.uint32());
+              message.tags?.push(reader.uint32());
             }
 
             continue;
@@ -360,12 +395,15 @@ export const Tile_Feature: MessageFns<Tile_Feature> = {
             break;
           }
 
-          message.type = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.type = _enumValue;
+          }
           continue;
         }
         case 4: {
           if (tag === 32) {
-            message.geometry.push(reader.uint32());
+            message.geometry?.push(reader.uint32());
 
             continue;
           }
@@ -373,7 +411,7 @@ export const Tile_Feature: MessageFns<Tile_Feature> = {
           if (tag === 34) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.geometry.push(reader.uint32());
+              message.geometry?.push(reader.uint32());
             }
 
             continue;
@@ -399,32 +437,48 @@ export const Tile_Feature: MessageFns<Tile_Feature> = {
     };
   },
 
-  toJSON(message: Tile_Feature): unknown {
+  toJSON(message: Tile_Feature, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.id !== undefined && message.id !== 0) {
       obj.id = Math.round(message.id);
     }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
+    }
     if (message.tags?.length) {
-      obj.tags = message.tags.map((e) => Math.round(e));
+      obj.tags = message.tags?.map((e) => Math.round(e));
+    }
+    if (message.tags) {
+      obj2.tags = message.tags?.map((e) => Math.round(e));
     }
     if (message.type !== undefined && message.type !== 0) {
       obj.type = tile_GeomTypeToJSON(message.type);
     }
-    if (message.geometry?.length) {
-      obj.geometry = message.geometry.map((e) => Math.round(e));
+    if (Object.hasOwn(message, "type")) {
+      obj2.type = message.type !== undefined ? tile_GeomTypeToJSON(message.type) : message.type;
     }
-    return obj;
+    if (message.geometry?.length) {
+      obj.geometry = message.geometry?.map((e) => Math.round(e));
+    }
+    if (message.geometry) {
+      obj2.geometry = message.geometry?.map((e) => Math.round(e));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Tile_Feature>, I>>(base?: I): Tile_Feature {
     return Tile_Feature.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Tile_Feature>, I>>(object: I): Tile_Feature {
+  fromPartial<I extends Exact<DeepPartial<Tile_Feature>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Tile_Feature {
     const message = createBaseTile_Feature();
     message.id = object.id ?? 0;
-    message.tags = object.tags?.map((e) => e) || [];
+    message.tags = object.tags?.map((e) => e) as any;
     message.type = object.type ?? 0;
-    message.geometry = object.geometry?.map((e) => e) || [];
+    message.geometry = object.geometry?.map((e) => e) as any;
     return message;
   },
 };
@@ -441,14 +495,20 @@ export const Tile_Layer: MessageFns<Tile_Layer> = {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
-    for (const v of message.features) {
-      Tile_Feature.encode(v!, writer.uint32(18).fork()).join();
+    if (message.features !== undefined && message.features.length !== 0) {
+      for (const v of message.features) {
+        Tile_Feature.encode(v!, writer.uint32(18).fork()).join();
+      }
     }
-    for (const v of message.keys) {
-      writer.uint32(26).string(v!);
+    if (message.keys !== undefined && message.keys.length !== 0) {
+      for (const v of message.keys) {
+        writer.uint32(26).string(v!);
+      }
     }
-    for (const v of message.values) {
-      Tile_Value.encode(v!, writer.uint32(34).fork()).join();
+    if (message.values !== undefined && message.values.length !== 0) {
+      for (const v of message.values) {
+        Tile_Value.encode(v!, writer.uint32(34).fork()).join();
+      }
     }
     if (message.extent !== undefined && message.extent !== 4096) {
       writer.uint32(40).uint32(message.extent);
@@ -484,7 +544,7 @@ export const Tile_Layer: MessageFns<Tile_Layer> = {
             break;
           }
 
-          message.features.push(Tile_Feature.decode(reader, reader.uint32()));
+          message.features?.push(Tile_Feature.decode(reader, reader.uint32()));
           continue;
         }
         case 3: {
@@ -492,7 +552,7 @@ export const Tile_Layer: MessageFns<Tile_Layer> = {
             break;
           }
 
-          message.keys.push(reader.string());
+          message.keys?.push(reader.string());
           continue;
         }
         case 4: {
@@ -500,7 +560,7 @@ export const Tile_Layer: MessageFns<Tile_Layer> = {
             break;
           }
 
-          message.values.push(Tile_Value.decode(reader, reader.uint32()));
+          message.values?.push(Tile_Value.decode(reader, reader.uint32()));
           continue;
         }
         case 5: {
@@ -533,39 +593,61 @@ export const Tile_Layer: MessageFns<Tile_Layer> = {
     };
   },
 
-  toJSON(message: Tile_Layer): unknown {
+  toJSON(message: Tile_Layer, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.version !== 1) {
       obj.version = Math.round(message.version);
+    }
+    if (Object.hasOwn(message, "version")) {
+      obj2.version = message.version !== undefined ? Math.round(message.version) : message.version;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
     if (message.features?.length) {
-      obj.features = message.features.map((e) => Tile_Feature.toJSON(e));
+      obj.features = message.features?.map((e) => Tile_Feature.toJSON(e));
+    }
+    if (message.features) {
+      obj2.features = message.features?.map((e) => Tile_Feature.toJSON(e, true));
     }
     if (message.keys?.length) {
       obj.keys = message.keys;
     }
+    if (message.keys) {
+      obj2.keys = message.keys;
+    }
     if (message.values?.length) {
-      obj.values = message.values.map((e) => Tile_Value.toJSON(e));
+      obj.values = message.values?.map((e) => Tile_Value.toJSON(e));
+    }
+    if (message.values) {
+      obj2.values = message.values?.map((e) => Tile_Value.toJSON(e, true));
     }
     if (message.extent !== undefined && message.extent !== 4096) {
       obj.extent = Math.round(message.extent);
     }
-    return obj;
+    if (Object.hasOwn(message, "extent")) {
+      obj2.extent = message.extent !== undefined ? Math.round(message.extent) : message.extent;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Tile_Layer>, I>>(base?: I): Tile_Layer {
     return Tile_Layer.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Tile_Layer>, I>>(object: I): Tile_Layer {
+  fromPartial<I extends Exact<DeepPartial<Tile_Layer>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Tile_Layer {
     const message = createBaseTile_Layer();
     message.version = object.version ?? 1;
     message.name = object.name ?? "";
-    message.features = object.features?.map((e) => Tile_Feature.fromPartial(e)) || [];
-    message.keys = object.keys?.map((e) => e) || [];
-    message.values = object.values?.map((e) => Tile_Value.fromPartial(e)) || [];
+    message.features = object.features?.map((e) => Tile_Feature.fromPartial(e, options)) as any;
+    message.keys = object.keys?.map((e) => e) as any;
+    message.values = object.values?.map((e) => Tile_Value.fromPartial(e, options)) as any;
     message.extent = object.extent ?? 4096;
     return message;
   },
@@ -576,7 +658,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -602,7 +684,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

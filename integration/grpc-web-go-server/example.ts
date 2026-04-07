@@ -150,21 +150,31 @@ export const DashFlash: MessageFns<DashFlash> = {
     };
   },
 
-  toJSON(message: DashFlash): unknown {
+  toJSON(message: DashFlash, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.msg !== "") {
       obj.msg = message.msg;
+    }
+    if (Object.hasOwn(message, "msg")) {
+      obj2.msg = message.msg !== undefined ? message.msg : message.msg;
     }
     if (message.type !== 0) {
       obj.type = dashFlash_TypeToJSON(message.type);
     }
-    return obj;
+    if (Object.hasOwn(message, "type")) {
+      obj2.type = message.type !== undefined ? dashFlash_TypeToJSON(message.type) : message.type;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashFlash>, I>>(base?: I): DashFlash {
     return DashFlash.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashFlash>, I>>(object: I): DashFlash {
+  fromPartial<I extends Exact<DeepPartial<DashFlash>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashFlash {
     const message = createBaseDashFlash();
     message.msg = object.msg ?? "";
     message.type = object.type ?? 0;
@@ -184,8 +194,10 @@ export const DashUserSettingsState: MessageFns<DashUserSettingsState> = {
     if (message.urls !== undefined) {
       DashUserSettingsState_URLs.encode(message.urls, writer.uint32(50).fork()).join();
     }
-    for (const v of message.flashes) {
-      DashFlash.encode(v!, writer.uint32(58).fork()).join();
+    if (message.flashes !== undefined && message.flashes.length !== 0) {
+      for (const v of message.flashes) {
+        DashFlash.encode(v!, writer.uint32(58).fork()).join();
+      }
     }
     return writer;
   },
@@ -218,7 +230,7 @@ export const DashUserSettingsState: MessageFns<DashUserSettingsState> = {
             break;
           }
 
-          message.flashes.push(DashFlash.decode(reader, reader.uint32()));
+          message.flashes?.push(DashFlash.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -238,30 +250,43 @@ export const DashUserSettingsState: MessageFns<DashUserSettingsState> = {
     };
   },
 
-  toJSON(message: DashUserSettingsState): unknown {
+  toJSON(message: DashUserSettingsState, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.email !== "") {
       obj.email = message.email;
+    }
+    if (Object.hasOwn(message, "email")) {
+      obj2.email = message.email !== undefined ? message.email : message.email;
     }
     if (message.urls !== undefined) {
       obj.urls = DashUserSettingsState_URLs.toJSON(message.urls);
     }
-    if (message.flashes?.length) {
-      obj.flashes = message.flashes.map((e) => DashFlash.toJSON(e));
+    if (Object.hasOwn(message, "urls")) {
+      obj2.urls = message.urls !== undefined ? DashUserSettingsState_URLs.toJSON(message.urls, true) : message.urls;
     }
-    return obj;
+    if (message.flashes?.length) {
+      obj.flashes = message.flashes?.map((e) => DashFlash.toJSON(e));
+    }
+    if (message.flashes) {
+      obj2.flashes = message.flashes?.map((e) => DashFlash.toJSON(e, true));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashUserSettingsState>, I>>(base?: I): DashUserSettingsState {
     return DashUserSettingsState.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState>, I>>(object: I): DashUserSettingsState {
+  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashUserSettingsState {
     const message = createBaseDashUserSettingsState();
     message.email = object.email ?? "";
     message.urls = (object.urls !== undefined && object.urls !== null)
-      ? DashUserSettingsState_URLs.fromPartial(object.urls)
+      ? DashUserSettingsState_URLs.fromPartial(object.urls, options)
       : undefined;
-    message.flashes = object.flashes?.map((e) => DashFlash.fromPartial(e)) || [];
+    message.flashes = object.flashes?.map((e) => DashFlash.fromPartial(e, options)) as any;
     return message;
   },
 };
@@ -320,21 +345,31 @@ export const DashUserSettingsState_URLs: MessageFns<DashUserSettingsState_URLs> 
     };
   },
 
-  toJSON(message: DashUserSettingsState_URLs): unknown {
+  toJSON(message: DashUserSettingsState_URLs, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.connectGoogle !== "") {
       obj.connectGoogle = message.connectGoogle;
+    }
+    if (Object.hasOwn(message, "connectGoogle")) {
+      obj2.connect_google = message.connectGoogle !== undefined ? message.connectGoogle : message.connectGoogle;
     }
     if (message.connectGithub !== "") {
       obj.connectGithub = message.connectGithub;
     }
-    return obj;
+    if (Object.hasOwn(message, "connectGithub")) {
+      obj2.connect_github = message.connectGithub !== undefined ? message.connectGithub : message.connectGithub;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashUserSettingsState_URLs>, I>>(base?: I): DashUserSettingsState_URLs {
     return DashUserSettingsState_URLs.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState_URLs>, I>>(object: I): DashUserSettingsState_URLs {
+  fromPartial<I extends Exact<DeepPartial<DashUserSettingsState_URLs>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashUserSettingsState_URLs {
     const message = createBaseDashUserSettingsState_URLs();
     message.connectGoogle = object.connectGoogle ?? "";
     message.connectGithub = object.connectGithub ?? "";
@@ -420,27 +455,43 @@ export const DashCred: MessageFns<DashCred> = {
     };
   },
 
-  toJSON(message: DashCred): unknown {
+  toJSON(message: DashCred, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.description !== "") {
       obj.description = message.description;
+    }
+    if (Object.hasOwn(message, "description")) {
+      obj2.description = message.description !== undefined ? message.description : message.description;
     }
     if (message.metadata !== "") {
       obj.metadata = message.metadata;
     }
+    if (Object.hasOwn(message, "metadata")) {
+      obj2.metadata = message.metadata !== undefined ? message.metadata : message.metadata;
+    }
     if (message.token !== "") {
       obj.token = message.token;
+    }
+    if (Object.hasOwn(message, "token")) {
+      obj2.token = message.token !== undefined ? message.token : message.token;
     }
     if (message.id !== "") {
       obj.id = message.id;
     }
-    return obj;
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? message.id : message.id;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashCred>, I>>(base?: I): DashCred {
     return DashCred.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashCred>, I>>(object: I): DashCred {
+  fromPartial<I extends Exact<DeepPartial<DashCred>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashCred {
     const message = createBaseDashCred();
     message.description = object.description ?? "";
     message.metadata = object.metadata ?? "";
@@ -504,21 +555,31 @@ export const DashAPICredsCreateReq: MessageFns<DashAPICredsCreateReq> = {
     };
   },
 
-  toJSON(message: DashAPICredsCreateReq): unknown {
+  toJSON(message: DashAPICredsCreateReq, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.description !== "") {
       obj.description = message.description;
+    }
+    if (Object.hasOwn(message, "description")) {
+      obj2.description = message.description !== undefined ? message.description : message.description;
     }
     if (message.metadata !== "") {
       obj.metadata = message.metadata;
     }
-    return obj;
+    if (Object.hasOwn(message, "metadata")) {
+      obj2.metadata = message.metadata !== undefined ? message.metadata : message.metadata;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashAPICredsCreateReq>, I>>(base?: I): DashAPICredsCreateReq {
     return DashAPICredsCreateReq.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashAPICredsCreateReq>, I>>(object: I): DashAPICredsCreateReq {
+  fromPartial<I extends Exact<DeepPartial<DashAPICredsCreateReq>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashAPICredsCreateReq {
     const message = createBaseDashAPICredsCreateReq();
     message.description = object.description ?? "";
     message.metadata = object.metadata ?? "";
@@ -604,27 +665,43 @@ export const DashAPICredsUpdateReq: MessageFns<DashAPICredsUpdateReq> = {
     };
   },
 
-  toJSON(message: DashAPICredsUpdateReq): unknown {
+  toJSON(message: DashAPICredsUpdateReq, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.credSid !== "") {
       obj.credSid = message.credSid;
+    }
+    if (Object.hasOwn(message, "credSid")) {
+      obj2.cred_sid = message.credSid !== undefined ? message.credSid : message.credSid;
     }
     if (message.description !== "") {
       obj.description = message.description;
     }
+    if (Object.hasOwn(message, "description")) {
+      obj2.description = message.description !== undefined ? message.description : message.description;
+    }
     if (message.metadata !== "") {
       obj.metadata = message.metadata;
+    }
+    if (Object.hasOwn(message, "metadata")) {
+      obj2.metadata = message.metadata !== undefined ? message.metadata : message.metadata;
     }
     if (message.id !== "") {
       obj.id = message.id;
     }
-    return obj;
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? message.id : message.id;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashAPICredsUpdateReq>, I>>(base?: I): DashAPICredsUpdateReq {
     return DashAPICredsUpdateReq.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashAPICredsUpdateReq>, I>>(object: I): DashAPICredsUpdateReq {
+  fromPartial<I extends Exact<DeepPartial<DashAPICredsUpdateReq>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashAPICredsUpdateReq {
     const message = createBaseDashAPICredsUpdateReq();
     message.credSid = object.credSid ?? "";
     message.description = object.description ?? "";
@@ -688,21 +765,31 @@ export const DashAPICredsDeleteReq: MessageFns<DashAPICredsDeleteReq> = {
     };
   },
 
-  toJSON(message: DashAPICredsDeleteReq): unknown {
+  toJSON(message: DashAPICredsDeleteReq, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.credSid !== "") {
       obj.credSid = message.credSid;
+    }
+    if (Object.hasOwn(message, "credSid")) {
+      obj2.cred_sid = message.credSid !== undefined ? message.credSid : message.credSid;
     }
     if (message.id !== "") {
       obj.id = message.id;
     }
-    return obj;
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? message.id : message.id;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DashAPICredsDeleteReq>, I>>(base?: I): DashAPICredsDeleteReq {
     return DashAPICredsDeleteReq.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DashAPICredsDeleteReq>, I>>(object: I): DashAPICredsDeleteReq {
+  fromPartial<I extends Exact<DeepPartial<DashAPICredsDeleteReq>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DashAPICredsDeleteReq {
     const message = createBaseDashAPICredsDeleteReq();
     message.credSid = object.credSid ?? "";
     message.id = object.id ?? "";
@@ -739,15 +826,16 @@ export const Empty: MessageFns<Empty> = {
     return {};
   },
 
-  toJSON(_: Empty): unknown {
+  toJSON(_: Empty, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Empty>, I>>(base?: I): Empty {
     return Empty.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Empty>, I>>(_: I): Empty {
+  fromPartial<I extends Exact<DeepPartial<Empty>, I>>(_: I, options?: { defaultZeroFields?: string[] }): Empty {
     const message = createBaseEmpty();
     return message;
   },
@@ -834,7 +922,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -849,7 +937,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

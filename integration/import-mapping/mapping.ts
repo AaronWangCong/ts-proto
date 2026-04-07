@@ -71,20 +71,29 @@ export const WithEmpty: MessageFns<WithEmpty> = {
     return { empty: isSet(object.empty) ? Empty.fromJSON(object.empty) : undefined };
   },
 
-  toJSON(message: WithEmpty): unknown {
+  toJSON(message: WithEmpty, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.empty !== undefined) {
       obj.empty = Empty.toJSON(message.empty);
     }
-    return obj;
+    if (Object.hasOwn(message, "empty")) {
+      obj2.empty = message.empty !== undefined ? Empty.toJSON(message.empty, true) : message.empty;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<WithEmpty>, I>>(base?: I): WithEmpty {
     return WithEmpty.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<WithEmpty>, I>>(object: I): WithEmpty {
+  fromPartial<I extends Exact<DeepPartial<WithEmpty>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): WithEmpty {
     const message = createBaseWithEmpty();
-    message.empty = (object.empty !== undefined && object.empty !== null) ? Empty.fromPartial(object.empty) : undefined;
+    message.empty = (object.empty !== undefined && object.empty !== null)
+      ? Empty.fromPartial(object.empty, options)
+      : undefined;
     return message;
   },
 };
@@ -129,18 +138,25 @@ export const WithStruct: MessageFns<WithStruct> = {
     return { strut: isObject(object.strut) ? object.strut : undefined };
   },
 
-  toJSON(message: WithStruct): unknown {
+  toJSON(message: WithStruct, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.strut !== undefined) {
       obj.strut = message.strut;
     }
-    return obj;
+    if (Object.hasOwn(message, "strut")) {
+      obj2.strut = message.strut !== undefined ? message.strut : message.strut;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<WithStruct>, I>>(base?: I): WithStruct {
     return WithStruct.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<WithStruct>, I>>(object: I): WithStruct {
+  fromPartial<I extends Exact<DeepPartial<WithStruct>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): WithStruct {
     const message = createBaseWithStruct();
     message.strut = object.strut ?? undefined;
     return message;
@@ -187,18 +203,25 @@ export const WithTimestamp: MessageFns<WithTimestamp> = {
     return { timestamp: isSet(object.timestamp) ? fromJsonTimestamp(object.timestamp) : undefined };
   },
 
-  toJSON(message: WithTimestamp): unknown {
+  toJSON(message: WithTimestamp, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.timestamp !== undefined) {
       obj.timestamp = message.timestamp.toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "timestamp")) {
+      obj2.timestamp = message.timestamp !== undefined ? message.timestamp.toISOString() : message.timestamp;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<WithTimestamp>, I>>(base?: I): WithTimestamp {
     return WithTimestamp.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<WithTimestamp>, I>>(object: I): WithTimestamp {
+  fromPartial<I extends Exact<DeepPartial<WithTimestamp>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): WithTimestamp {
     const message = createBaseWithTimestamp();
     message.timestamp = object.timestamp ?? undefined;
     return message;
@@ -295,39 +318,62 @@ export const WithAll: MessageFns<WithAll> = {
     };
   },
 
-  toJSON(message: WithAll): unknown {
+  toJSON(message: WithAll, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.empty !== undefined) {
       obj.empty = Empty.toJSON(message.empty);
+    }
+    if (Object.hasOwn(message, "empty")) {
+      obj2.empty = message.empty !== undefined ? Empty.toJSON(message.empty, true) : message.empty;
     }
     if (message.strut !== undefined) {
       obj.strut = message.strut;
     }
+    if (Object.hasOwn(message, "strut")) {
+      obj2.strut = message.strut !== undefined ? message.strut : message.strut;
+    }
     if (message.timestamp !== undefined) {
       obj.timestamp = message.timestamp.toISOString();
+    }
+    if (Object.hasOwn(message, "timestamp")) {
+      obj2.timestamp = message.timestamp !== undefined ? message.timestamp.toISOString() : message.timestamp;
     }
     if (message.duration !== undefined) {
       obj.duration = Duration.toJSON(message.duration);
     }
+    if (Object.hasOwn(message, "duration")) {
+      obj2.duration = message.duration !== undefined ? Duration.toJSON(message.duration, true) : message.duration;
+    }
     if (message.veryVerySecret !== undefined) {
       obj.veryVerySecret = VeryVerySecret.toJSON(message.veryVerySecret);
     }
-    return obj;
+    if (Object.hasOwn(message, "veryVerySecret")) {
+      obj2.very_very_secret = message.veryVerySecret !== undefined
+        ? VeryVerySecret.toJSON(message.veryVerySecret, true)
+        : message.veryVerySecret;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<WithAll>, I>>(base?: I): WithAll {
     return WithAll.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<WithAll>, I>>(object: I): WithAll {
+  fromPartial<I extends Exact<DeepPartial<WithAll>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): WithAll {
     const message = createBaseWithAll();
-    message.empty = (object.empty !== undefined && object.empty !== null) ? Empty.fromPartial(object.empty) : undefined;
+    message.empty = (object.empty !== undefined && object.empty !== null)
+      ? Empty.fromPartial(object.empty, options)
+      : undefined;
     message.strut = object.strut ?? undefined;
     message.timestamp = object.timestamp ?? undefined;
     message.duration = (object.duration !== undefined && object.duration !== null)
-      ? Duration.fromPartial(object.duration)
+      ? Duration.fromPartial(object.duration, options)
       : undefined;
     message.veryVerySecret = (object.veryVerySecret !== undefined && object.veryVerySecret !== null)
-      ? VeryVerySecret.fromPartial(object.veryVerySecret)
+      ? VeryVerySecret.fromPartial(object.veryVerySecret, options)
       : undefined;
     return message;
   },
@@ -338,7 +384,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -379,7 +425,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

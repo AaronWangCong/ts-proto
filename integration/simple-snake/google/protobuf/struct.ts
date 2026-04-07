@@ -10,7 +10,7 @@ export const protobufPackage = "google.protobuf";
  * `NullValue` is a singleton enumeration to represent the null value for the
  * `Value` type union.
  *
- *  The JSON representation for `NullValue` is JSON `null`.
+ * The JSON representation for `NullValue` is JSON `null`.
  */
 export enum NullValue {
   /** NULL_VALUE - Null value. */
@@ -70,27 +70,27 @@ export interface Struct_FieldsEntry {
  */
 export interface Value {
   /** Represents a null value. */
-  null_value?:
+  nullValue?:
     | NullValue
     | undefined;
   /** Represents a double value. */
-  number_value?:
+  numberValue?:
     | number
     | undefined;
   /** Represents a string value. */
-  string_value?:
+  stringValue?:
     | string
     | undefined;
   /** Represents a boolean value. */
-  bool_value?:
+  boolValue?:
     | boolean
     | undefined;
   /** Represents a structured value. */
-  struct_value?:
+  structValue?:
     | { [key: string]: any }
     | undefined;
   /** Represents a repeated `Value`. */
-  list_value?: Array<any> | undefined;
+  listValue?: Array<any> | undefined;
 }
 
 /**
@@ -155,24 +155,27 @@ export const Struct: MessageFns<Struct> & StructWrapperFns = {
     };
   },
 
-  toJSON(message: Struct): unknown {
+  toJSON(message: Struct, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.fields) {
       const entries = Object.entries(message.fields);
       if (entries.length > 0) {
         obj.fields = {};
+        obj2.fields = {};
         entries.forEach(([k, v]) => {
           obj.fields[k] = v;
+          obj2.fields[k] = v;
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Struct>, I>>(base?: I): Struct {
     return Struct.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Struct>, I>>(object: I): Struct {
+  fromPartial<I extends Exact<DeepPartial<Struct>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Struct {
     const message = createBaseStruct();
     message.fields = Object.entries(object.fields ?? {}).reduce<{ [key: string]: any | undefined }>(
       (acc, [key, value]) => {
@@ -262,21 +265,31 @@ export const Struct_FieldsEntry: MessageFns<Struct_FieldsEntry> = {
     };
   },
 
-  toJSON(message: Struct_FieldsEntry): unknown {
+  toJSON(message: Struct_FieldsEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== undefined) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(base?: I): Struct_FieldsEntry {
     return Struct_FieldsEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(object: I): Struct_FieldsEntry {
+  fromPartial<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Struct_FieldsEntry {
     const message = createBaseStruct_FieldsEntry();
     message.key = object.key ?? "";
     message.value = object.value ?? undefined;
@@ -286,34 +299,34 @@ export const Struct_FieldsEntry: MessageFns<Struct_FieldsEntry> = {
 
 function createBaseValue(): Value {
   return {
-    null_value: undefined,
-    number_value: undefined,
-    string_value: undefined,
-    bool_value: undefined,
-    struct_value: undefined,
-    list_value: undefined,
+    nullValue: undefined,
+    numberValue: undefined,
+    stringValue: undefined,
+    boolValue: undefined,
+    structValue: undefined,
+    listValue: undefined,
   };
 }
 
 export const Value: MessageFns<Value> & AnyValueWrapperFns = {
   encode(message: Value, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.null_value !== undefined) {
-      writer.uint32(8).int32(message.null_value);
+    if (message.nullValue !== undefined) {
+      writer.uint32(8).int32(message.nullValue);
     }
-    if (message.number_value !== undefined) {
-      writer.uint32(17).double(message.number_value);
+    if (message.numberValue !== undefined) {
+      writer.uint32(17).double(message.numberValue);
     }
-    if (message.string_value !== undefined) {
-      writer.uint32(26).string(message.string_value);
+    if (message.stringValue !== undefined) {
+      writer.uint32(26).string(message.stringValue);
     }
-    if (message.bool_value !== undefined) {
-      writer.uint32(32).bool(message.bool_value);
+    if (message.boolValue !== undefined) {
+      writer.uint32(32).bool(message.boolValue);
     }
-    if (message.struct_value !== undefined) {
-      Struct.encode(Struct.wrap(message.struct_value), writer.uint32(42).fork()).join();
+    if (message.structValue !== undefined) {
+      Struct.encode(Struct.wrap(message.structValue), writer.uint32(42).fork()).join();
     }
-    if (message.list_value !== undefined) {
-      ListValue.encode(ListValue.wrap(message.list_value), writer.uint32(50).fork()).join();
+    if (message.listValue !== undefined) {
+      ListValue.encode(ListValue.wrap(message.listValue), writer.uint32(50).fork()).join();
     }
     return writer;
   },
@@ -330,7 +343,10 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
             break;
           }
 
-          message.null_value = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.nullValue = _enumValue;
+          }
           continue;
         }
         case 2: {
@@ -338,7 +354,7 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
             break;
           }
 
-          message.number_value = reader.double();
+          message.numberValue = reader.double();
           continue;
         }
         case 3: {
@@ -346,7 +362,7 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
             break;
           }
 
-          message.string_value = reader.string();
+          message.stringValue = reader.string();
           continue;
         }
         case 4: {
@@ -354,7 +370,7 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
             break;
           }
 
-          message.bool_value = reader.bool();
+          message.boolValue = reader.bool();
           continue;
         }
         case 5: {
@@ -362,7 +378,7 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
             break;
           }
 
-          message.struct_value = Struct.unwrap(Struct.decode(reader, reader.uint32()));
+          message.structValue = Struct.unwrap(Struct.decode(reader, reader.uint32()));
           continue;
         }
         case 6: {
@@ -370,7 +386,7 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
             break;
           }
 
-          message.list_value = ListValue.unwrap(ListValue.decode(reader, reader.uint32()));
+          message.listValue = ListValue.unwrap(ListValue.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -384,49 +400,68 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
 
   fromJSON(object: any): Value {
     return {
-      null_value: isSet(object.null_value) ? nullValueFromJSON(object.null_value) : undefined,
-      number_value: isSet(object.number_value) ? globalThis.Number(object.number_value) : undefined,
-      string_value: isSet(object.string_value) ? globalThis.String(object.string_value) : undefined,
-      bool_value: isSet(object.bool_value) ? globalThis.Boolean(object.bool_value) : undefined,
-      struct_value: isObject(object.struct_value) ? object.struct_value : undefined,
-      list_value: globalThis.Array.isArray(object.list_value) ? [...object.list_value] : undefined,
+      nullValue: isSet(object.null_value) ? nullValueFromJSON(object.null_value) : undefined,
+      numberValue: isSet(object.number_value) ? globalThis.Number(object.number_value) : undefined,
+      stringValue: isSet(object.string_value) ? globalThis.String(object.string_value) : undefined,
+      boolValue: isSet(object.bool_value) ? globalThis.Boolean(object.bool_value) : undefined,
+      structValue: isObject(object.struct_value) ? object.struct_value : undefined,
+      listValue: globalThis.Array.isArray(object.list_value) ? [...object.list_value] : undefined,
     };
   },
 
-  toJSON(message: Value): unknown {
+  toJSON(message: Value, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.null_value !== undefined) {
-      obj.null_value = nullValueToJSON(message.null_value);
+    const obj2: any = {};
+    if (message.nullValue !== undefined) {
+      obj.null_value = nullValueToJSON(message.nullValue);
     }
-    if (message.number_value !== undefined) {
-      obj.number_value = message.number_value;
+    if (Object.hasOwn(message, "nullValue")) {
+      obj2.null_value = message.nullValue !== undefined ? nullValueToJSON(message.nullValue) : message.nullValue;
     }
-    if (message.string_value !== undefined) {
-      obj.string_value = message.string_value;
+    if (message.numberValue !== undefined) {
+      obj.number_value = message.numberValue;
     }
-    if (message.bool_value !== undefined) {
-      obj.bool_value = message.bool_value;
+    if (Object.hasOwn(message, "numberValue")) {
+      obj2.number_value = message.numberValue !== undefined ? message.numberValue : message.numberValue;
     }
-    if (message.struct_value !== undefined) {
-      obj.struct_value = message.struct_value;
+    if (message.stringValue !== undefined) {
+      obj.string_value = message.stringValue;
     }
-    if (message.list_value !== undefined) {
-      obj.list_value = message.list_value;
+    if (Object.hasOwn(message, "stringValue")) {
+      obj2.string_value = message.stringValue !== undefined ? message.stringValue : message.stringValue;
     }
-    return obj;
+    if (message.boolValue !== undefined) {
+      obj.bool_value = message.boolValue;
+    }
+    if (Object.hasOwn(message, "boolValue")) {
+      obj2.bool_value = message.boolValue !== undefined ? message.boolValue : message.boolValue;
+    }
+    if (message.structValue !== undefined) {
+      obj.struct_value = message.structValue;
+    }
+    if (Object.hasOwn(message, "structValue")) {
+      obj2.struct_value = message.structValue !== undefined ? message.structValue : message.structValue;
+    }
+    if (message.listValue !== undefined) {
+      obj.list_value = message.listValue;
+    }
+    if (Object.hasOwn(message, "listValue")) {
+      obj2.list_value = message.listValue !== undefined ? message.listValue : message.listValue;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Value>, I>>(base?: I): Value {
     return Value.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I): Value {
+  fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Value {
     const message = createBaseValue();
-    message.null_value = object.null_value ?? undefined;
-    message.number_value = object.number_value ?? undefined;
-    message.string_value = object.string_value ?? undefined;
-    message.bool_value = object.bool_value ?? undefined;
-    message.struct_value = object.struct_value ?? undefined;
-    message.list_value = object.list_value ?? undefined;
+    message.nullValue = object.nullValue ?? undefined;
+    message.numberValue = object.numberValue ?? undefined;
+    message.stringValue = object.stringValue ?? undefined;
+    message.boolValue = object.boolValue ?? undefined;
+    message.structValue = object.structValue ?? undefined;
+    message.listValue = object.listValue ?? undefined;
     return message;
   },
 
@@ -474,8 +509,10 @@ function createBaseListValue(): ListValue {
 
 export const ListValue: MessageFns<ListValue> & ListValueWrapperFns = {
   encode(message: ListValue, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.values) {
-      Value.encode(Value.wrap(v!), writer.uint32(10).fork()).join();
+    if (message.values !== undefined && message.values.length !== 0) {
+      for (const v of message.values) {
+        Value.encode(Value.wrap(v!), writer.uint32(10).fork()).join();
+      }
     }
     return writer;
   },
@@ -492,7 +529,7 @@ export const ListValue: MessageFns<ListValue> & ListValueWrapperFns = {
             break;
           }
 
-          message.values.push(Value.unwrap(Value.decode(reader, reader.uint32())));
+          message.values?.push(Value.unwrap(Value.decode(reader, reader.uint32())));
           continue;
         }
       }
@@ -508,20 +545,27 @@ export const ListValue: MessageFns<ListValue> & ListValueWrapperFns = {
     return { values: globalThis.Array.isArray(object?.values) ? [...object.values] : [] };
   },
 
-  toJSON(message: ListValue): unknown {
+  toJSON(message: ListValue, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.values?.length) {
       obj.values = message.values;
     }
-    return obj;
+    if (message.values) {
+      obj2.values = message.values;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ListValue>, I>>(base?: I): ListValue {
     return ListValue.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ListValue>, I>>(object: I): ListValue {
+  fromPartial<I extends Exact<DeepPartial<ListValue>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ListValue {
     const message = createBaseListValue();
-    message.values = object.values?.map((e) => e) || [];
+    message.values = object.values?.map((e) => e) as any;
     return message;
   },
 
@@ -545,7 +589,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -564,9 +608,9 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }
 
 export interface StructWrapperFns {

@@ -131,25 +131,34 @@ export const Simple: MessageFns<Simple> = {
     };
   },
 
-  toJSON(message: Simple): unknown {
+  toJSON(message: Simple, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
+    }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
     }
     if (message.otherSimple !== undefined) {
       obj.otherSimple = Simple3.toJSON(message.otherSimple);
     }
-    return obj;
+    if (Object.hasOwn(message, "otherSimple")) {
+      obj2.otherSimple = message.otherSimple !== undefined
+        ? Simple3.toJSON(message.otherSimple, true)
+        : message.otherSimple;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Simple>, I>>(base?: I): Simple {
     return Simple.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I): Simple {
+  fromPartial<I extends Exact<DeepPartial<Simple>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Simple {
     const message = createBaseSimple();
     message.name = object.name ?? "";
     message.otherSimple = (object.otherSimple !== undefined && object.otherSimple !== null)
-      ? Simple3.fromPartial(object.otherSimple)
+      ? Simple3.fromPartial(object.otherSimple, options)
       : undefined;
     return message;
   },
@@ -211,25 +220,37 @@ export const DifferentSimple: MessageFns<DifferentSimple> = {
     };
   },
 
-  toJSON(message: DifferentSimple): unknown {
+  toJSON(message: DifferentSimple, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
+    }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
     }
     if (message.otherOptionalSimple2 !== undefined) {
       obj.otherOptionalSimple2 = Simple3.toJSON(message.otherOptionalSimple2);
     }
-    return obj;
+    if (Object.hasOwn(message, "otherOptionalSimple2")) {
+      obj2.otherOptionalSimple2 = message.otherOptionalSimple2 !== undefined
+        ? Simple3.toJSON(message.otherOptionalSimple2, true)
+        : message.otherOptionalSimple2;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<DifferentSimple>, I>>(base?: I): DifferentSimple {
     return DifferentSimple.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<DifferentSimple>, I>>(object: I): DifferentSimple {
+  fromPartial<I extends Exact<DeepPartial<DifferentSimple>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): DifferentSimple {
     const message = createBaseDifferentSimple();
     message.name = object.name ?? "";
     message.otherOptionalSimple2 = (object.otherOptionalSimple2 !== undefined && object.otherOptionalSimple2 !== null)
-      ? Simple3.fromPartial(object.otherOptionalSimple2)
+      ? Simple3.fromPartial(object.otherOptionalSimple2, options)
       : undefined;
     return message;
   },
@@ -289,21 +310,31 @@ export const SimpleEnums: MessageFns<SimpleEnums> = {
     };
   },
 
-  toJSON(message: SimpleEnums): unknown {
+  toJSON(message: SimpleEnums, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.localEnum !== 0) {
       obj.localEnum = simpleEnumToJSON(message.localEnum);
+    }
+    if (Object.hasOwn(message, "localEnum")) {
+      obj2.local_enum = message.localEnum !== undefined ? simpleEnumToJSON(message.localEnum) : message.localEnum;
     }
     if (message.importEnum !== 0) {
       obj.importEnum = simpleEnumToJSON5(message.importEnum);
     }
-    return obj;
+    if (Object.hasOwn(message, "importEnum")) {
+      obj2.import_enum = message.importEnum !== undefined ? simpleEnumToJSON5(message.importEnum) : message.importEnum;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleEnums>, I>>(base?: I): SimpleEnums {
     return SimpleEnums.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SimpleEnums>, I>>(object: I): SimpleEnums {
+  fromPartial<I extends Exact<DeepPartial<SimpleEnums>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SimpleEnums {
     const message = createBaseSimpleEnums();
     message.localEnum = object.localEnum ?? 0;
     message.importEnum = object.importEnum ?? 0;
@@ -351,18 +382,25 @@ export const FooServiceCreateRequest: MessageFns<FooServiceCreateRequest> = {
     return { kind: isSet(object.kind) ? fooServiceFromJSON(object.kind) : 0 };
   },
 
-  toJSON(message: FooServiceCreateRequest): unknown {
+  toJSON(message: FooServiceCreateRequest, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.kind !== 0) {
       obj.kind = fooServiceToJSON(message.kind);
     }
-    return obj;
+    if (Object.hasOwn(message, "kind")) {
+      obj2.kind = message.kind !== undefined ? fooServiceToJSON(message.kind) : message.kind;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<FooServiceCreateRequest>, I>>(base?: I): FooServiceCreateRequest {
     return FooServiceCreateRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<FooServiceCreateRequest>, I>>(object: I): FooServiceCreateRequest {
+  fromPartial<I extends Exact<DeepPartial<FooServiceCreateRequest>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): FooServiceCreateRequest {
     const message = createBaseFooServiceCreateRequest();
     message.kind = object.kind ?? 0;
     return message;
@@ -409,18 +447,25 @@ export const FooServiceCreateResponse: MessageFns<FooServiceCreateResponse> = {
     return { kind: isSet(object.kind) ? fooServiceFromJSON(object.kind) : 0 };
   },
 
-  toJSON(message: FooServiceCreateResponse): unknown {
+  toJSON(message: FooServiceCreateResponse, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.kind !== 0) {
       obj.kind = fooServiceToJSON(message.kind);
     }
-    return obj;
+    if (Object.hasOwn(message, "kind")) {
+      obj2.kind = message.kind !== undefined ? fooServiceToJSON(message.kind) : message.kind;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<FooServiceCreateResponse>, I>>(base?: I): FooServiceCreateResponse {
     return FooServiceCreateResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<FooServiceCreateResponse>, I>>(object: I): FooServiceCreateResponse {
+  fromPartial<I extends Exact<DeepPartial<FooServiceCreateResponse>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): FooServiceCreateResponse {
     const message = createBaseFooServiceCreateResponse();
     message.kind = object.kind ?? 0;
     return message;
@@ -483,7 +528,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -498,7 +543,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

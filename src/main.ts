@@ -481,6 +481,39 @@ export function generateFile(ctx: Context, fileDesc: FileDescriptorProto): [stri
   return [moduleName, joinCode(chunks, { on: "\n\n" })];
 }
 
+  const appendVarint = conditionalOutput(
+    "appendVarint",
+    code`
+      function appendVarint(data: number[], value: bigint | number): number[] {
+        let v = BigInt.asUintN(64, BigInt(value));
+        while (v >= 0x80n) {
+          data.push(Number(v & 0x7Fn) | 0x80);
+          v >>= 7n;
+        }
+        data.push(Number(v));
+        return data;
+      }
+    `,
+  );
+
+  const buildEmptyRepeatedToUnknown = conditionalOutput(
+    "buildEmptyRepeatedToUnknown",
+    code`
+      function buildEmptyRepeatedToUnknown(emptyRepeatedFields: (number | bigint)[]): Uint8Array {
+        const data: number[] = [];
+        for (const fieldNum of emptyRepeatedFields) {
+          ${appendVarint}(data, fieldNum);
+        }
+        const result: number[] = [];
+        const tag = (20000n << 3n) | 2n;
+        ${appendVarint}(result, tag);
+        ${appendVarint}(result, data.length);
+        result.push(...data);
+        return new Uint8Array(result);
+      }
+    `,
+  );
+
 export type Utils = ReturnType<typeof makeDeepPartial> &
   ReturnType<typeof makeObjectIdMethods> &
   ReturnType<typeof makeTimestampMethods> &
@@ -665,7 +698,7 @@ function makeByteUtils(options: Options) {
       }
     `,
   );
-  return { globalThis, bytesFromBase64, base64FromBytes };
+  return { globalThis, bytesFromBase64, base64FromBytes, buildEmptyRepeatedToUnknown, appendVarint };
 }
 
 function makeDeepPartial(options: Options, longs: ReturnType<typeof makeLongUtils>) {
@@ -1701,6 +1734,9 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
   const chunks: Code[] = [];
 
   const BinaryWriter = imp("BinaryWriter@@bufbuild/protobuf/wire");
+  const hasEmptyRepeatedArrayFields = messageDesc.field.some(
+    (field) => isRepeated(field) && !isMapType(ctx, messageDesc, field),
+  );
 
   // create the basic function declaration
   chunks.push(code`
@@ -1709,6 +1745,10 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
       writer: ${BinaryWriter} = new ${BinaryWriter}(),
     ): ${BinaryWriter} {
   `);
+
+  if (hasEmptyRepeatedArrayFields) {
+    chunks.push(code`const emptyRepeatedFields: number[] = [];`);
+  }
 
   const processedOneofs = new Set<number>();
   const oneOfFieldsDict = messageDesc.field
@@ -1766,6 +1806,11 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
               ${listWriteSnippet}
             }
           `);
+          chunks.push(code`
+            if (${messageProperty} !== undefined && ${messageProperty}.length === 0) {
+              emptyRepeatedFields?.push(${((field.number << 3) | basicWireType(field.type)) >>> 0});
+            }
+          `);
         // } else {
           // chunks.push(listWriteSnippet);
         // }
@@ -1787,6 +1832,11 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
           chunks.push(code`
             if (${messageProperty} !== undefined && ${messageProperty}.length !== 0) {
               ${listWriteSnippet}
+            }
+          `);
+          chunks.push(code`
+            if (${messageProperty} !== undefined && ${messageProperty}.length === 0) {
+              emptyRepeatedFields?.push(${tag});
             }
           `);
         // } else {
@@ -1851,6 +1901,14 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
               ${listWriteSnippet}
             }
           `);
+          chunks.push(code`
+            if (${messageProperty} !== undefined ${withAndMaybeCheckIsNotNull(
+            options,
+            messageProperty,
+          )} && ${messageProperty}.length === 0) {
+              emptyRepeatedFields?.push(${tag});
+            }
+          `);
         // } else {
           // chunks.push(listWriteSnippet);
         // }
@@ -1902,6 +1960,15 @@ function generateEncode(ctx: Context, fullName: string, messageDesc: DescriptorP
       chunks.push(code`${writeSnippet(`${messageProperty}`)};`);
     }
   });
+
+  if (hasEmptyRepeatedArrayFields) {
+    chunks.push(code`
+      if (emptyRepeatedFields?.length !== 0) {
+        const emptyUnknown = ${utils.buildEmptyRepeatedToUnknown}(emptyRepeatedFields);
+        writer.raw(emptyUnknown);
+      }
+    `);
+  }
 
   if (options.unknownFields) {
     chunks.push(code`if (message._unknownFields !== undefined) {

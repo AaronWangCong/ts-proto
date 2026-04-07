@@ -18,18 +18,25 @@ export const Message: MessageFns<Message> = {
     return { data: isSet(object.data) ? Buffer.from(bytesFromBase64(object.data)) : Buffer.alloc(0) };
   },
 
-  toJSON(message: Message): unknown {
+  toJSON(message: Message, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.data.length !== 0) {
       obj.data = base64FromBytes(message.data);
     }
-    return obj;
+    if (Object.hasOwn(message, "data")) {
+      obj2.data = message.data !== undefined ? base64FromBytes(message.data) : message.data;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Message>, I>>(base?: I): Message {
     return Message.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Message>, I>>(object: I): Message {
+  fromPartial<I extends Exact<DeepPartial<Message>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Message {
     const message = createBaseMessage();
     message.data = object.data ?? Buffer.alloc(0);
     return message;
@@ -49,7 +56,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -62,7 +69,7 @@ function isSet(value: any): boolean {
 
 export interface MessageFns<T> {
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

@@ -43,7 +43,7 @@ export const NestedList: MessageFns<NestedList> = {
 
           const el = StringValue.decode(reader, reader.uint32()).value;
           if (el !== undefined) {
-            message.aString!.push(el);
+            message.aString!?.push(el);
           }
           continue;
         }
@@ -57,23 +57,32 @@ export const NestedList: MessageFns<NestedList> = {
   },
 
   fromJSON(object: any): NestedList {
-    return { aString: globalThis.Array.isArray(object?.aString) ? object.aString.map((e: any) => String(e)) : [] };
+    return {
+      aString: globalThis.Array.isArray(object?.aString) ? object.aString.map((e: any) => globalThis.String(e)) : [],
+    };
   },
 
-  toJSON(message: NestedList): unknown {
+  toJSON(message: NestedList, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.aString?.length) {
       obj.aString = message.aString;
     }
-    return obj;
+    if (message.aString) {
+      obj2.a_string = message.aString;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<NestedList>, I>>(base?: I): NestedList {
     return NestedList.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<NestedList>, I>>(object: I): NestedList {
+  fromPartial<I extends Exact<DeepPartial<NestedList>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): NestedList {
     const message = createBaseNestedList();
-    message.aString = object.aString?.map((e) => e) || [];
+    message.aString = object.aString?.map((e) => e) as any;
     return message;
   },
 };
@@ -118,21 +127,28 @@ export const Example: MessageFns<Example> = {
     return { list: isSet(object.list) ? NestedList.fromJSON(object.list) : undefined };
   },
 
-  toJSON(message: Example): unknown {
+  toJSON(message: Example, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.list !== undefined) {
       obj.list = NestedList.toJSON(message.list);
     }
-    return obj;
+    if (Object.hasOwn(message, "list")) {
+      obj2.list = message.list !== undefined ? NestedList.toJSON(message.list, true) : message.list;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Example>, I>>(base?: I): Example {
     return Example.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Example>, I>>(object: I): Example {
+  fromPartial<I extends Exact<DeepPartial<Example>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Example {
     const message = createBaseExample();
     message.list = (object.list !== undefined && object.list !== null)
-      ? NestedList.fromPartial(object.list)
+      ? NestedList.fromPartial(object.list, options)
       : undefined;
     return message;
   },
@@ -143,7 +159,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -158,7 +174,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

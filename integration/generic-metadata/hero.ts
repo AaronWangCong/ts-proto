@@ -10,20 +10,20 @@ import { Foo } from "./some-file";
 export const protobufPackage = "hero";
 
 export interface HeroById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface VillainById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface Hero {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 
 export interface Villain {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 
@@ -33,7 +33,7 @@ function createBaseHeroById(): HeroById {
 
 export const HeroById: MessageFns<HeroById> = {
   encode(message: HeroById, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     return writer;
@@ -64,23 +64,30 @@ export const HeroById: MessageFns<HeroById> = {
   },
 
   fromJSON(object: any): HeroById {
-    return { id: isSet(object.id) ? globalThis.Number(object.id) : 0 };
+    return { id: isSet(object.id) ? globalThis.Number(object.id) : undefined };
   },
 
-  toJSON(message: HeroById): unknown {
+  toJSON(message: HeroById, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.id !== 0) {
+    const obj2: any = {};
+    if (message.id !== undefined && message.id !== 0) {
       obj.id = Math.round(message.id);
     }
-    return obj;
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<HeroById>, I>>(base?: I): HeroById {
     return HeroById.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<HeroById>, I>>(object: I): HeroById {
+  fromPartial<I extends Exact<DeepPartial<HeroById>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): HeroById {
     const message = createBaseHeroById();
-    message.id = object.id ?? 0;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
     return message;
   },
 };
@@ -91,7 +98,7 @@ function createBaseVillainById(): VillainById {
 
 export const VillainById: MessageFns<VillainById> = {
   encode(message: VillainById, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     return writer;
@@ -122,23 +129,30 @@ export const VillainById: MessageFns<VillainById> = {
   },
 
   fromJSON(object: any): VillainById {
-    return { id: isSet(object.id) ? globalThis.Number(object.id) : 0 };
+    return { id: isSet(object.id) ? globalThis.Number(object.id) : undefined };
   },
 
-  toJSON(message: VillainById): unknown {
+  toJSON(message: VillainById, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.id !== 0) {
+    const obj2: any = {};
+    if (message.id !== undefined && message.id !== 0) {
       obj.id = Math.round(message.id);
     }
-    return obj;
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<VillainById>, I>>(base?: I): VillainById {
     return VillainById.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<VillainById>, I>>(object: I): VillainById {
+  fromPartial<I extends Exact<DeepPartial<VillainById>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): VillainById {
     const message = createBaseVillainById();
-    message.id = object.id ?? 0;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
     return message;
   },
 };
@@ -149,7 +163,7 @@ function createBaseHero(): Hero {
 
 export const Hero: MessageFns<Hero> = {
   encode(message: Hero, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     if (message.name !== "") {
@@ -192,28 +206,35 @@ export const Hero: MessageFns<Hero> = {
 
   fromJSON(object: any): Hero {
     return {
-      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
+      id: isSet(object.id) ? globalThis.Number(object.id) : undefined,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
     };
   },
 
-  toJSON(message: Hero): unknown {
+  toJSON(message: Hero, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.id !== 0) {
+    const obj2: any = {};
+    if (message.id !== undefined && message.id !== 0) {
       obj.id = Math.round(message.id);
+    }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Hero>, I>>(base?: I): Hero {
     return Hero.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Hero>, I>>(object: I): Hero {
+  fromPartial<I extends Exact<DeepPartial<Hero>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Hero {
     const message = createBaseHero();
-    message.id = object.id ?? 0;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
     message.name = object.name ?? "";
     return message;
   },
@@ -225,7 +246,7 @@ function createBaseVillain(): Villain {
 
 export const Villain: MessageFns<Villain> = {
   encode(message: Villain, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     if (message.name !== "") {
@@ -268,28 +289,38 @@ export const Villain: MessageFns<Villain> = {
 
   fromJSON(object: any): Villain {
     return {
-      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
+      id: isSet(object.id) ? globalThis.Number(object.id) : undefined,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
     };
   },
 
-  toJSON(message: Villain): unknown {
+  toJSON(message: Villain, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.id !== 0) {
+    const obj2: any = {};
+    if (message.id !== undefined && message.id !== 0) {
       obj.id = Math.round(message.id);
+    }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Villain>, I>>(base?: I): Villain {
     return Villain.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Villain>, I>>(object: I): Villain {
+  fromPartial<I extends Exact<DeepPartial<Villain>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Villain {
     const message = createBaseVillain();
-    message.id = object.id ?? 0;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
     message.name = object.name ?? "";
     return message;
   },
@@ -385,7 +416,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -400,7 +431,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

@@ -94,7 +94,7 @@ export const protobufPackage = "google.protobuf";
  * [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
  * the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
  * the Joda Time's [`ISODateTimeFormat.dateTime()`](
- * http://www.joda.org/joda-time/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime%2D%2D
+ * http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
  * ) to obtain a formatter capable of generating timestamps in this format.
  */
 export interface Timestamp {
@@ -165,28 +165,38 @@ export const Timestamp: MessageFns<Timestamp> = {
   fromJSON(object: any): Timestamp {
     return {
       seconds: isSet(object.seconds) ? globalThis.Number(object.seconds) : 0,
-      nanos: isSet(object.nanos) ? globalThis.Number(object.nanos) : 0,
+      nanos: isSet(object.nanos) ? globalThis.Number(object.nanos) : undefined,
     };
   },
 
-  toJSON(message: Timestamp): unknown {
+  toJSON(message: Timestamp, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.seconds !== undefined && message.seconds !== 0) {
       obj.seconds = Math.round(message.seconds);
+    }
+    if (Object.hasOwn(message, "seconds")) {
+      obj2.seconds = message.seconds !== undefined ? Math.round(message.seconds) : message.seconds;
     }
     if (message.nanos !== undefined && message.nanos !== 0) {
       obj.nanos = Math.round(message.nanos);
     }
-    return obj;
+    if (Object.hasOwn(message, "nanos")) {
+      obj2.nanos = message.nanos !== undefined ? Math.round(message.nanos) : message.nanos;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Timestamp>, I>>(base?: I): Timestamp {
     return Timestamp.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Timestamp>, I>>(object: I): Timestamp {
+  fromPartial<I extends Exact<DeepPartial<Timestamp>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Timestamp {
     const message = createBaseTimestamp();
-    message.seconds = object.seconds ?? 0;
-    message.nanos = object.nanos ?? 0;
+    message.seconds = object.seconds ?? (options?.defaultZeroFields?.includes("seconds") ? "0" : undefined);
+    message.nanos = object.nanos ?? (options?.defaultZeroFields?.includes("nanos") ? 0 : undefined);
     return message;
   },
 };
@@ -196,7 +206,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -222,7 +232,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

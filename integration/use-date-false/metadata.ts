@@ -51,21 +51,30 @@ export const Metadata: MessageFns<Metadata> = {
     return { lastEdited: isSet(object.lastEdited) ? fromJsonTimestamp(object.lastEdited) : undefined };
   },
 
-  toJSON(message: Metadata): unknown {
+  toJSON(message: Metadata, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.lastEdited !== undefined) {
       obj.lastEdited = fromTimestamp(message.lastEdited).toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "lastEdited")) {
+      obj2.last_edited = message.lastEdited !== undefined
+        ? fromTimestamp(message.lastEdited).toISOString()
+        : message.lastEdited;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Metadata>, I>>(base?: I): Metadata {
     return Metadata.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Metadata>, I>>(object: I): Metadata {
+  fromPartial<I extends Exact<DeepPartial<Metadata>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Metadata {
     const message = createBaseMetadata();
     message.lastEdited = (object.lastEdited !== undefined && object.lastEdited !== null)
-      ? Timestamp.fromPartial(object.lastEdited)
+      ? Timestamp.fromPartial(object.lastEdited, options)
       : undefined;
     return message;
   },
@@ -76,7 +85,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -113,7 +122,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

@@ -11,7 +11,7 @@ export const protobufPackage = "simple";
 export interface Numbers {
   double: number;
   float: number;
-  int32: number;
+  int32?: number | undefined;
   int64: bigint;
   uint32: number;
   uint64: bigint;
@@ -23,7 +23,7 @@ export interface Numbers {
   sfixed64: bigint;
   guint64: bigint | undefined;
   timestamp: Date | undefined;
-  uint64s: bigint[];
+  uint64S: bigint[];
 }
 
 function createBaseNumbers(): Numbers {
@@ -42,7 +42,7 @@ function createBaseNumbers(): Numbers {
     sfixed64: BigInt("0"),
     guint64: undefined,
     timestamp: undefined,
-    uint64s: [],
+    uint64S: [],
   };
 }
 
@@ -54,7 +54,7 @@ export const Numbers: MessageFns<Numbers> = {
     if (message.float !== 0) {
       writer.uint32(21).float(message.float);
     }
-    if (message.int32 !== 0) {
+    if (message.int32 !== undefined && message.int32 !== 0) {
       writer.uint32(24).int32(message.int32);
     }
     if (message.int64 !== BigInt("0")) {
@@ -105,14 +105,16 @@ export const Numbers: MessageFns<Numbers> = {
     if (message.timestamp !== undefined) {
       Timestamp.encode(toTimestamp(message.timestamp), writer.uint32(114).fork()).join();
     }
-    writer.uint32(122).fork();
-    for (const v of message.uint64s) {
-      if (BigInt.asUintN(64, v) !== v) {
-        throw new globalThis.Error("a value provided in array field uint64s of type uint64 is too large");
+    if (message.uint64S !== undefined && message.uint64S.length !== 0) {
+      writer.uint32(122).fork();
+      for (const v of message.uint64S) {
+        if (BigInt.asUintN(64, v) !== v) {
+          throw new globalThis.Error("a value provided in array field uint64S of type uint64 is too large");
+        }
+        writer.uint64(v);
       }
-      writer.uint64(v);
+      writer.join();
     }
-    writer.join();
     return writer;
   },
 
@@ -237,7 +239,7 @@ export const Numbers: MessageFns<Numbers> = {
         }
         case 15: {
           if (tag === 120) {
-            message.uint64s.push(reader.uint64() as bigint);
+            message.uint64S?.push(reader.uint64() as bigint);
 
             continue;
           }
@@ -245,7 +247,7 @@ export const Numbers: MessageFns<Numbers> = {
           if (tag === 122) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.uint64s.push(reader.uint64() as bigint);
+              message.uint64S?.push(reader.uint64() as bigint);
             }
 
             continue;
@@ -266,7 +268,7 @@ export const Numbers: MessageFns<Numbers> = {
     return {
       double: isSet(object.double) ? globalThis.Number(object.double) : 0,
       float: isSet(object.float) ? globalThis.Number(object.float) : 0,
-      int32: isSet(object.int32) ? globalThis.Number(object.int32) : 0,
+      int32: isSet(object.int32) ? globalThis.Number(object.int32) : undefined,
       int64: isSet(object.int64) ? BigInt(object.int64) : BigInt("0"),
       uint32: isSet(object.uint32) ? globalThis.Number(object.uint32) : 0,
       uint64: isSet(object.uint64) ? BigInt(object.uint64) : BigInt("0"),
@@ -278,69 +280,118 @@ export const Numbers: MessageFns<Numbers> = {
       sfixed64: isSet(object.sfixed64) ? BigInt(object.sfixed64) : BigInt("0"),
       guint64: isSet(object.guint64) ? BigInt(object.guint64) : undefined,
       timestamp: isSet(object.timestamp) ? fromJsonTimestamp(object.timestamp) : undefined,
-      uint64s: globalThis.Array.isArray(object?.uint64s) ? object.uint64s.map((e: any) => BigInt(e)) : [],
+      uint64S: globalThis.Array.isArray(object?.uint64s) ? object.uint64s.map((e: any) => BigInt(e)) : [],
     };
   },
 
-  toJSON(message: Numbers): unknown {
+  toJSON(message: Numbers, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.double !== 0) {
       obj.double = message.double;
+    }
+    if (Object.hasOwn(message, "double")) {
+      obj2.double = message.double !== undefined ? message.double : message.double;
     }
     if (message.float !== 0) {
       obj.float = message.float;
     }
-    if (message.int32 !== 0) {
+    if (Object.hasOwn(message, "float")) {
+      obj2.float = message.float !== undefined ? message.float : message.float;
+    }
+    if (message.int32 !== undefined && message.int32 !== 0) {
       obj.int32 = Math.round(message.int32);
+    }
+    if (Object.hasOwn(message, "int32")) {
+      obj2.int32 = message.int32 !== undefined ? Math.round(message.int32) : message.int32;
     }
     if (message.int64 !== BigInt("0")) {
       obj.int64 = message.int64.toString();
     }
+    if (Object.hasOwn(message, "int64")) {
+      obj2.int64 = message.int64 !== undefined ? message.int64.toString() : message.int64;
+    }
     if (message.uint32 !== 0) {
       obj.uint32 = Math.round(message.uint32);
+    }
+    if (Object.hasOwn(message, "uint32")) {
+      obj2.uint32 = message.uint32 !== undefined ? Math.round(message.uint32) : message.uint32;
     }
     if (message.uint64 !== BigInt("0")) {
       obj.uint64 = message.uint64.toString();
     }
+    if (Object.hasOwn(message, "uint64")) {
+      obj2.uint64 = message.uint64 !== undefined ? message.uint64.toString() : message.uint64;
+    }
     if (message.sint32 !== 0) {
       obj.sint32 = Math.round(message.sint32);
+    }
+    if (Object.hasOwn(message, "sint32")) {
+      obj2.sint32 = message.sint32 !== undefined ? Math.round(message.sint32) : message.sint32;
     }
     if (message.sint64 !== BigInt("0")) {
       obj.sint64 = message.sint64.toString();
     }
+    if (Object.hasOwn(message, "sint64")) {
+      obj2.sint64 = message.sint64 !== undefined ? message.sint64.toString() : message.sint64;
+    }
     if (message.fixed32 !== 0) {
       obj.fixed32 = Math.round(message.fixed32);
+    }
+    if (Object.hasOwn(message, "fixed32")) {
+      obj2.fixed32 = message.fixed32 !== undefined ? Math.round(message.fixed32) : message.fixed32;
     }
     if (message.fixed64 !== BigInt("0")) {
       obj.fixed64 = message.fixed64.toString();
     }
+    if (Object.hasOwn(message, "fixed64")) {
+      obj2.fixed64 = message.fixed64 !== undefined ? message.fixed64.toString() : message.fixed64;
+    }
     if (message.sfixed32 !== 0) {
       obj.sfixed32 = Math.round(message.sfixed32);
+    }
+    if (Object.hasOwn(message, "sfixed32")) {
+      obj2.sfixed32 = message.sfixed32 !== undefined ? Math.round(message.sfixed32) : message.sfixed32;
     }
     if (message.sfixed64 !== BigInt("0")) {
       obj.sfixed64 = message.sfixed64.toString();
     }
+    if (Object.hasOwn(message, "sfixed64")) {
+      obj2.sfixed64 = message.sfixed64 !== undefined ? message.sfixed64.toString() : message.sfixed64;
+    }
     if (message.guint64 !== undefined) {
       obj.guint64 = message.guint64;
+    }
+    if (Object.hasOwn(message, "guint64")) {
+      obj2.guint64 = message.guint64 !== undefined ? message.guint64 : message.guint64;
     }
     if (message.timestamp !== undefined) {
       obj.timestamp = message.timestamp.toISOString();
     }
-    if (message.uint64s?.length) {
-      obj.uint64s = message.uint64s.map((e) => e.toString());
+    if (Object.hasOwn(message, "timestamp")) {
+      obj2.timestamp = message.timestamp !== undefined ? message.timestamp.toISOString() : message.timestamp;
     }
-    return obj;
+    if (message.uint64S?.length) {
+      obj.uint64s = message.uint64S?.map((e) => e.toString());
+    }
+    if (message.uint64S) {
+      obj2.uint64s = message.uint64S?.map((e) => e.toString());
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Numbers>, I>>(base?: I): Numbers {
     return Numbers.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(object: I): Numbers {
+  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Numbers {
     const message = createBaseNumbers();
     message.double = object.double ?? 0;
     message.float = object.float ?? 0;
-    message.int32 = object.int32 ?? 0;
-    message.int64 = object.int64 ?? BigInt("0");
+    message.int32 = object.int32 ?? (options?.defaultZeroFields?.includes("int32") ? 0 : undefined);
+    message.int64 = object.int64 ?? "0";
     message.uint32 = object.uint32 ?? 0;
     message.uint64 = object.uint64 ?? BigInt("0");
     message.sint32 = object.sint32 ?? 0;
@@ -351,7 +402,7 @@ export const Numbers: MessageFns<Numbers> = {
     message.sfixed64 = object.sfixed64 ?? BigInt("0");
     message.guint64 = object.guint64 ?? undefined;
     message.timestamp = object.timestamp ?? undefined;
-    message.uint64s = object.uint64s?.map((e) => e) || [];
+    message.uint64S = object.uint64S?.map((e) => e) as any;
     return message;
   },
 };
@@ -361,7 +412,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | bigint
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -398,7 +449,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

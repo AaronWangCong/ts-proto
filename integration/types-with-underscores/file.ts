@@ -53,20 +53,26 @@ export const Baz: MessageFns<Baz> = {
     return { foo: isSet(object.foo) ? FooBar.fromJSON(object.foo) : undefined };
   },
 
-  toJSON(message: Baz): unknown {
+  toJSON(message: Baz, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.foo !== undefined) {
       obj.foo = FooBar.toJSON(message.foo);
     }
-    return obj;
+    if (Object.hasOwn(message, "foo")) {
+      obj2.foo = message.foo !== undefined ? FooBar.toJSON(message.foo, true) : message.foo;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Baz>, I>>(base?: I): Baz {
     return Baz.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Baz>, I>>(object: I): Baz {
+  fromPartial<I extends Exact<DeepPartial<Baz>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Baz {
     const message = createBaseBaz();
-    message.foo = (object.foo !== undefined && object.foo !== null) ? FooBar.fromPartial(object.foo) : undefined;
+    message.foo = (object.foo !== undefined && object.foo !== null)
+      ? FooBar.fromPartial(object.foo, options)
+      : undefined;
     return message;
   },
 };
@@ -100,15 +106,16 @@ export const FooBar: MessageFns<FooBar> = {
     return {};
   },
 
-  toJSON(_: FooBar): unknown {
+  toJSON(_: FooBar, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<FooBar>, I>>(base?: I): FooBar {
     return FooBar.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<FooBar>, I>>(_: I): FooBar {
+  fromPartial<I extends Exact<DeepPartial<FooBar>, I>>(_: I, options?: { defaultZeroFields?: string[] }): FooBar {
     const message = createBaseFooBar();
     return message;
   },
@@ -119,7 +126,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -134,7 +141,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

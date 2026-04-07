@@ -83,18 +83,25 @@ export const Issue56: MessageFns<Issue56> = {
     return { test: isSet(object.test) ? enumWithoutZeroFromJSON(object.test) : 1 };
   },
 
-  toJSON(message: Issue56): unknown {
+  toJSON(message: Issue56, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.test !== 1) {
       obj.test = enumWithoutZeroToJSON(message.test);
     }
-    return obj;
+    if (Object.hasOwn(message, "test")) {
+      obj2.test = message.test !== undefined ? enumWithoutZeroToJSON(message.test) : message.test;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Issue56>, I>>(base?: I): Issue56 {
     return Issue56.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Issue56>, I>>(object: I): Issue56 {
+  fromPartial<I extends Exact<DeepPartial<Issue56>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Issue56 {
     const message = createBaseIssue56();
     message.test = object.test ?? 1;
     return message;
@@ -106,7 +113,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -121,7 +128,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

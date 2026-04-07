@@ -78,7 +78,7 @@ export function barToJSON(object: Bar): string {
 
 export interface WithNestedEnum {
   foo: Foo;
-  Bar: Bar;
+  bar: Bar;
   baz: WithNestedEnum_Baz;
   qux: WithNestedEnum_Qux;
 }
@@ -154,7 +154,7 @@ export function withNestedEnum_QuxToJSON(object: WithNestedEnum_Qux): string {
 }
 
 function createBaseWithNestedEnum(): WithNestedEnum {
-  return { foo: 0, Bar: 0, baz: 0, qux: 0 };
+  return { foo: 0, bar: 0, baz: 0, qux: 0 };
 }
 
 export const WithNestedEnum: MessageFns<WithNestedEnum> = {
@@ -162,8 +162,8 @@ export const WithNestedEnum: MessageFns<WithNestedEnum> = {
     if (message.foo !== 0) {
       writer.uint32(8).int32(message.foo);
     }
-    if (message.Bar !== 0) {
-      writer.uint32(16).int32(message.Bar);
+    if (message.bar !== 0) {
+      writer.uint32(16).int32(message.bar);
     }
     if (message.baz !== 0) {
       writer.uint32(24).int32(message.baz);
@@ -194,7 +194,7 @@ export const WithNestedEnum: MessageFns<WithNestedEnum> = {
             break;
           }
 
-          message.Bar = reader.int32() as any;
+          message.bar = reader.int32() as any;
           continue;
         }
         case 3: {
@@ -225,36 +225,52 @@ export const WithNestedEnum: MessageFns<WithNestedEnum> = {
   fromJSON(object: any): WithNestedEnum {
     return {
       foo: isSet(object.foo) ? fooFromJSON(object.foo) : 0,
-      Bar: isSet(object.Bar) ? barFromJSON(object.Bar) : 0,
+      bar: isSet(object.Bar) ? barFromJSON(object.Bar) : 0,
       baz: isSet(object.baz) ? withNestedEnum_BazFromJSON(object.baz) : 0,
       qux: isSet(object.qux) ? withNestedEnum_QuxFromJSON(object.qux) : 0,
     };
   },
 
-  toJSON(message: WithNestedEnum): unknown {
+  toJSON(message: WithNestedEnum, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.foo !== 0) {
       obj.foo = fooToJSON(message.foo);
     }
-    if (message.Bar !== 0) {
-      obj.Bar = barToJSON(message.Bar);
+    if (Object.hasOwn(message, "foo")) {
+      obj2.foo = message.foo !== undefined ? fooToJSON(message.foo) : message.foo;
+    }
+    if (message.bar !== 0) {
+      obj.Bar = barToJSON(message.bar);
+    }
+    if (Object.hasOwn(message, "bar")) {
+      obj2.Bar = message.bar !== undefined ? barToJSON(message.bar) : message.bar;
     }
     if (message.baz !== 0) {
       obj.baz = withNestedEnum_BazToJSON(message.baz);
     }
+    if (Object.hasOwn(message, "baz")) {
+      obj2.baz = message.baz !== undefined ? withNestedEnum_BazToJSON(message.baz) : message.baz;
+    }
     if (message.qux !== 0) {
       obj.qux = withNestedEnum_QuxToJSON(message.qux);
     }
-    return obj;
+    if (Object.hasOwn(message, "qux")) {
+      obj2.qux = message.qux !== undefined ? withNestedEnum_QuxToJSON(message.qux) : message.qux;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<WithNestedEnum>, I>>(base?: I): WithNestedEnum {
     return WithNestedEnum.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<WithNestedEnum>, I>>(object: I): WithNestedEnum {
+  fromPartial<I extends Exact<DeepPartial<WithNestedEnum>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): WithNestedEnum {
     const message = createBaseWithNestedEnum();
     message.foo = object.foo ?? 0;
-    message.Bar = object.Bar ?? 0;
+    message.bar = object.bar ?? 0;
     message.baz = object.baz ?? 0;
     message.qux = object.qux ?? 0;
     return message;
@@ -266,7 +282,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -281,7 +297,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

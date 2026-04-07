@@ -6,46 +6,46 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export const protobufPackage = "simple";
 
-export interface Object {
+export interface ObjectMessage {
   name: string;
 }
 
-export interface Error {
+export interface ErrorMessage {
   name: string;
 }
 
-export interface String {
+export interface StringMessage {
   value: string;
 }
 
-export interface Boolean {
+export interface BooleanMessage {
   value: boolean;
 }
 
-export interface Number {
+export interface NumberMessage {
   value: number;
 }
 
-export interface Array {
-  values: String[];
+export interface ArrayMessage {
+  values: StringMessage[];
 }
 
-function createBaseObject(): Object {
+function createBaseObjectMessage(): ObjectMessage {
   return { name: "" };
 }
 
-export const Object: MessageFns<Object> = {
-  encode(message: Object, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const ObjectMessage: MessageFns<ObjectMessage> = {
+  encode(message: ObjectMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Object {
+  decode(input: BinaryReader | Uint8Array, length?: number): ObjectMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseObject();
+    const message = createBaseObjectMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -66,44 +66,51 @@ export const Object: MessageFns<Object> = {
     return message;
   },
 
-  fromJSON(object: any): Object {
+  fromJSON(object: any): ObjectMessage {
     return { name: isSet(object.name) ? gt.String(object.name) : "" };
   },
 
-  toJSON(message: Object): unknown {
+  toJSON(message: ObjectMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create<I extends Exact<DeepPartial<Object>, I>>(base?: I): Object {
-    return Object.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<ObjectMessage>, I>>(base?: I): ObjectMessage {
+    return ObjectMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Object>, I>>(object: I): Object {
-    const message = createBaseObject();
+  fromPartial<I extends Exact<DeepPartial<ObjectMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ObjectMessage {
+    const message = createBaseObjectMessage();
     message.name = object.name ?? "";
     return message;
   },
 };
 
-function createBaseError(): Error {
+function createBaseErrorMessage(): ErrorMessage {
   return { name: "" };
 }
 
-export const Error: MessageFns<Error> = {
-  encode(message: Error, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const ErrorMessage: MessageFns<ErrorMessage> = {
+  encode(message: ErrorMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.name !== "") {
       writer.uint32(10).string(message.name);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Error {
+  decode(input: BinaryReader | Uint8Array, length?: number): ErrorMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseError();
+    const message = createBaseErrorMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -124,44 +131,51 @@ export const Error: MessageFns<Error> = {
     return message;
   },
 
-  fromJSON(object: any): Error {
+  fromJSON(object: any): ErrorMessage {
     return { name: isSet(object.name) ? gt.String(object.name) : "" };
   },
 
-  toJSON(message: Error): unknown {
+  toJSON(message: ErrorMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create<I extends Exact<DeepPartial<Error>, I>>(base?: I): Error {
-    return Error.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<ErrorMessage>, I>>(base?: I): ErrorMessage {
+    return ErrorMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Error>, I>>(object: I): Error {
-    const message = createBaseError();
+  fromPartial<I extends Exact<DeepPartial<ErrorMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ErrorMessage {
+    const message = createBaseErrorMessage();
     message.name = object.name ?? "";
     return message;
   },
 };
 
-function createBaseString(): String {
+function createBaseStringMessage(): StringMessage {
   return { value: "" };
 }
 
-export const String: MessageFns<String> = {
-  encode(message: String, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const StringMessage: MessageFns<StringMessage> = {
+  encode(message: StringMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.value !== "") {
       writer.uint32(10).string(message.value);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): String {
+  decode(input: BinaryReader | Uint8Array, length?: number): StringMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseString();
+    const message = createBaseStringMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -182,44 +196,51 @@ export const String: MessageFns<String> = {
     return message;
   },
 
-  fromJSON(object: any): String {
+  fromJSON(object: any): StringMessage {
     return { value: isSet(object.value) ? gt.String(object.value) : "" };
   },
 
-  toJSON(message: String): unknown {
+  toJSON(message: StringMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create<I extends Exact<DeepPartial<String>, I>>(base?: I): String {
-    return String.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<StringMessage>, I>>(base?: I): StringMessage {
+    return StringMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<String>, I>>(object: I): String {
-    const message = createBaseString();
+  fromPartial<I extends Exact<DeepPartial<StringMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): StringMessage {
+    const message = createBaseStringMessage();
     message.value = object.value ?? "";
     return message;
   },
 };
 
-function createBaseBoolean(): Boolean {
+function createBaseBooleanMessage(): BooleanMessage {
   return { value: false };
 }
 
-export const Boolean: MessageFns<Boolean> = {
-  encode(message: Boolean, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const BooleanMessage: MessageFns<BooleanMessage> = {
+  encode(message: BooleanMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.value !== false) {
       writer.uint32(8).bool(message.value);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Boolean {
+  decode(input: BinaryReader | Uint8Array, length?: number): BooleanMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseBoolean();
+    const message = createBaseBooleanMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -240,44 +261,51 @@ export const Boolean: MessageFns<Boolean> = {
     return message;
   },
 
-  fromJSON(object: any): Boolean {
+  fromJSON(object: any): BooleanMessage {
     return { value: isSet(object.value) ? gt.Boolean(object.value) : false };
   },
 
-  toJSON(message: Boolean): unknown {
+  toJSON(message: BooleanMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== false) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create<I extends Exact<DeepPartial<Boolean>, I>>(base?: I): Boolean {
-    return Boolean.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<BooleanMessage>, I>>(base?: I): BooleanMessage {
+    return BooleanMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Boolean>, I>>(object: I): Boolean {
-    const message = createBaseBoolean();
+  fromPartial<I extends Exact<DeepPartial<BooleanMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): BooleanMessage {
+    const message = createBaseBooleanMessage();
     message.value = object.value ?? false;
     return message;
   },
 };
 
-function createBaseNumber(): Number {
+function createBaseNumberMessage(): NumberMessage {
   return { value: 0 };
 }
 
-export const Number: MessageFns<Number> = {
-  encode(message: Number, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const NumberMessage: MessageFns<NumberMessage> = {
+  encode(message: NumberMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.value !== 0) {
       writer.uint32(9).double(message.value);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Number {
+  decode(input: BinaryReader | Uint8Array, length?: number): NumberMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseNumber();
+    const message = createBaseNumberMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -298,44 +326,53 @@ export const Number: MessageFns<Number> = {
     return message;
   },
 
-  fromJSON(object: any): Number {
+  fromJSON(object: any): NumberMessage {
     return { value: isSet(object.value) ? gt.Number(object.value) : 0 };
   },
 
-  toJSON(message: Number): unknown {
+  toJSON(message: NumberMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.value !== 0) {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create<I extends Exact<DeepPartial<Number>, I>>(base?: I): Number {
-    return Number.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<NumberMessage>, I>>(base?: I): NumberMessage {
+    return NumberMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Number>, I>>(object: I): Number {
-    const message = createBaseNumber();
+  fromPartial<I extends Exact<DeepPartial<NumberMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): NumberMessage {
+    const message = createBaseNumberMessage();
     message.value = object.value ?? 0;
     return message;
   },
 };
 
-function createBaseArray(): Array {
+function createBaseArrayMessage(): ArrayMessage {
   return { values: [] };
 }
 
-export const Array: MessageFns<Array> = {
-  encode(message: Array, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.values) {
-      String.encode(v!, writer.uint32(10).fork()).join();
+export const ArrayMessage: MessageFns<ArrayMessage> = {
+  encode(message: ArrayMessage, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.values !== undefined && message.values.length !== 0) {
+      for (const v of message.values) {
+        StringMessage.encode(v!, writer.uint32(10).fork()).join();
+      }
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Array {
+  decode(input: BinaryReader | Uint8Array, length?: number): ArrayMessage {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseArray();
+    const message = createBaseArrayMessage();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -344,7 +381,7 @@ export const Array: MessageFns<Array> = {
             break;
           }
 
-          message.values.push(String.decode(reader, reader.uint32()));
+          message.values?.push(StringMessage.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -356,24 +393,31 @@ export const Array: MessageFns<Array> = {
     return message;
   },
 
-  fromJSON(object: any): Array {
-    return { values: gt.Array.isArray(object?.values) ? object.values.map((e: any) => String.fromJSON(e)) : [] };
+  fromJSON(object: any): ArrayMessage {
+    return { values: gt.Array.isArray(object?.values) ? object.values.map((e: any) => StringMessage.fromJSON(e)) : [] };
   },
 
-  toJSON(message: Array): unknown {
+  toJSON(message: ArrayMessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.values?.length) {
-      obj.values = message.values.map((e) => String.toJSON(e));
+      obj.values = message.values?.map((e) => StringMessage.toJSON(e));
     }
-    return obj;
+    if (message.values) {
+      obj2.values = message.values?.map((e) => StringMessage.toJSON(e, true));
+    }
+    return isProto ? obj2 : obj;
   },
 
-  create<I extends Exact<DeepPartial<Array>, I>>(base?: I): Array {
-    return Array.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<ArrayMessage>, I>>(base?: I): ArrayMessage {
+    return ArrayMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Array>, I>>(object: I): Array {
-    const message = createBaseArray();
-    message.values = object.values?.map((e) => String.fromPartial(e)) || [];
+  fromPartial<I extends Exact<DeepPartial<ArrayMessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ArrayMessage {
+    const message = createBaseArrayMessage();
+    message.values = object.values?.map((e) => StringMessage.fromPartial(e, options)) as any;
     return message;
   },
 };
@@ -402,7 +446,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -417,7 +461,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

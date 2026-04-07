@@ -140,30 +140,43 @@ export const GroupsOptionalTest: MessageFns<GroupsOptionalTest> = {
     };
   },
 
-  toJSON(message: GroupsOptionalTest): unknown {
+  toJSON(message: GroupsOptionalTest, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.int1 !== undefined && message.int1 !== 0) {
       obj.int1 = Math.round(message.int1);
+    }
+    if (Object.hasOwn(message, "int1")) {
+      obj2.int1 = message.int1 !== undefined ? Math.round(message.int1) : message.int1;
     }
     if (message.group !== undefined) {
       obj.group = GroupsOptionalTest_Group.toJSON(message.group);
     }
+    if (Object.hasOwn(message, "group")) {
+      obj2.group = message.group !== undefined ? GroupsOptionalTest_Group.toJSON(message.group, true) : message.group;
+    }
     if (message.int3 !== undefined && message.int3 !== 0) {
       obj.int3 = Math.round(message.int3);
     }
-    return obj;
+    if (Object.hasOwn(message, "int3")) {
+      obj2.int3 = message.int3 !== undefined ? Math.round(message.int3) : message.int3;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsOptionalTest>, I>>(base?: I): GroupsOptionalTest {
     return GroupsOptionalTest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GroupsOptionalTest>, I>>(object: I): GroupsOptionalTest {
+  fromPartial<I extends Exact<DeepPartial<GroupsOptionalTest>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GroupsOptionalTest {
     const message = createBaseGroupsOptionalTest();
-    message.int1 = object.int1 ?? undefined;
+    message.int1 = object.int1 ?? (options?.defaultZeroFields?.includes("int1") ? 0 : undefined);
     message.group = (object.group !== undefined && object.group !== null)
-      ? GroupsOptionalTest_Group.fromPartial(object.group)
+      ? GroupsOptionalTest_Group.fromPartial(object.group, options)
       : undefined;
-    message.int3 = object.int3 ?? undefined;
+    message.int3 = object.int3 ?? (options?.defaultZeroFields?.includes("int3") ? 0 : undefined);
     return message;
   },
 };
@@ -242,21 +255,31 @@ export const GroupsOptionalTest_Group: MessageFns<GroupsOptionalTest_Group> = {
     };
   },
 
-  toJSON(message: GroupsOptionalTest_Group): unknown {
+  toJSON(message: GroupsOptionalTest_Group, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== undefined && message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== undefined && message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsOptionalTest_Group>, I>>(base?: I): GroupsOptionalTest_Group {
     return GroupsOptionalTest_Group.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GroupsOptionalTest_Group>, I>>(object: I): GroupsOptionalTest_Group {
+  fromPartial<I extends Exact<DeepPartial<GroupsOptionalTest_Group>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GroupsOptionalTest_Group {
     const message = createBaseGroupsOptionalTest_Group();
     message.key = object.key ?? undefined;
     message.value = object.value ?? undefined;
@@ -312,7 +335,7 @@ export const GroupsRepeatedTest: MessageFns<GroupsRepeatedTest> = {
             if (message.int1 === undefined) {
               message.int1 = [];
             }
-            message.int1!.push(reader.int32());
+            message.int1!?.push(reader.int32());
 
             continue;
           }
@@ -323,7 +346,7 @@ export const GroupsRepeatedTest: MessageFns<GroupsRepeatedTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.int1!.push(reader.int32());
+              message.int1!?.push(reader.int32());
             }
 
             continue;
@@ -341,7 +364,7 @@ export const GroupsRepeatedTest: MessageFns<GroupsRepeatedTest> = {
           }
           const el = GroupsRepeatedTest_Group.decode(reader);
           if (el !== undefined) {
-            message.group!.push(el);
+            message.group!?.push(el);
           }
           continue;
         }
@@ -350,7 +373,7 @@ export const GroupsRepeatedTest: MessageFns<GroupsRepeatedTest> = {
             if (message.int3 === undefined) {
               message.int3 = [];
             }
-            message.int3!.push(reader.int32());
+            message.int3!?.push(reader.int32());
 
             continue;
           }
@@ -361,7 +384,7 @@ export const GroupsRepeatedTest: MessageFns<GroupsRepeatedTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.int3!.push(reader.int32());
+              message.int3!?.push(reader.int32());
             }
 
             continue;
@@ -400,28 +423,41 @@ export const GroupsRepeatedTest: MessageFns<GroupsRepeatedTest> = {
     };
   },
 
-  toJSON(message: GroupsRepeatedTest): unknown {
+  toJSON(message: GroupsRepeatedTest, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.int1?.length) {
-      obj.int1 = message.int1.map((e) => Math.round(e));
+      obj.int1 = message.int1?.map((e) => Math.round(e));
+    }
+    if (message.int1) {
+      obj2.int1 = message.int1?.map((e) => Math.round(e));
     }
     if (message.group?.length) {
-      obj.group = message.group.map((e) => GroupsRepeatedTest_Group.toJSON(e));
+      obj.group = message.group?.map((e) => GroupsRepeatedTest_Group.toJSON(e));
+    }
+    if (message.group) {
+      obj2.group = message.group?.map((e) => GroupsRepeatedTest_Group.toJSON(e, true));
     }
     if (message.int3?.length) {
-      obj.int3 = message.int3.map((e) => Math.round(e));
+      obj.int3 = message.int3?.map((e) => Math.round(e));
     }
-    return obj;
+    if (message.int3) {
+      obj2.int3 = message.int3?.map((e) => Math.round(e));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsRepeatedTest>, I>>(base?: I): GroupsRepeatedTest {
     return GroupsRepeatedTest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GroupsRepeatedTest>, I>>(object: I): GroupsRepeatedTest {
+  fromPartial<I extends Exact<DeepPartial<GroupsRepeatedTest>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GroupsRepeatedTest {
     const message = createBaseGroupsRepeatedTest();
-    message.int1 = object.int1?.map((e) => e) || undefined;
-    message.group = object.group?.map((e) => GroupsRepeatedTest_Group.fromPartial(e)) || undefined;
-    message.int3 = object.int3?.map((e) => e) || undefined;
+    message.int1 = object.int1?.map((e) => e) as any;
+    message.group = object.group?.map((e) => GroupsRepeatedTest_Group.fromPartial(e, options)) as any;
+    message.int3 = object.int3?.map((e) => e) as any;
     return message;
   },
 };
@@ -470,7 +506,7 @@ export const GroupsRepeatedTest_Group: MessageFns<GroupsRepeatedTest_Group> = {
           }
           const el = reader.string();
           if (el !== undefined) {
-            message.key!.push(el);
+            message.key!?.push(el);
           }
           continue;
         }
@@ -484,7 +520,7 @@ export const GroupsRepeatedTest_Group: MessageFns<GroupsRepeatedTest_Group> = {
           }
           const el = reader.string();
           if (el !== undefined) {
-            message.value!.push(el);
+            message.value!?.push(el);
           }
           continue;
         }
@@ -516,24 +552,34 @@ export const GroupsRepeatedTest_Group: MessageFns<GroupsRepeatedTest_Group> = {
     };
   },
 
-  toJSON(message: GroupsRepeatedTest_Group): unknown {
+  toJSON(message: GroupsRepeatedTest_Group, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key?.length) {
       obj.key = message.key;
+    }
+    if (message.key) {
+      obj2.key = message.key;
     }
     if (message.value?.length) {
       obj.value = message.value;
     }
-    return obj;
+    if (message.value) {
+      obj2.value = message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsRepeatedTest_Group>, I>>(base?: I): GroupsRepeatedTest_Group {
     return GroupsRepeatedTest_Group.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GroupsRepeatedTest_Group>, I>>(object: I): GroupsRepeatedTest_Group {
+  fromPartial<I extends Exact<DeepPartial<GroupsRepeatedTest_Group>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GroupsRepeatedTest_Group {
     const message = createBaseGroupsRepeatedTest_Group();
-    message.key = object.key?.map((e) => e) || undefined;
-    message.value = object.value?.map((e) => e) || undefined;
+    message.key = object.key?.map((e) => e) as any;
+    message.value = object.value?.map((e) => e) as any;
     return message;
   },
 };
@@ -586,7 +632,7 @@ export const GroupsNestedTest: MessageFns<GroupsNestedTest> = {
             if (message.int1 === undefined) {
               message.int1 = [];
             }
-            message.int1!.push(reader.int32());
+            message.int1!?.push(reader.int32());
 
             continue;
           }
@@ -597,7 +643,7 @@ export const GroupsNestedTest: MessageFns<GroupsNestedTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.int1!.push(reader.int32());
+              message.int1!?.push(reader.int32());
             }
 
             continue;
@@ -615,7 +661,7 @@ export const GroupsNestedTest: MessageFns<GroupsNestedTest> = {
           }
           const el = GroupsNestedTest_Group.decode(reader);
           if (el !== undefined) {
-            message.group!.push(el);
+            message.group!?.push(el);
           }
           continue;
         }
@@ -624,7 +670,7 @@ export const GroupsNestedTest: MessageFns<GroupsNestedTest> = {
             if (message.int3 === undefined) {
               message.int3 = [];
             }
-            message.int3!.push(reader.int32());
+            message.int3!?.push(reader.int32());
 
             continue;
           }
@@ -635,7 +681,7 @@ export const GroupsNestedTest: MessageFns<GroupsNestedTest> = {
             }
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.int3!.push(reader.int32());
+              message.int3!?.push(reader.int32());
             }
 
             continue;
@@ -674,28 +720,41 @@ export const GroupsNestedTest: MessageFns<GroupsNestedTest> = {
     };
   },
 
-  toJSON(message: GroupsNestedTest): unknown {
+  toJSON(message: GroupsNestedTest, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.int1?.length) {
-      obj.int1 = message.int1.map((e) => Math.round(e));
+      obj.int1 = message.int1?.map((e) => Math.round(e));
+    }
+    if (message.int1) {
+      obj2.int1 = message.int1?.map((e) => Math.round(e));
     }
     if (message.group?.length) {
-      obj.group = message.group.map((e) => GroupsNestedTest_Group.toJSON(e));
+      obj.group = message.group?.map((e) => GroupsNestedTest_Group.toJSON(e));
+    }
+    if (message.group) {
+      obj2.group = message.group?.map((e) => GroupsNestedTest_Group.toJSON(e, true));
     }
     if (message.int3?.length) {
-      obj.int3 = message.int3.map((e) => Math.round(e));
+      obj.int3 = message.int3?.map((e) => Math.round(e));
     }
-    return obj;
+    if (message.int3) {
+      obj2.int3 = message.int3?.map((e) => Math.round(e));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsNestedTest>, I>>(base?: I): GroupsNestedTest {
     return GroupsNestedTest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GroupsNestedTest>, I>>(object: I): GroupsNestedTest {
+  fromPartial<I extends Exact<DeepPartial<GroupsNestedTest>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GroupsNestedTest {
     const message = createBaseGroupsNestedTest();
-    message.int1 = object.int1?.map((e) => e) || undefined;
-    message.group = object.group?.map((e) => GroupsNestedTest_Group.fromPartial(e)) || undefined;
-    message.int3 = object.int3?.map((e) => e) || undefined;
+    message.int1 = object.int1?.map((e) => e) as any;
+    message.group = object.group?.map((e) => GroupsNestedTest_Group.fromPartial(e, options)) as any;
+    message.int3 = object.int3?.map((e) => e) as any;
     return message;
   },
 };
@@ -739,7 +798,7 @@ export const GroupsNestedTest_Group: MessageFns<GroupsNestedTest_Group> = {
           }
           const el = GroupsNestedTest_Group_Nested.decode(reader);
           if (el !== undefined) {
-            message.nested!.push(el);
+            message.nested!?.push(el);
           }
           continue;
         }
@@ -772,20 +831,27 @@ export const GroupsNestedTest_Group: MessageFns<GroupsNestedTest_Group> = {
     };
   },
 
-  toJSON(message: GroupsNestedTest_Group): unknown {
+  toJSON(message: GroupsNestedTest_Group, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.nested?.length) {
-      obj.nested = message.nested.map((e) => GroupsNestedTest_Group_Nested.toJSON(e));
+      obj.nested = message.nested?.map((e) => GroupsNestedTest_Group_Nested.toJSON(e));
     }
-    return obj;
+    if (message.nested) {
+      obj2.nested = message.nested?.map((e) => GroupsNestedTest_Group_Nested.toJSON(e, true));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsNestedTest_Group>, I>>(base?: I): GroupsNestedTest_Group {
     return GroupsNestedTest_Group.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GroupsNestedTest_Group>, I>>(object: I): GroupsNestedTest_Group {
+  fromPartial<I extends Exact<DeepPartial<GroupsNestedTest_Group>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): GroupsNestedTest_Group {
     const message = createBaseGroupsNestedTest_Group();
-    message.nested = object.nested?.map((e) => GroupsNestedTest_Group_Nested.fromPartial(e)) || undefined;
+    message.nested = object.nested?.map((e) => GroupsNestedTest_Group_Nested.fromPartial(e, options)) as any;
     return message;
   },
 };
@@ -829,7 +895,7 @@ export const GroupsNestedTest_Group_Nested: MessageFns<GroupsNestedTest_Group_Ne
           }
           const el = GroupsNestedTest_Group_Nested_Nested2.decode(reader);
           if (el !== undefined) {
-            message.nested2!.push(el);
+            message.nested2!?.push(el);
           }
           continue;
         }
@@ -862,12 +928,16 @@ export const GroupsNestedTest_Group_Nested: MessageFns<GroupsNestedTest_Group_Ne
     };
   },
 
-  toJSON(message: GroupsNestedTest_Group_Nested): unknown {
+  toJSON(message: GroupsNestedTest_Group_Nested, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.nested2?.length) {
-      obj.nested2 = message.nested2.map((e) => GroupsNestedTest_Group_Nested_Nested2.toJSON(e));
+      obj.nested2 = message.nested2?.map((e) => GroupsNestedTest_Group_Nested_Nested2.toJSON(e));
     }
-    return obj;
+    if (message.nested2) {
+      obj2.nested2 = message.nested2?.map((e) => GroupsNestedTest_Group_Nested_Nested2.toJSON(e, true));
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsNestedTest_Group_Nested>, I>>(base?: I): GroupsNestedTest_Group_Nested {
@@ -875,9 +945,10 @@ export const GroupsNestedTest_Group_Nested: MessageFns<GroupsNestedTest_Group_Ne
   },
   fromPartial<I extends Exact<DeepPartial<GroupsNestedTest_Group_Nested>, I>>(
     object: I,
+    options?: { defaultZeroFields?: string[] },
   ): GroupsNestedTest_Group_Nested {
     const message = createBaseGroupsNestedTest_Group_Nested();
-    message.nested2 = object.nested2?.map((e) => GroupsNestedTest_Group_Nested_Nested2.fromPartial(e)) || undefined;
+    message.nested2 = object.nested2?.map((e) => GroupsNestedTest_Group_Nested_Nested2.fromPartial(e, options)) as any;
     return message;
   },
 };
@@ -942,12 +1013,16 @@ export const GroupsNestedTest_Group_Nested_Nested2: MessageFns<GroupsNestedTest_
     return { string1: isSet(object.string1) ? globalThis.String(object.string1) : undefined };
   },
 
-  toJSON(message: GroupsNestedTest_Group_Nested_Nested2): unknown {
+  toJSON(message: GroupsNestedTest_Group_Nested_Nested2, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.string1 !== undefined && message.string1 !== "") {
       obj.string1 = message.string1;
     }
-    return obj;
+    if (Object.hasOwn(message, "string1")) {
+      obj2.string1 = message.string1 !== undefined ? message.string1 : message.string1;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<GroupsNestedTest_Group_Nested_Nested2>, I>>(
@@ -957,6 +1032,7 @@ export const GroupsNestedTest_Group_Nested_Nested2: MessageFns<GroupsNestedTest_
   },
   fromPartial<I extends Exact<DeepPartial<GroupsNestedTest_Group_Nested_Nested2>, I>>(
     object: I,
+    options?: { defaultZeroFields?: string[] },
   ): GroupsNestedTest_Group_Nested_Nested2 {
     const message = createBaseGroupsNestedTest_Group_Nested_Nested2();
     message.string1 = object.string1 ?? undefined;
@@ -969,7 +1045,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -984,7 +1060,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

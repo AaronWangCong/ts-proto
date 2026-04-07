@@ -7,19 +7,19 @@ import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 export const protobufPackage = "useNullAsOptional";
 
 export interface ProfileInfo {
-  id: number;
+  id?: number | null;
   bio: string;
   phone: string;
 }
 
 export interface User {
-  id: number;
+  id?: number | null;
   username: string;
   profile?: ProfileInfo | null | undefined;
 }
 
 export interface UserById {
-  id: number;
+  id?: number | null;
 }
 
 function createBaseProfileInfo(): ProfileInfo {
@@ -28,7 +28,7 @@ function createBaseProfileInfo(): ProfileInfo {
 
 export const ProfileInfo: MessageFns<ProfileInfo> = {
   encode(message: ProfileInfo, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== null && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     if (message.bio !== "") {
@@ -82,32 +82,45 @@ export const ProfileInfo: MessageFns<ProfileInfo> = {
 
   fromJSON(object: any): ProfileInfo {
     return {
-      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
+      id: isSet(object.id) ? globalThis.Number(object.id) : null,
       bio: isSet(object.bio) ? globalThis.String(object.bio) : "",
       phone: isSet(object.phone) ? globalThis.String(object.phone) : "",
     };
   },
 
-  toJSON(message: ProfileInfo): unknown {
+  toJSON(message: ProfileInfo, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.id !== 0) {
+    const obj2: any = {};
+    if (message.id !== undefined && message.id !== null && message.id !== 0) {
       obj.id = Math.round(message.id);
+    }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
     }
     if (message.bio !== "") {
       obj.bio = message.bio;
     }
+    if (Object.hasOwn(message, "bio")) {
+      obj2.bio = message.bio !== undefined ? message.bio : message.bio;
+    }
     if (message.phone !== "") {
       obj.phone = message.phone;
     }
-    return obj;
+    if (Object.hasOwn(message, "phone")) {
+      obj2.phone = message.phone !== undefined ? message.phone : message.phone;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ProfileInfo>, I>>(base?: I): ProfileInfo {
     return ProfileInfo.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ProfileInfo>, I>>(object: I): ProfileInfo {
+  fromPartial<I extends Exact<DeepPartial<ProfileInfo>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ProfileInfo {
     const message = createBaseProfileInfo();
-    message.id = object.id ?? 0;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
     message.bio = object.bio ?? "";
     message.phone = object.phone ?? "";
     return message;
@@ -120,7 +133,7 @@ function createBaseUser(): User {
 
 export const User: MessageFns<User> = {
   encode(message: User, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== null && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     if (message.username !== "") {
@@ -174,35 +187,45 @@ export const User: MessageFns<User> = {
 
   fromJSON(object: any): User {
     return {
-      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
+      id: isSet(object.id) ? globalThis.Number(object.id) : null,
       username: isSet(object.username) ? globalThis.String(object.username) : "",
       profile: isSet(object.profile) ? ProfileInfo.fromJSON(object.profile) : null,
     };
   },
 
-  toJSON(message: User): unknown {
+  toJSON(message: User, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.id !== 0) {
+    const obj2: any = {};
+    if (message.id !== undefined && message.id !== null && message.id !== 0) {
       obj.id = Math.round(message.id);
+    }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
     }
     if (message.username !== "") {
       obj.username = message.username;
     }
+    if (Object.hasOwn(message, "username")) {
+      obj2.username = message.username !== undefined ? message.username : message.username;
+    }
     if (message.profile !== undefined && message.profile !== null) {
       obj.profile = ProfileInfo.toJSON(message.profile);
     }
-    return obj;
+    if (Object.hasOwn(message, "profile")) {
+      obj2.profile = message.profile !== undefined ? ProfileInfo.toJSON(message.profile, true) : message.profile;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<User>, I>>(base?: I): User {
     return User.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<User>, I>>(object: I): User {
+  fromPartial<I extends Exact<DeepPartial<User>, I>>(object: I, options?: { defaultZeroFields?: string[] }): User {
     const message = createBaseUser();
-    message.id = object.id ?? 0;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
     message.username = object.username ?? "";
     message.profile = (object.profile !== undefined && object.profile !== null)
-      ? ProfileInfo.fromPartial(object.profile)
+      ? ProfileInfo.fromPartial(object.profile, options)
       : undefined;
     return message;
   },
@@ -214,7 +237,7 @@ function createBaseUserById(): UserById {
 
 export const UserById: MessageFns<UserById> = {
   encode(message: UserById, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id !== 0) {
+    if (message.id !== undefined && message.id !== null && message.id !== 0) {
       writer.uint32(8).int32(message.id);
     }
     return writer;
@@ -245,23 +268,30 @@ export const UserById: MessageFns<UserById> = {
   },
 
   fromJSON(object: any): UserById {
-    return { id: isSet(object.id) ? globalThis.Number(object.id) : 0 };
+    return { id: isSet(object.id) ? globalThis.Number(object.id) : null };
   },
 
-  toJSON(message: UserById): unknown {
+  toJSON(message: UserById, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.id !== 0) {
+    const obj2: any = {};
+    if (message.id !== undefined && message.id !== null && message.id !== 0) {
       obj.id = Math.round(message.id);
     }
-    return obj;
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? Math.round(message.id) : message.id;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<UserById>, I>>(base?: I): UserById {
     return UserById.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<UserById>, I>>(object: I): UserById {
+  fromPartial<I extends Exact<DeepPartial<UserById>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): UserById {
     const message = createBaseUserById();
-    message.id = object.id ?? 0;
+    message.id = object.id ?? (options?.defaultZeroFields?.includes("id") ? 0 : undefined);
     return message;
   },
 };
@@ -295,7 +325,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -310,7 +340,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

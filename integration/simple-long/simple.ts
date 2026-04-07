@@ -41,7 +41,7 @@ export interface SimpleWithMap_LongLookupEntry {
 export interface Numbers {
   double: number;
   float: number;
-  int32: number;
+  int32?: number | undefined;
   int64: Long;
   uint32: number;
   uint64: Long;
@@ -73,11 +73,15 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
     if (message.bananas !== undefined) {
       Int64Value.encode({ value: message.bananas! }, writer.uint32(34).fork()).join();
     }
-    for (const v of message.coins) {
-      Int32Value.encode({ value: v!! }, writer.uint32(50).fork()).join();
+    if (message.coins !== undefined && message.coins.length !== 0) {
+      for (const v of message.coins) {
+        Int32Value.encode({ value: v!! }, writer.uint32(50).fork()).join();
+      }
     }
-    for (const v of message.snacks) {
-      StringValue.encode({ value: v!! }, writer.uint32(58).fork()).join();
+    if (message.snacks !== undefined && message.snacks.length !== 0) {
+      for (const v of message.snacks) {
+        StringValue.encode({ value: v!! }, writer.uint32(58).fork()).join();
+      }
     }
     return writer;
   },
@@ -126,7 +130,7 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
             break;
           }
 
-          message.coins.push(Int32Value.decode(reader, reader.uint32()).value);
+          message.coins?.push(Int32Value.decode(reader, reader.uint32()).value);
           continue;
         }
         case 7: {
@@ -134,7 +138,7 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
             break;
           }
 
-          message.snacks.push(StringValue.decode(reader, reader.uint32()).value);
+          message.snacks?.push(StringValue.decode(reader, reader.uint32()).value);
           continue;
         }
       }
@@ -148,42 +152,64 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
 
   fromJSON(object: any): SimpleWithWrappers {
     return {
-      name: isSet(object.name) ? String(object.name) : undefined,
-      age: isSet(object.age) ? Number(object.age) : undefined,
-      enabled: isSet(object.enabled) ? Boolean(object.enabled) : undefined,
+      name: isSet(object.name) ? globalThis.String(object.name) : undefined,
+      age: isSet(object.age) ? globalThis.Number(object.age) : undefined,
+      enabled: isSet(object.enabled) ? globalThis.Boolean(object.enabled) : undefined,
       bananas: isSet(object.bananas) ? Long.fromValue(object.bananas) : undefined,
-      coins: globalThis.Array.isArray(object?.coins) ? object.coins.map((e: any) => Number(e)) : [],
-      snacks: globalThis.Array.isArray(object?.snacks) ? object.snacks.map((e: any) => String(e)) : [],
+      coins: globalThis.Array.isArray(object?.coins) ? object.coins.map((e: any) => globalThis.Number(e)) : [],
+      snacks: globalThis.Array.isArray(object?.snacks) ? object.snacks.map((e: any) => globalThis.String(e)) : [],
     };
   },
 
-  toJSON(message: SimpleWithWrappers): unknown {
+  toJSON(message: SimpleWithWrappers, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== undefined) {
       obj.name = message.name;
+    }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
     }
     if (message.age !== undefined) {
       obj.age = message.age;
     }
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? message.age : message.age;
+    }
     if (message.enabled !== undefined) {
       obj.enabled = message.enabled;
+    }
+    if (Object.hasOwn(message, "enabled")) {
+      obj2.enabled = message.enabled !== undefined ? message.enabled : message.enabled;
     }
     if (message.bananas !== undefined) {
       obj.bananas = message.bananas;
     }
+    if (Object.hasOwn(message, "bananas")) {
+      obj2.bananas = message.bananas !== undefined ? message.bananas : message.bananas;
+    }
     if (message.coins?.length) {
       obj.coins = message.coins;
+    }
+    if (message.coins) {
+      obj2.coins = message.coins;
     }
     if (message.snacks?.length) {
       obj.snacks = message.snacks;
     }
-    return obj;
+    if (message.snacks) {
+      obj2.snacks = message.snacks;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleWithWrappers>, I>>(base?: I): SimpleWithWrappers {
     return SimpleWithWrappers.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SimpleWithWrappers>, I>>(object: I): SimpleWithWrappers {
+  fromPartial<I extends Exact<DeepPartial<SimpleWithWrappers>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SimpleWithWrappers {
     const message = createBaseSimpleWithWrappers();
     message.name = object.name ?? undefined;
     message.age = object.age ?? undefined;
@@ -191,8 +217,8 @@ export const SimpleWithWrappers: MessageFns<SimpleWithWrappers> = {
     message.bananas = (object.bananas !== undefined && object.bananas !== null)
       ? Long.fromValue(object.bananas)
       : undefined;
-    message.coins = object.coins?.map((e) => e) || [];
-    message.snacks = object.snacks?.map((e) => e) || [];
+    message.coins = object.coins?.map((e) => e) as any;
+    message.snacks = object.snacks?.map((e) => e) as any;
     return message;
   },
 };
@@ -268,13 +294,13 @@ export const SimpleWithMap: MessageFns<SimpleWithMap> = {
     return {
       nameLookup: isObject(object.nameLookup)
         ? Object.entries(object.nameLookup).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-          acc[key] = String(value);
+          acc[key] = globalThis.String(value);
           return acc;
         }, {})
         : {},
       intLookup: isObject(object.intLookup)
         ? Object.entries(object.intLookup).reduce<{ [key: number]: number }>((acc, [key, value]) => {
-          acc[globalThis.Number(key)] = Number(value);
+          acc[globalThis.Number(key)] = globalThis.Number(value);
           return acc;
         }, {})
         : {},
@@ -287,14 +313,17 @@ export const SimpleWithMap: MessageFns<SimpleWithMap> = {
     };
   },
 
-  toJSON(message: SimpleWithMap): unknown {
+  toJSON(message: SimpleWithMap, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.nameLookup) {
       const entries = Object.entries(message.nameLookup);
       if (entries.length > 0) {
         obj.nameLookup = {};
+        obj2.nameLookup = {};
         entries.forEach(([k, v]) => {
           obj.nameLookup[k] = v;
+          obj2.nameLookup[k] = v;
         });
       }
     }
@@ -302,8 +331,10 @@ export const SimpleWithMap: MessageFns<SimpleWithMap> = {
       const entries = Object.entries(message.intLookup);
       if (entries.length > 0) {
         obj.intLookup = {};
+        obj2.intLookup = {};
         entries.forEach(([k, v]) => {
           obj.intLookup[k] = Math.round(v);
+          obj2.intLookup[k] = Math.round(v);
         });
       }
     }
@@ -313,13 +344,22 @@ export const SimpleWithMap: MessageFns<SimpleWithMap> = {
         obj.longLookup[longToNumber(k)] = v.toString();
       });
     }
-    return obj;
+    if (message.longLookup) {
+      obj2.longLookup = {};
+      message.longLookup.forEach((v, k) => {
+        obj2.longLookup[longToNumber(k)] = v.toString();
+      });
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleWithMap>, I>>(base?: I): SimpleWithMap {
     return SimpleWithMap.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SimpleWithMap>, I>>(object: I): SimpleWithMap {
+  fromPartial<I extends Exact<DeepPartial<SimpleWithMap>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SimpleWithMap {
     const message = createBaseSimpleWithMap();
     message.nameLookup = Object.entries(object.nameLookup ?? {}).reduce<{ [key: string]: string }>(
       (acc, [key, value]) => {
@@ -406,15 +446,22 @@ export const SimpleWithMap_NameLookupEntry: MessageFns<SimpleWithMap_NameLookupE
     };
   },
 
-  toJSON(message: SimpleWithMap_NameLookupEntry): unknown {
+  toJSON(message: SimpleWithMap_NameLookupEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== "") {
       obj.value = message.value;
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleWithMap_NameLookupEntry>, I>>(base?: I): SimpleWithMap_NameLookupEntry {
@@ -422,6 +469,7 @@ export const SimpleWithMap_NameLookupEntry: MessageFns<SimpleWithMap_NameLookupE
   },
   fromPartial<I extends Exact<DeepPartial<SimpleWithMap_NameLookupEntry>, I>>(
     object: I,
+    options?: { defaultZeroFields?: string[] },
   ): SimpleWithMap_NameLookupEntry {
     const message = createBaseSimpleWithMap_NameLookupEntry();
     message.key = object.key ?? "";
@@ -484,21 +532,31 @@ export const SimpleWithMap_IntLookupEntry: MessageFns<SimpleWithMap_IntLookupEnt
     };
   },
 
-  toJSON(message: SimpleWithMap_IntLookupEntry): unknown {
+  toJSON(message: SimpleWithMap_IntLookupEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== 0) {
       obj.key = Math.round(message.key);
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? Math.round(message.key) : message.key;
     }
     if (message.value !== 0) {
       obj.value = Math.round(message.value);
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? Math.round(message.value) : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleWithMap_IntLookupEntry>, I>>(base?: I): SimpleWithMap_IntLookupEntry {
     return SimpleWithMap_IntLookupEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SimpleWithMap_IntLookupEntry>, I>>(object: I): SimpleWithMap_IntLookupEntry {
+  fromPartial<I extends Exact<DeepPartial<SimpleWithMap_IntLookupEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SimpleWithMap_IntLookupEntry {
     const message = createBaseSimpleWithMap_IntLookupEntry();
     message.key = object.key ?? 0;
     message.value = object.value ?? 0;
@@ -560,15 +618,22 @@ export const SimpleWithMap_LongLookupEntry: MessageFns<SimpleWithMap_LongLookupE
     };
   },
 
-  toJSON(message: SimpleWithMap_LongLookupEntry): unknown {
+  toJSON(message: SimpleWithMap_LongLookupEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (!message.key.equals(Long.ZERO)) {
       obj.key = (message.key || Long.ZERO).toString();
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? (message.key || Long.ZERO).toString() : message.key;
     }
     if (!message.value.equals(Long.ZERO)) {
       obj.value = (message.value || Long.ZERO).toString();
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? (message.value || Long.ZERO).toString() : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleWithMap_LongLookupEntry>, I>>(base?: I): SimpleWithMap_LongLookupEntry {
@@ -576,10 +641,11 @@ export const SimpleWithMap_LongLookupEntry: MessageFns<SimpleWithMap_LongLookupE
   },
   fromPartial<I extends Exact<DeepPartial<SimpleWithMap_LongLookupEntry>, I>>(
     object: I,
+    options?: { defaultZeroFields?: string[] },
   ): SimpleWithMap_LongLookupEntry {
     const message = createBaseSimpleWithMap_LongLookupEntry();
-    message.key = (object.key !== undefined && object.key !== null) ? Long.fromValue(object.key) : Long.ZERO;
-    message.value = (object.value !== undefined && object.value !== null) ? Long.fromValue(object.value) : Long.ZERO;
+    message.key = (object.key !== undefined && object.key !== null) ? Long.fromValue(object.key) : "0";
+    message.value = (object.value !== undefined && object.value !== null) ? Long.fromValue(object.value) : "0";
     return message;
   },
 };
@@ -610,7 +676,7 @@ export const Numbers: MessageFns<Numbers> = {
     if (message.float !== 0) {
       writer.uint32(21).float(message.float);
     }
-    if (message.int32 !== 0) {
+    if (message.int32 !== undefined && message.int32 !== 0) {
       writer.uint32(24).int32(message.int32);
     }
     if (!message.int64.equals(Long.ZERO)) {
@@ -640,11 +706,13 @@ export const Numbers: MessageFns<Numbers> = {
     if (!message.sfixed64.equals(Long.ZERO)) {
       writer.uint32(97).sfixed64(message.sfixed64.toString());
     }
-    writer.uint32(106).fork();
-    for (const v of message.manyUint64) {
-      writer.uint64(v.toString());
+    if (message.manyUint64 !== undefined && message.manyUint64.length !== 0) {
+      writer.uint32(106).fork();
+      for (const v of message.manyUint64) {
+        writer.uint64(v.toString());
+      }
+      writer.join();
     }
-    writer.join();
     return writer;
   },
 
@@ -753,7 +821,7 @@ export const Numbers: MessageFns<Numbers> = {
         }
         case 13: {
           if (tag === 104) {
-            message.manyUint64.push(Long.fromString(reader.uint64().toString(), true));
+            message.manyUint64?.push(Long.fromString(reader.uint64().toString(), true));
 
             continue;
           }
@@ -761,7 +829,7 @@ export const Numbers: MessageFns<Numbers> = {
           if (tag === 106) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.manyUint64.push(Long.fromString(reader.uint64().toString(), true));
+              message.manyUint64?.push(Long.fromString(reader.uint64().toString(), true));
             }
 
             continue;
@@ -782,7 +850,7 @@ export const Numbers: MessageFns<Numbers> = {
     return {
       double: isSet(object.double) ? globalThis.Number(object.double) : 0,
       float: isSet(object.float) ? globalThis.Number(object.float) : 0,
-      int32: isSet(object.int32) ? globalThis.Number(object.int32) : 0,
+      int32: isSet(object.int32) ? globalThis.Number(object.int32) : undefined,
       int64: isSet(object.int64) ? Long.fromValue(object.int64) : Long.ZERO,
       uint32: isSet(object.uint32) ? globalThis.Number(object.uint32) : 0,
       uint64: isSet(object.uint64) ? Long.fromValue(object.uint64) : Long.UZERO,
@@ -798,59 +866,102 @@ export const Numbers: MessageFns<Numbers> = {
     };
   },
 
-  toJSON(message: Numbers): unknown {
+  toJSON(message: Numbers, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.double !== 0) {
       obj.double = message.double;
+    }
+    if (Object.hasOwn(message, "double")) {
+      obj2.double = message.double !== undefined ? message.double : message.double;
     }
     if (message.float !== 0) {
       obj.float = message.float;
     }
-    if (message.int32 !== 0) {
+    if (Object.hasOwn(message, "float")) {
+      obj2.float = message.float !== undefined ? message.float : message.float;
+    }
+    if (message.int32 !== undefined && message.int32 !== 0) {
       obj.int32 = Math.round(message.int32);
+    }
+    if (Object.hasOwn(message, "int32")) {
+      obj2.int32 = message.int32 !== undefined ? Math.round(message.int32) : message.int32;
     }
     if (!message.int64.equals(Long.ZERO)) {
       obj.int64 = (message.int64 || Long.ZERO).toString();
     }
+    if (Object.hasOwn(message, "int64")) {
+      obj2.int64 = message.int64 !== undefined ? (message.int64 || Long.ZERO).toString() : message.int64;
+    }
     if (message.uint32 !== 0) {
       obj.uint32 = Math.round(message.uint32);
+    }
+    if (Object.hasOwn(message, "uint32")) {
+      obj2.uint32 = message.uint32 !== undefined ? Math.round(message.uint32) : message.uint32;
     }
     if (!message.uint64.equals(Long.UZERO)) {
       obj.uint64 = (message.uint64 || Long.UZERO).toString();
     }
+    if (Object.hasOwn(message, "uint64")) {
+      obj2.uint64 = message.uint64 !== undefined ? (message.uint64 || Long.UZERO).toString() : message.uint64;
+    }
     if (message.sint32 !== 0) {
       obj.sint32 = Math.round(message.sint32);
+    }
+    if (Object.hasOwn(message, "sint32")) {
+      obj2.sint32 = message.sint32 !== undefined ? Math.round(message.sint32) : message.sint32;
     }
     if (!message.sint64.equals(Long.ZERO)) {
       obj.sint64 = (message.sint64 || Long.ZERO).toString();
     }
+    if (Object.hasOwn(message, "sint64")) {
+      obj2.sint64 = message.sint64 !== undefined ? (message.sint64 || Long.ZERO).toString() : message.sint64;
+    }
     if (message.fixed32 !== 0) {
       obj.fixed32 = Math.round(message.fixed32);
+    }
+    if (Object.hasOwn(message, "fixed32")) {
+      obj2.fixed32 = message.fixed32 !== undefined ? Math.round(message.fixed32) : message.fixed32;
     }
     if (!message.fixed64.equals(Long.UZERO)) {
       obj.fixed64 = (message.fixed64 || Long.UZERO).toString();
     }
+    if (Object.hasOwn(message, "fixed64")) {
+      obj2.fixed64 = message.fixed64 !== undefined ? (message.fixed64 || Long.UZERO).toString() : message.fixed64;
+    }
     if (message.sfixed32 !== 0) {
       obj.sfixed32 = Math.round(message.sfixed32);
+    }
+    if (Object.hasOwn(message, "sfixed32")) {
+      obj2.sfixed32 = message.sfixed32 !== undefined ? Math.round(message.sfixed32) : message.sfixed32;
     }
     if (!message.sfixed64.equals(Long.ZERO)) {
       obj.sfixed64 = (message.sfixed64 || Long.ZERO).toString();
     }
-    if (message.manyUint64?.length) {
-      obj.manyUint64 = message.manyUint64.map((e) => (e || Long.UZERO).toString());
+    if (Object.hasOwn(message, "sfixed64")) {
+      obj2.sfixed64 = message.sfixed64 !== undefined ? (message.sfixed64 || Long.ZERO).toString() : message.sfixed64;
     }
-    return obj;
+    if (message.manyUint64?.length) {
+      obj.manyUint64 = message.manyUint64?.map((e) => (e || Long.UZERO).toString());
+    }
+    if (message.manyUint64) {
+      obj2.manyUint64 = message.manyUint64?.map((e) => (e || Long.UZERO).toString());
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Numbers>, I>>(base?: I): Numbers {
     return Numbers.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(object: I): Numbers {
+  fromPartial<I extends Exact<DeepPartial<Numbers>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Numbers {
     const message = createBaseNumbers();
     message.double = object.double ?? 0;
     message.float = object.float ?? 0;
-    message.int32 = object.int32 ?? 0;
-    message.int64 = (object.int64 !== undefined && object.int64 !== null) ? Long.fromValue(object.int64) : Long.ZERO;
+    message.int32 = object.int32 ?? (options?.defaultZeroFields?.includes("int32") ? 0 : undefined);
+    message.int64 = (object.int64 !== undefined && object.int64 !== null) ? Long.fromValue(object.int64) : "0";
     message.uint32 = object.uint32 ?? 0;
     message.uint64 = (object.uint64 !== undefined && object.uint64 !== null)
       ? Long.fromValue(object.uint64)
@@ -867,7 +978,7 @@ export const Numbers: MessageFns<Numbers> = {
     message.sfixed64 = (object.sfixed64 !== undefined && object.sfixed64 !== null)
       ? Long.fromValue(object.sfixed64)
       : Long.ZERO;
-    message.manyUint64 = object.manyUint64?.map((e) => Long.fromValue(e)) || [];
+    message.manyUint64 = object.manyUint64?.map((e) => Long.fromValue(e)) as any;
     return message;
   },
 };
@@ -877,7 +988,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends Long ? string | number | Long : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -907,7 +1018,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

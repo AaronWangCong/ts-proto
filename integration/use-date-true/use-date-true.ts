@@ -33,8 +33,10 @@ export const Todo: MessageFns<Todo> = {
     if (message.timestamp !== undefined) {
       Timestamp.encode(toTimestamp(message.timestamp), writer.uint32(18).fork()).join();
     }
-    for (const v of message.repeatedTimestamp) {
-      Timestamp.encode(toTimestamp(v!), writer.uint32(26).fork()).join();
+    if (message.repeatedTimestamp !== undefined && message.repeatedTimestamp.length !== 0) {
+      for (const v of message.repeatedTimestamp) {
+        Timestamp.encode(toTimestamp(v!), writer.uint32(26).fork()).join();
+      }
     }
     if (message.optionalTimestamp !== undefined) {
       Timestamp.encode(toTimestamp(message.optionalTimestamp), writer.uint32(34).fork()).join();
@@ -73,7 +75,7 @@ export const Todo: MessageFns<Todo> = {
             break;
           }
 
-          message.repeatedTimestamp.push(fromTimestamp(Timestamp.decode(reader, reader.uint32())));
+          message.repeatedTimestamp?.push(fromTimestamp(Timestamp.decode(reader, reader.uint32())));
           continue;
         }
         case 4: {
@@ -121,40 +123,57 @@ export const Todo: MessageFns<Todo> = {
     };
   },
 
-  toJSON(message: Todo): unknown {
+  toJSON(message: Todo, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.id !== "") {
       obj.id = message.id;
+    }
+    if (Object.hasOwn(message, "id")) {
+      obj2.id = message.id !== undefined ? message.id : message.id;
     }
     if (message.timestamp !== undefined) {
       obj.timestamp = message.timestamp.toISOString();
     }
+    if (Object.hasOwn(message, "timestamp")) {
+      obj2.timestamp = message.timestamp !== undefined ? message.timestamp.toISOString() : message.timestamp;
+    }
     if (message.repeatedTimestamp?.length) {
-      obj.repeatedTimestamp = message.repeatedTimestamp.map((e) => e.toISOString());
+      obj.repeatedTimestamp = message.repeatedTimestamp?.map((e) => e.toISOString());
+    }
+    if (message.repeatedTimestamp) {
+      obj2.repeated_timestamp = message.repeatedTimestamp?.map((e) => e.toISOString());
     }
     if (message.optionalTimestamp !== undefined) {
       obj.optionalTimestamp = message.optionalTimestamp.toISOString();
+    }
+    if (Object.hasOwn(message, "optionalTimestamp")) {
+      obj2.optional_timestamp = message.optionalTimestamp !== undefined
+        ? message.optionalTimestamp.toISOString()
+        : message.optionalTimestamp;
     }
     if (message.mapOfTimestamps) {
       const entries = Object.entries(message.mapOfTimestamps);
       if (entries.length > 0) {
         obj.mapOfTimestamps = {};
+        obj2.map_of_timestamps = {};
         entries.forEach(([k, v]) => {
           obj.mapOfTimestamps[k] = v.toISOString();
+          obj2.map_of_timestamps[k] = v.toISOString();
         });
       }
     }
-    return obj;
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Todo>, I>>(base?: I): Todo {
     return Todo.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Todo>, I>>(object: I): Todo {
+  fromPartial<I extends Exact<DeepPartial<Todo>, I>>(object: I, options?: { defaultZeroFields?: string[] }): Todo {
     const message = createBaseTodo();
     message.id = object.id ?? "";
     message.timestamp = object.timestamp ?? undefined;
-    message.repeatedTimestamp = object.repeatedTimestamp?.map((e) => e) || [];
+    message.repeatedTimestamp = object.repeatedTimestamp?.map((e) => e) as any;
     message.optionalTimestamp = object.optionalTimestamp ?? undefined;
     message.mapOfTimestamps = Object.entries(object.mapOfTimestamps ?? {}).reduce<{ [key: string]: Date }>(
       (acc, [key, value]) => {
@@ -223,21 +242,31 @@ export const Todo_MapOfTimestampsEntry: MessageFns<Todo_MapOfTimestampsEntry> = 
     };
   },
 
-  toJSON(message: Todo_MapOfTimestampsEntry): unknown {
+  toJSON(message: Todo_MapOfTimestampsEntry, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.key !== "") {
       obj.key = message.key;
+    }
+    if (Object.hasOwn(message, "key")) {
+      obj2.key = message.key !== undefined ? message.key : message.key;
     }
     if (message.value !== undefined) {
       obj.value = message.value.toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "value")) {
+      obj2.value = message.value !== undefined ? message.value.toISOString() : message.value;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<Todo_MapOfTimestampsEntry>, I>>(base?: I): Todo_MapOfTimestampsEntry {
     return Todo_MapOfTimestampsEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Todo_MapOfTimestampsEntry>, I>>(object: I): Todo_MapOfTimestampsEntry {
+  fromPartial<I extends Exact<DeepPartial<Todo_MapOfTimestampsEntry>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): Todo_MapOfTimestampsEntry {
     const message = createBaseTodo_MapOfTimestampsEntry();
     message.key = object.key ?? "";
     message.value = object.value ?? undefined;
@@ -290,7 +319,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -331,7 +360,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

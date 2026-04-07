@@ -13,17 +13,17 @@ export const protobufPackage = "simple";
  */
 
 export interface SimpleStruct {
-  simple_struct: { [key: string]: any } | undefined;
+  simpleStruct: { [key: string]: any } | undefined;
 }
 
 function createBaseSimpleStruct(): SimpleStruct {
-  return { simple_struct: undefined };
+  return { simpleStruct: undefined };
 }
 
 export const SimpleStruct: MessageFns<SimpleStruct> = {
   encode(message: SimpleStruct, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.simple_struct !== undefined) {
-      Struct.encode(Struct.wrap(message.simple_struct), writer.uint32(10).fork()).join();
+    if (message.simpleStruct !== undefined) {
+      Struct.encode(Struct.wrap(message.simpleStruct), writer.uint32(10).fork()).join();
     }
     return writer;
   },
@@ -40,7 +40,7 @@ export const SimpleStruct: MessageFns<SimpleStruct> = {
             break;
           }
 
-          message.simple_struct = Struct.unwrap(Struct.decode(reader, reader.uint32()));
+          message.simpleStruct = Struct.unwrap(Struct.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -53,23 +53,30 @@ export const SimpleStruct: MessageFns<SimpleStruct> = {
   },
 
   fromJSON(object: any): SimpleStruct {
-    return { simple_struct: isObject(object.simple_struct) ? object.simple_struct : undefined };
+    return { simpleStruct: isObject(object.simple_struct) ? object.simple_struct : undefined };
   },
 
-  toJSON(message: SimpleStruct): unknown {
+  toJSON(message: SimpleStruct, isProto?: boolean): unknown {
     const obj: any = {};
-    if (message.simple_struct !== undefined) {
-      obj.simple_struct = message.simple_struct;
+    const obj2: any = {};
+    if (message.simpleStruct !== undefined) {
+      obj.simple_struct = message.simpleStruct;
     }
-    return obj;
+    if (Object.hasOwn(message, "simpleStruct")) {
+      obj2.simple_struct = message.simpleStruct !== undefined ? message.simpleStruct : message.simpleStruct;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<SimpleStruct>, I>>(base?: I): SimpleStruct {
     return SimpleStruct.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SimpleStruct>, I>>(object: I): SimpleStruct {
+  fromPartial<I extends Exact<DeepPartial<SimpleStruct>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): SimpleStruct {
     const message = createBaseSimpleStruct();
-    message.simple_struct = object.simple_struct ?? undefined;
+    message.simpleStruct = object.simpleStruct ?? undefined;
     return message;
   },
 };
@@ -80,7 +87,7 @@ export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
   : T extends { $case: string } ? { [K in keyof Omit<T, "$case">]?: DeepPartial<T[K]> } & { $case: T["$case"] }
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -95,7 +102,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

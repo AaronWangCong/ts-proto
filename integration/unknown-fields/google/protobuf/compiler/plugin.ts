@@ -252,14 +252,18 @@ function createBaseCodeGeneratorRequest(): CodeGeneratorRequest {
 
 export const CodeGeneratorRequest: MessageFns<CodeGeneratorRequest> = {
   encode(message: CodeGeneratorRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.fileToGenerate) {
-      writer.uint32(10).string(v!);
+    if (message.fileToGenerate !== undefined && message.fileToGenerate.length !== 0) {
+      for (const v of message.fileToGenerate) {
+        writer.uint32(10).string(v!);
+      }
     }
     if (message.parameter !== undefined && message.parameter !== "") {
       writer.uint32(18).string(message.parameter);
     }
-    for (const v of message.protoFile) {
-      FileDescriptorProto.encode(v!, writer.uint32(122).fork()).join();
+    if (message.protoFile !== undefined && message.protoFile.length !== 0) {
+      for (const v of message.protoFile) {
+        FileDescriptorProto.encode(v!, writer.uint32(122).fork()).join();
+      }
     }
     if (message.compilerVersion !== undefined) {
       Version.encode(message.compilerVersion, writer.uint32(26).fork()).join();
@@ -287,7 +291,7 @@ export const CodeGeneratorRequest: MessageFns<CodeGeneratorRequest> = {
             break;
           }
 
-          message.fileToGenerate.push(reader.string());
+          message.fileToGenerate?.push(reader.string());
           continue;
         }
         case 2: {
@@ -303,7 +307,7 @@ export const CodeGeneratorRequest: MessageFns<CodeGeneratorRequest> = {
             break;
           }
 
-          message.protoFile.push(FileDescriptorProto.decode(reader, reader.uint32()));
+          message.protoFile?.push(FileDescriptorProto.decode(reader, reader.uint32()));
           continue;
         }
         case 3: {
@@ -344,8 +348,10 @@ export const CodeGeneratorResponse: MessageFns<CodeGeneratorResponse> = {
     if (message.supportedFeatures !== undefined && message.supportedFeatures !== 0) {
       writer.uint32(16).uint64(message.supportedFeatures);
     }
-    for (const v of message.file) {
-      CodeGeneratorResponse_File.encode(v!, writer.uint32(122).fork()).join();
+    if (message.file !== undefined && message.file.length !== 0) {
+      for (const v of message.file) {
+        CodeGeneratorResponse_File.encode(v!, writer.uint32(122).fork()).join();
+      }
     }
     if (message._unknownFields !== undefined) {
       for (const [key, values] of Object.entries(message._unknownFields)) {
@@ -386,7 +392,7 @@ export const CodeGeneratorResponse: MessageFns<CodeGeneratorResponse> = {
             break;
           }
 
-          message.file.push(CodeGeneratorResponse_File.decode(reader, reader.uint32()));
+          message.file?.push(CodeGeneratorResponse_File.decode(reader, reader.uint32()));
           continue;
         }
       }

@@ -10,21 +10,21 @@ import { Empty } from "./google/protobuf/empty";
 export const protobufPackage = "hero";
 
 export interface HeroById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface VillainById {
-  id: number;
+  id?: number | undefined;
 }
 
 export interface Hero {
-  id: number;
+  id?: number | undefined;
   name: string;
   birthDate: Date | undefined;
 }
 
 export interface Villain {
-  id: number;
+  id?: number | undefined;
   name: string;
 }
 

@@ -193,7 +193,10 @@ export const PleaseChoose: MessageFns<PleaseChoose> = {
             break;
           }
 
-          message.anEnum = reader.int32() as any;
+          const _enumValue = reader.int32() as any;
+          if (_enumValue !== 0) {
+            message.anEnum = _enumValue;
+          }
           continue;
         }
         case 5: {
@@ -253,54 +256,95 @@ export const PleaseChoose: MessageFns<PleaseChoose> = {
     };
   },
 
-  toJSON(message: PleaseChoose): unknown {
+  toJSON(message: PleaseChoose, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
+    }
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
     }
     if (message.aNumber !== undefined) {
       obj.aNumber = message.aNumber;
     }
+    if (Object.hasOwn(message, "aNumber")) {
+      obj2.a_number = message.aNumber !== undefined ? message.aNumber : message.aNumber;
+    }
     if (message.aString !== undefined) {
       obj.aString = message.aString;
+    }
+    if (Object.hasOwn(message, "aString")) {
+      obj2.a_string = message.aString !== undefined ? message.aString : message.aString;
     }
     if (message.aMessage !== undefined) {
       obj.aMessage = PleaseChoose_Submessage.toJSON(message.aMessage);
     }
+    if (Object.hasOwn(message, "aMessage")) {
+      obj2.a_message = message.aMessage !== undefined
+        ? PleaseChoose_Submessage.toJSON(message.aMessage, true)
+        : message.aMessage;
+    }
     if (message.aBool !== undefined) {
       obj.aBool = message.aBool;
+    }
+    if (Object.hasOwn(message, "aBool")) {
+      obj2.a_bool = message.aBool !== undefined ? message.aBool : message.aBool;
     }
     if (message.bunchaBytes !== undefined) {
       obj.bunchaBytes = base64FromBytes(message.bunchaBytes);
     }
+    if (Object.hasOwn(message, "bunchaBytes")) {
+      obj2.buncha_bytes = message.bunchaBytes !== undefined
+        ? base64FromBytes(message.bunchaBytes)
+        : message.bunchaBytes;
+    }
     if (message.anEnum !== undefined) {
       obj.anEnum = pleaseChoose_StateEnumToJSON(message.anEnum);
+    }
+    if (Object.hasOwn(message, "anEnum")) {
+      obj2.anEnum = message.anEnum !== undefined ? pleaseChoose_StateEnumToJSON(message.anEnum) : message.anEnum;
     }
     if (message.age !== 0) {
       obj.age = Math.round(message.age);
     }
+    if (Object.hasOwn(message, "age")) {
+      obj2.age = message.age !== undefined ? Math.round(message.age) : message.age;
+    }
     if (message.either !== undefined) {
       obj.either = message.either;
+    }
+    if (Object.hasOwn(message, "either")) {
+      obj2.either = message.either !== undefined ? message.either : message.either;
     }
     if (message.or !== undefined) {
       obj.or = message.or;
     }
+    if (Object.hasOwn(message, "or")) {
+      obj2.or = message.or !== undefined ? message.or : message.or;
+    }
     if (message.thirdOption !== undefined) {
       obj.thirdOption = message.thirdOption;
     }
-    return obj;
+    if (Object.hasOwn(message, "thirdOption")) {
+      obj2.third_option = message.thirdOption !== undefined ? message.thirdOption : message.thirdOption;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PleaseChoose>, I>>(base?: I): PleaseChoose {
     return PleaseChoose.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PleaseChoose>, I>>(object: I): PleaseChoose {
+  fromPartial<I extends Exact<DeepPartial<PleaseChoose>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PleaseChoose {
     const message = createBasePleaseChoose();
     message.name = object.name ?? "";
     message.aNumber = object.aNumber ?? undefined;
     message.aString = object.aString ?? undefined;
     message.aMessage = (object.aMessage !== undefined && object.aMessage !== null)
-      ? PleaseChoose_Submessage.fromPartial(object.aMessage)
+      ? PleaseChoose_Submessage.fromPartial(object.aMessage, options)
       : undefined;
     message.aBool = object.aBool ?? undefined;
     message.bunchaBytes = object.bunchaBytes ?? undefined;
@@ -353,18 +397,25 @@ export const PleaseChoose_Submessage: MessageFns<PleaseChoose_Submessage> = {
     return { name: isSet(object.name) ? globalThis.String(object.name) : "" };
   },
 
-  toJSON(message: PleaseChoose_Submessage): unknown {
+  toJSON(message: PleaseChoose_Submessage, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.name !== "") {
       obj.name = message.name;
     }
-    return obj;
+    if (Object.hasOwn(message, "name")) {
+      obj2.name = message.name !== undefined ? message.name : message.name;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PleaseChoose_Submessage>, I>>(base?: I): PleaseChoose_Submessage {
     return PleaseChoose_Submessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PleaseChoose_Submessage>, I>>(object: I): PleaseChoose_Submessage {
+  fromPartial<I extends Exact<DeepPartial<PleaseChoose_Submessage>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PleaseChoose_Submessage {
     const message = createBasePleaseChoose_Submessage();
     message.name = object.name ?? "";
     return message;
@@ -401,7 +452,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -416,7 +467,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

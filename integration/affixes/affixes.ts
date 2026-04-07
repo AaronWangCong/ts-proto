@@ -87,15 +87,19 @@ export const PrefixAwesomeMessageSuffix: MessageFns<PrefixAwesomeMessageSuffix> 
     return {};
   },
 
-  toJSON(_: PrefixAwesomeMessageSuffix): unknown {
+  toJSON(_: PrefixAwesomeMessageSuffix, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixAwesomeMessageSuffix>, I>>(base?: I): PrefixAwesomeMessageSuffix {
     return PrefixAwesomeMessageSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixAwesomeMessageSuffix>, I>>(_: I): PrefixAwesomeMessageSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixAwesomeMessageSuffix>, I>>(
+    _: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixAwesomeMessageSuffix {
     const message = createBasePrefixAwesomeMessageSuffix();
     return message;
   },
@@ -130,9 +134,10 @@ export const PrefixAwesomeMessage_InnerSuffix: MessageFns<PrefixAwesomeMessage_I
     return {};
   },
 
-  toJSON(_: PrefixAwesomeMessage_InnerSuffix): unknown {
+  toJSON(_: PrefixAwesomeMessage_InnerSuffix, isProto?: boolean): unknown {
     const obj: any = {};
-    return obj;
+    const obj2: any = {};
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixAwesomeMessage_InnerSuffix>, I>>(
@@ -142,6 +147,7 @@ export const PrefixAwesomeMessage_InnerSuffix: MessageFns<PrefixAwesomeMessage_I
   },
   fromPartial<I extends Exact<DeepPartial<PrefixAwesomeMessage_InnerSuffix>, I>>(
     _: I,
+    options?: { defaultZeroFields?: string[] },
   ): PrefixAwesomeMessage_InnerSuffix {
     const message = createBasePrefixAwesomeMessage_InnerSuffix();
     return message;
@@ -197,26 +203,36 @@ export const PrefixGoogleSuffix: MessageFns<PrefixGoogleSuffix> = {
 
   fromJSON(object: any): PrefixGoogleSuffix {
     return {
-      guint64: isSet(object.guint64) ? Number(object.guint64) : undefined,
+      guint64: isSet(object.guint64) ? globalThis.Number(object.guint64) : undefined,
       timestamp: isSet(object.timestamp) ? fromJsonTimestamp(object.timestamp) : undefined,
     };
   },
 
-  toJSON(message: PrefixGoogleSuffix): unknown {
+  toJSON(message: PrefixGoogleSuffix, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.guint64 !== undefined) {
       obj.guint64 = message.guint64;
+    }
+    if (Object.hasOwn(message, "guint64")) {
+      obj2.guint64 = message.guint64 !== undefined ? message.guint64 : message.guint64;
     }
     if (message.timestamp !== undefined) {
       obj.timestamp = message.timestamp.toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "timestamp")) {
+      obj2.timestamp = message.timestamp !== undefined ? message.timestamp.toISOString() : message.timestamp;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<PrefixGoogleSuffix>, I>>(base?: I): PrefixGoogleSuffix {
     return PrefixGoogleSuffix.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<PrefixGoogleSuffix>, I>>(object: I): PrefixGoogleSuffix {
+  fromPartial<I extends Exact<DeepPartial<PrefixGoogleSuffix>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): PrefixGoogleSuffix {
     const message = createBasePrefixGoogleSuffix();
     message.guint64 = object.guint64 ?? undefined;
     message.timestamp = object.timestamp ?? undefined;
@@ -246,7 +262,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -283,7 +299,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }

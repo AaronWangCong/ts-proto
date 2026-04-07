@@ -51,18 +51,25 @@ export const ImportedThing: MessageFns<ImportedThing> = {
     return { createdAt: isSet(object.createdAt) ? fromJsonTimestamp(object.createdAt) : undefined };
   },
 
-  toJSON(message: ImportedThing): unknown {
+  toJSON(message: ImportedThing, isProto?: boolean): unknown {
     const obj: any = {};
+    const obj2: any = {};
     if (message.createdAt !== undefined) {
       obj.createdAt = message.createdAt.toISOString();
     }
-    return obj;
+    if (Object.hasOwn(message, "createdAt")) {
+      obj2.created_at = message.createdAt !== undefined ? message.createdAt.toISOString() : message.createdAt;
+    }
+    return isProto ? obj2 : obj;
   },
 
   create<I extends Exact<DeepPartial<ImportedThing>, I>>(base?: I): ImportedThing {
     return ImportedThing.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ImportedThing>, I>>(object: I): ImportedThing {
+  fromPartial<I extends Exact<DeepPartial<ImportedThing>, I>>(
+    object: I,
+    options?: { defaultZeroFields?: string[] },
+  ): ImportedThing {
     const message = createBaseImportedThing();
     message.createdAt = object.createdAt ?? undefined;
     return message;
@@ -74,7 +81,7 @@ type Builtin = Date | Function | Uint8Array | string | number | boolean | undefi
 export type DeepPartial<T> = T extends Builtin ? T
   : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
   : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
@@ -111,7 +118,7 @@ export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
-  toJSON(message: T): unknown;
+  toJSON(message: T, isProto?: boolean): unknown;
   create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I, options?: { defaultZeroFields?: string[] }): T;
 }
