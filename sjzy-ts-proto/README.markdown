@@ -23,7 +23,7 @@ If migrating to `@bufbuild/protobuf` is a blocker for you, you can pin your `ts-
 
 If you could file reports (or better PRs!) for any issues you come across while the release is still fresh, that would be greatly appreciated.
 
-Any tips or tricks for others on the migration would also be appreciated! 
+Any tips or tricks for others on the migration would also be appreciated!
 
 ## Table of contents
 
@@ -461,6 +461,8 @@ Generated code will be placed in the Gradle build directory.
 - With `--ts_proto_opt=useMongoObjectId=true`, fields of a type called ObjectId where the message is constructed to have on field called value that is a string will be mapped to type `mongodb.ObjectId` in the generated types. This will require your project to install the mongodb npm package. See [ObjectId](#objectid) for more details.
 
 - With `--ts_proto_opt=annotateFilesWithVersion=false`, the generated files will not contain the versions of `protoc` and `ts-proto` used to generate the file. This option is normally set to `true`, such that files list the versions used.
+
+- With `--ts_proto_opt=annotateFilesWithProtocVersion=false`, the generated files will not contain the versions of `protoc` used to generate the file. This option is normally set to `true`, such that files list the versions used.
 
 - With `--ts_proto_opt=outputSchema=true`, meta typings will be generated that can later be used in other code generators.
 

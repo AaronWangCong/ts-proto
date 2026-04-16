@@ -115,6 +115,7 @@ export type Options = {
   disableProto2DefaultValues: boolean;
   useNullAsOptional: boolean;
   annotateFilesWithVersion: boolean;
+  annotateFilesWithProtocVersion: boolean;
   noDefaultsForOptionals: boolean;
   bigIntLiteral: boolean;
   typePrefix: string;
@@ -188,6 +189,7 @@ export function defaultOptions(): Options {
     disableProto2DefaultValues: false,
     useNullAsOptional: false,
     annotateFilesWithVersion: true,
+    annotateFilesWithProtocVersion: true,
     noDefaultsForOptionals: false,
     bigIntLiteral: true,
     typePrefix: "",
@@ -370,7 +372,7 @@ export function getTsPoetOpts(
         ? `
 // versions:
 //   protoc-gen-ts_proto  ${tsProtoVersion}
-//   protoc               ${protocVersion}`
+${options.annotateFilesWithProtocVersion ? `//   protoc               ${protocVersion}` : ""}`
         : ""
     }
 ${fileName ? `// source: ${fileName}` : ""}
