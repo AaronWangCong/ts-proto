@@ -79,7 +79,7 @@ function generateRpcMethod(ctx: Context, serviceDesc: ServiceDescriptorProto, me
       return this.rpc.${method}(
         ${methodDescName(serviceDesc, methodDesc)},
         _request,
-        ${requestMessage}.toJSON(request as ${requestMessage}, true),
+        ${requestMessage}.toRawObject(request as ${requestMessage}),
         metadata,
         ${useAbortSignal ? "abortSignal," : ""}
       );

@@ -33,7 +33,7 @@ function main() {
       ? process.env.NODE_OPTIONS
       : [process.env.NODE_OPTIONS, "--import tsx"].filter(Boolean).join(" ");
 
-    const tsProtoOpt = ["annotateFilesWithVersion=false", parameters].filter(Boolean).join(",");
+    const tsProtoOpt = ["annotateFilesWithVersion=false","forceLong=string", parameters].filter(Boolean).join(",");
 
     runCommand(
       "protoc",

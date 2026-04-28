@@ -286,6 +286,7 @@ export function generateFile(ctx: Context, fileDesc: FileDescriptorProto): [stri
           }
           if (options.outputJsonMethods === true || options.outputJsonMethods === "to-only") {
             staticMembers.push(generateToJson(ctx, fullName, fullTypeName, message));
+            staticMembers.push(generateToRawObject(ctx, fullName, message));
           }
         }
         if (options.outputPartialMethods) {
@@ -824,7 +825,8 @@ function makeMessageFns(
       commonStaticMembers.push(code`fromJSON(object: any): T;`);
     }
     if (options.outputJsonMethods === true || options.outputJsonMethods === "to-only") {
-      commonStaticMembers.push(code`toJSON(message: T, isProto?: boolean): unknown;`);
+      commonStaticMembers.push(code`toJSON(message: T): unknown;`);
+      commonStaticMembers.push(code`toRawObject(message: T): any;`);
     }
   }
 
@@ -2544,11 +2546,9 @@ function generateToJson(
   }
 
   // create the basic function declaration
-  // isProto 是否返回proto原始命名字段
   chunks.push(code`
-    toJSON(${messageDesc.field.length > 0 ? "message" : "_"}: ${fullName}, isProto?: boolean): unknown {
+    toJSON(${messageDesc.field.length > 0 ? "message" : "_"}: ${fullName}): unknown {
       const obj: any = {};
-      const obj2: any = {};
   `);
 
   let currentIfTarget = "";
@@ -2558,10 +2558,9 @@ function generateToJson(
     const fieldName = getFieldName(field, options);
     const jsonName = getFieldJsonName(field, options);
     const jsonProperty = getPropertyAccessor("obj", jsonName);
-    const protoProperty = getPropertyAccessor("obj2", field.name);
     const messageProperty = getPropertyAccessor("message", fieldName);
 
-    const readSnippet = (from: string, isProto?: boolean): Code => {
+    const readSnippet = (from: string): Code => {
       if (isEnum(field)) {
         const toJson = getEnumMethod(ctx, field.typeName, "ToJSON");
         return code`${toJson}(${from})`;
@@ -2610,16 +2609,16 @@ function generateToJson(
           return code`${from}`;
         } else {
           const type = basicTypeName(ctx, valueType);
-          return code`${type}.toJSON(${from}${isProto ? ', true' : ''})`;
+          return code`${type}.toJSON(${from})`;
         }
       } else if (isAnyValueType(field)) {
         return code`${from}`;
       } else if (isFieldMaskType(field)) {
         const type = basicTypeName(ctx, field, { keepValueType: true });
-        return code`${type}.toJSON(${type}.wrap(${from})${isProto ? ', true' : ''})`;
+        return code`${type}.toJSON(${type}.wrap(${from}))`;
       } else if (isMessage(field) && !isValueType(ctx, field) && !isMapType(ctx, messageDesc, field)) {
         const type = basicTypeName(ctx, field, { keepValueType: true });
-        return code`${type}.toJSON(${from}${isProto ? ', true' : ''})`;
+        return code`${type}.toJSON(${from})`;
       } else if (isBytes(field)) {
         return code`${utils.base64FromBytes}(${from})`;
       } else if (isLong(field) && isJsTypeFieldOption(options, field)) {
@@ -2655,12 +2654,6 @@ function generateToJson(
               ${jsonProperty}[${i}] = ${readSnippet("v")};
             });
           }
-          if (${messageProperty}) {
-            ${protoProperty} = {};
-            ${messageProperty}.forEach((v, k) => {
-              ${protoProperty}[${i}] = ${readSnippet("v")};
-            });
-          }
         `);
       } else {
         chunks.push(code`
@@ -2668,10 +2661,8 @@ function generateToJson(
             const entries = Object.entries(${messageProperty});
             if (entries.length > 0) {
               ${jsonProperty} = {};
-              ${protoProperty} = {};
               entries.forEach(([k, v]) => {
                 ${jsonProperty}[${i}] = ${readSnippet("v")};
-                ${protoProperty}[${i}] = ${readSnippet("v")};
               });
             }
           }
@@ -2681,13 +2672,9 @@ function generateToJson(
       // Arrays might need their elements transformed
       const needMap = readSnippet("e").toCodeString([]) !== "e";
       const maybeMap = needMap ? code`?.map(e => ${readSnippet("e")})` : "";
-      const maybeMap2 = needMap ? code`?.map(e => ${readSnippet("e", true)})` : "";
       chunks.push(code`
         if (${messageProperty}?.length) {
           ${jsonProperty} = ${messageProperty}${maybeMap};
-        }
-        if (${messageProperty}) {
-          ${protoProperty} = ${messageProperty}${maybeMap2};
         }
       `);
     } else if (isWithinOneOfThatShouldBeUnion(options, field)) {
@@ -2701,7 +2688,6 @@ function generateToJson(
           currentIfTarget === oneofNameWithMessage ? "else " : ""
         }if (${oneofNameWithMessage}?.$case === '${fieldName}') {
           ${jsonProperty} = ${readSnippet(`${oneofNameWithMessage}.${valueName}`)};
-          ${protoProperty} = ${readSnippet(`${oneofNameWithMessage}.${valueName}`)};
         }
       `);
       currentIfTarget = oneofNameWithMessage;
@@ -2716,13 +2702,10 @@ function generateToJson(
         if (${check}) {
           ${jsonProperty} = ${readSnippet(`${messageProperty}`)};
         }
-        if(Object.hasOwn(message, '${fieldName}')) {
-          ${protoProperty} = ${messageProperty} !== undefined ? ${readSnippet(`${messageProperty}`, true)} : ${messageProperty};
-        }
       `);
     }
   });
-  chunks.push(code`return isProto ? obj2 : obj;`);
+  chunks.push(code`return obj;`);
   chunks.push(code`}`);
   return joinCode(chunks, { on: "\n" });
 }
@@ -2944,6 +2927,98 @@ function getFallbackValue(ctx: Context, field: FieldDescriptorProto, noDefaultVa
     return isOptional ? `(options?.defaultZeroFields?.includes("${fieldName}") ? "0" : undefined)` : `"0"`;
   }
   return isWithinOneOf(field) || noDefaultValue ? "undefined" : defaultValue(ctx, field);
+}
+
+function generateToRawObject(
+  ctx: Context,
+  fullName: string,
+  messageDesc: DescriptorProto,
+): Code {
+  const { options, typeMap } = ctx;
+  const chunks: Code[] = [];
+
+  chunks.push(code`
+    toRawObject(${messageDesc.field.length > 0 ? "message" : "_"}: ${fullName}): any {
+      const obj: any = {};
+  `);
+
+  messageDesc.field.forEach((field) => {
+    const fieldName = getFieldName(field, options);
+    const protoName = field.name;
+    const messageProperty = getPropertyAccessor("message", fieldName);
+    const rawProperty = getPropertyAccessor("obj", protoName);
+
+    const readSnippet = (from: string): Code => {
+      if (isTimestamp(field)) {
+        if (options.useDate === DateOption.DATE) {
+          return code`${ctx.utils.toTimestamp}(${from})`;
+        } else if (options.useDate === DateOption.TIMESTAMP) {
+          const type = basicTypeName(ctx, field, { keepValueType: true });
+          return code`${type}.toRawObject(${from})`;
+        } else {
+          return code`${from}`;
+        }
+      } else if (isMessage(field) && !isValueType(ctx, field) && !isMapType(ctx, messageDesc, field)) {
+        const type = basicTypeName(ctx, field, { keepValueType: true });
+        return code`${type}.toRawObject(${from})`;
+      } else if (isMapType(ctx, messageDesc, field)) {
+          const valueType = (typeMap.get(field.typeName)![2] as DescriptorProto).field[1];
+          if (isTimestamp(valueType)) {
+             if (options.useDate === DateOption.DATE) {
+               return code`${ctx.utils.toTimestamp}(${from})`;
+             } else if (options.useDate === DateOption.TIMESTAMP) {
+               const type = basicTypeName(ctx, valueType);
+               return code`${type}.toRawObject(${from})`;
+             } else {
+               return code`${from}`;
+             }
+          } else if (isMessage(valueType) && !isValueType(ctx, valueType)) {
+             const type = basicTypeName(ctx, valueType);
+             return code`${type}.toRawObject(${from})`;
+          }
+      }
+      return code`${from}`;
+    };
+
+    if (isRepeated(field)) {
+       if (isMapType(ctx, messageDesc, field)) {
+          const needMap = readSnippet("v").toCodeString([]) !== "v";
+          if (needMap) {
+             chunks.push(code`
+                if (${messageProperty}) {
+                  ${rawProperty} = {};
+                  Object.entries(${messageProperty}).forEach(([k, v]) => {
+                    ${rawProperty}[k] = ${readSnippet("v")};
+                  });
+                }
+             `);
+          } else {
+             chunks.push(code`
+                if (${messageProperty}) {
+                  ${rawProperty} = { ...${messageProperty} };
+                }
+             `);
+          }
+       } else {
+          const needMap = readSnippet("e").toCodeString([]) !== "e";
+          chunks.push(code`
+            if (${messageProperty}) {
+              ${rawProperty} = ${messageProperty}${needMap ? code`?.map((e: any) => ${readSnippet("e")})` : ""};
+            }
+          `);
+       }
+    } else {
+        chunks.push(code`
+          if (Object.hasOwn(message, '${fieldName}')) {
+            ${rawProperty} = ${messageProperty} !== undefined ? ${readSnippet(`${messageProperty}`)} : ${messageProperty};
+          }
+        `);
+    }
+  });
+
+  chunks.push(code`return obj;`);
+  chunks.push(code`}`);
+  return joinCode(chunks, { on: "\n" });
 }
 
 export const contextTypeVar = "Context extends DataLoaders";

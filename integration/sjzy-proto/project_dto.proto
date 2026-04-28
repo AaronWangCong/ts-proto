@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+
+message CreateMeetingRequest {
+  // 迭代Id
+  int64 iteration_id = 1;
+  // 节点id
+  int64 node_id = 2;
+  // 会议名称
+  string meeting_name = 3;
+  // 会议类型id
+  int64 meeting_type_id = 4;
+  // 开始时间
+  google.protobuf.Timestamp start_time = 5;
+  // 结束时间
+  google.protobuf.Timestamp end_time = 6;
+  // 会议室
+  repeated string meeting_room_id = 7;
+  // 会议成员
+  repeated int64 employee_id = 8;
+  // 工作项id
+  int64 work_item_id = 9;
+}
+
+
+message FindMeetingResponse {
+  repeated FindMeetingItem items = 1;
+}
+
+message FindMeetingItem {
+  // 迭代Id
+  int64 iteration_id = 1;
+  // 节点名称
+  string node_name = 2;
+  // 会议名称
+  string meeting_name = 3;
+  // 会议类型id
+  int64 meeting_type_id = 4;
+  // 开始时间
+  google.protobuf.Timestamp start_time = 5;
+  // 结束时间
+  google.protobuf.Timestamp end_time = 6;
+  // 会议室
+  repeated string meeting_room_id = 7;
+  // 会议成员
+  repeated int64 employee_id = 8;
+  // 工作项id
+  int64 work_item_id = 9;
+  // 会议地址
+  string meeting_url = 11;
+  // 会议录屏
+  string meeting_record = 12;
+}
+
+message IdRequest {
+  int64 id = 1;
+}

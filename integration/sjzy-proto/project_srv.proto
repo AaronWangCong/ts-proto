@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package sjzy_proto;
+
+import "project_dto.proto";
+import "google/protobuf/empty.proto";
+
+service Meeting {
+  // 创建会议
+  rpc Create(CreateMeetingRequest) returns(google.protobuf.Empty);
+  // 查看会议
+  rpc Find(IdRequest) returns(FindMeetingResponse);
+}

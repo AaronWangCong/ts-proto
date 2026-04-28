@@ -12,6 +12,7 @@
     "sjzy-ts-proto"
   ],
   "scripts": {
+    "dev": "tsx integration/watch.ts",
     "build": "yarn tsc",
     "build:test": "yarn proto2ts && yarn proto2pbjs",
     "prepare": "yarn build",
